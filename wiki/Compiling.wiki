@@ -1,9 +1,8 @@
 #summary Compile guide
 = Supported compilers =
 
-[http://www.mingw.org/ Mingw32]
-
-[http://www.microsoft.com/express/ Visual C++]
+[http://www.mingw.org/ Mingw32] 
+[http://www.microsoft.com/express/ Visual C++] 
 
 
 = Mingw32 =
@@ -11,6 +10,10 @@ Download source archive, in console cd into subdir *project_mingw32*, execute:
 
 > make_release 
 
-Result library will be in folder *dist/Release/mingw32*.
+Result static library will be in folder *dist/Release/mingw32*.
 
 = Visual C++ =
+In folder *project_vc2005express* open file L2Packets.sln with Visual Studio, choose build configuration *Release|Win32*, and build solution. Result static library will be in folder *dist/Release/vc2005*.
+
+= sqlite3 compile warnings =
+Yes, during build you will see lots of warnings in file sqlite3.c. sqlite devs think it is normal, see [http://www.sqlite.org/faq.html#q17 (17) I get hundreds of compiler warnings when I compile SQLite. Isn't this a problem? Doesn't it indicate poor code quality?]
