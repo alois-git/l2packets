@@ -7,8 +7,10 @@
 
 
 = Mingw32 =
-Download source archive, in console cd into subdir *project_mingw32*, execute:
-> make_release
+Download source archive, in console cd into subdir *project_mingw32*, execute: 
+
+> make_release 
+
 Result library will be in folder *dist/Release/mingw32*.
 
 = Visual C++ =
