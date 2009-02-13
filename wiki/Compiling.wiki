@@ -1,8 +1,7 @@
 #summary Compile guide
-= Supported compilers =
-
-[http://www.mingw.org/ Mingw32] 
-[http://www.microsoft.com/express/ Visual C++] 
+= Supported OS compilers =
+Now L2Packets only supports Win32/
+Currently 2 ways of compiling are ready: [http://www.mingw.org/ Mingw32] and [http://www.microsoft.com/express/ Visual C++].
 
 
 = Mingw32 =
