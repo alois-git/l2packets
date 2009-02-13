@@ -6,9 +6,9 @@ There are 2 ways of compiling: [http://www.mingw.org/ Mingw32] and [http://www.m
 
 = Mingw32 =
 Download source archive, in console cd into subdir *project_mingw32*, execute:
-{{{> make_release}}}
+ {{{> make_release}}}
 or
-{{{> mingw32-make -s -f Makefile_release.mingw32}}}
+ {{{> mingw32-make -s -f Makefile_release.mingw32}}}
 Result static library will be in folder *dist/Release/mingw32*.
 
 = Visual C++ =
