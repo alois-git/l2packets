@@ -1,14 +1,14 @@
 #summary Compile guide
-= Supported OS compilers =
-Now L2Packets only supports Win32/
-Currently 2 ways of compiling are ready: [http://www.mingw.org/ Mingw32] and [http://www.microsoft.com/express/ Visual C++].
+= Supported OS, compilers =
+At this moment !L2Packets supports only Win32.
+There are 2 ways of compiling: [http://www.mingw.org/ Mingw32] and [http://www.microsoft.com/express/ Visual C++].
 
 
 = Mingw32 =
 Download source archive, in console cd into subdir *project_mingw32*, execute:
- {{{> make_release}}}
+{{{> make_release}}}
 or
- {{{> mingw32-make -s -f Makefile_release.mingw32}}}
+{{{> mingw32-make -s -f Makefile_release.mingw32}}}
 Result static library will be in folder *dist/Release/mingw32*.
 
 = Visual C++ =
