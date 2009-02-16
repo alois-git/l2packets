@@ -1,7 +1,7 @@
 #summary Compile guide
 = Supported OS, compilers =
 At this moment !L2Packets supports only Win32.
-There are 2 ways of compiling: [http://www.mingw.org/ Mingw32] and [http://www.microsoft.com/express/ Visual C++].
+There are 2 ways of compiling: [http://www.mingw.org/ Mingw32] and [http://www.microsoft.com/express/vc/ Visual C++].
 
 
 = Mingw32 =
