@@ -12,7 +12,7 @@ or
 Result static library will be in folder *dist/Release/mingw32*.
 
 = Visual C++ =
-In folder *project_vc2005express* open file !L2Packets.sln with Visual Studio, choose build configuration *Release|Win32*, and build solution. Result static library will be in folder *dist/Release/vc2005*.
+In folder *project_vc2005express* open file !L2Packets.sln with Visual Studio, choose build configuration *Release|Win32*, and build solution. Project is for vc2005, but there should be no problem to compile it using vc2008. Result static library will be in folder *dist/Release/vc2005*.
 Debug build by default uses /MTd (Multi-threaded debug) C runtime, release - /MT.
 
 = sqlite3 compile warnings =
