@@ -1,8 +1,7 @@
 = Introduction =
-Add your content here.
+TODO :)
 
 = Docs =
-Add your content here.  Format your content with:
   * [http://code.google.com/p/l2packets/wiki/Compiling Compiling] library
   * Unsing library
   * Examples of usage
