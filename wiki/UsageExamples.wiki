@@ -1,6 +1,6 @@
-#summary One-sentence summary of this page.
+#summary Examples of Using the library
 
-= Introduction =
+= Examples of Using the library =
 
 Add your content here.
 
