@@ -1115,3 +1115,23 @@ bool UserInfo::parse_UserUnfo( void *l2_game_packet, int L2_Version )
 	return true;
 }
 }}}
+
+== Send movement packet :) ==
+{{{
+void L2Client::game_MoveTo( int xDst, int yDst, int zDst /*= 0x7FFFFFFF*/ )
+{
+	if( this->state != STATE_IN_GAME ) return; // only in game
+	if( zDst == 0x7FFFFFFF ) zDst = usr.z;
+	L2GamePacket *pack = new L2GamePacket();
+	pack->setPacketType( 0x0F ); // MoveBackwardToLocation
+	pack->writeInt( xDst );
+	pack->writeInt( yDst );
+	pack->writeInt( zDst );
+	pack->writeInt( usr.x );
+	pack->writeInt( usr.y );
+	pack->writeInt( usr.z );
+	pack->writeInt( 1 ); // for movement was used mouse
+	sendPacket( pack, true );
+	delete pack; pack = NULL;
+}
+}}}
