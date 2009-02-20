@@ -1,13 +1,1117 @@
 #summary Examples of Using the library
 
-= Examples of Using the library =
+= Examples =
+Examples from real program, maybe difficult to understand :)
 
-Add your content here.
+== Login Server conection ==
+{{{
+bool L2Client::L2ClientThread_Login( class L2Client *pcls )
+{
+	bool was_error = false;
+	int i = 0;
+	int rdyRead = 0, rdyWrite = 0;
+	unsigned char *packbuffer = NULL;
+	int r = -1;
+	long recvTimeoutMsec = 5000;
+	long sendTimeoutMsec = 5000;
+	unsigned int plen = 0;
+	unsigned char ptype = 0;
 
+	pcls->setState( L2Client::STATE_OFFLINE );
+	pcls->sock = INVALID_SOCKET;
+	pcls->sock = L2PNet_TCPsocket_create( true );
+	if( pcls->sock == INVALID_SOCKET )
+	{
+		log_error( LOG_ERROR, "L2ClientThread: socket crt failed!\n" );
+		pcls->threadNetCleanup( pcls );
+		return false;
+	}
 
-= Details =
+	pcls->setState( L2Client::STATE_CONNECTING_LOGIN );
+	pcls->addChatToTab( L2Client::CHAT_SYS, L"Connecting to login..." );
+	L2PNet_connect( pcls->sock, pcls->account.loginServerIP, pcls->account.loginServerPort );
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+	L2PNet_select( pcls->sock, L2PNET_SELECT_WRITE, 10000, &rdyRead, &rdyWrite );
+	if( !rdyWrite )
+	{
+		log_error( LOG_ERROR, "L2ClientThread: login connect failed!\n" );
+		pcls->threadNetCleanup( pcls );
+		pcls->addChatToTab( CHAT_SYS, L"Connect to login failed!" );
+		return false;
+	}
+
+	packbuffer = (unsigned char *)malloc( 10240 );
+	if( !packbuffer )
+	{
+		log_error( LOG_ERROR, "L2ClientThread: malloc() packbuffer failed!\n" );
+		pcls->threadNetCleanup( pcls );
+		return false;
+	}
+
+	pcls->addChatToTab( L2Client::CHAT_SYS, L"Connected to login." );
+
+	// TODO: Login server session vars
+	// login server session vars
+	unsigned char  ls_sessionID[4] = {0,0,0,0};
+	unsigned int   ls_sessionIDUInt = 0;
+	unsigned int   ls_protoVer = 0;
+	unsigned char  ls_RSA_pubKeyMod[128];
+	unsigned char  ls_ggShit[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+	unsigned char  ls_newBFKey[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+	unsigned int   ls_ggAuthResponse = 0;
+	unsigned char  ls_sessionKey1[8] = {0,0,0,0, 0,0,0,0};
+	unsigned char  ls_sessionKey2[8] = {0,0,0,0, 0,0,0,0};
+	unsigned char  ls_nGameServersCount = 0;
+	unsigned char  ls_lastServerID = 0;
+	int            ls_chosenGameServer = -1;
+	// login server session vars memset
+	memset( ls_RSA_pubKeyMod, 0, sizeof(ls_RSA_pubKeyMod) );
+	memset( pcls->login_sessionKey1, 0, sizeof(pcls->login_sessionKey1) );
+	memset( pcls->login_sessionKey2, 0, sizeof(pcls->login_sessionKey1) );
+	pcls->login_selectedGsId = 0;
+	memset( pcls->login_selectedGsIP, 0, sizeof(pcls->login_selectedGsIP) );
+	pcls->login_selectedGsPort = 0;
+	const int MAX_GAMESERVERS = 32;
+	L2GameServerInfo ls_gameservers[MAX_GAMESERVERS];
+	memset( ls_gameservers, 0, sizeof(ls_gameservers) );
+
+	// packet objects
+	L2LoginPacket              *pack = NULL;
+	L2Login_Init               *p_init = NULL;
+	L2Login_RequestGGAuth      *p_rgga = NULL;
+	L2Login_GGAuthResponse     *p_ggar = NULL;
+	L2Login_RequestAuthLogin   *p_ral = NULL;
+	L2Login_LoginOK            *p_lok = NULL;
+	L2Login_LoginFail          *p_lfail = NULL;
+	L2Login_AccountKicked      *p_acckick = NULL;
+	L2Login_RequestServerList  *p_rsl = NULL;
+	L2Login_ServerList         *p_sl = NULL;
+	L2Login_RequestServerLogin *p_rgsl  = NULL;
+	L2Login_PlayOK             *p_pok   = NULL;
+	L2Login_PlayFail           *p_pfail = NULL;
+
+	// receive Init
+	r = L2PacketReceive_buffer( pcls->sock, recvTimeoutMsec, &plen, packbuffer );
+	if( r <= 0 ) goto netErrorRecv;
+	if( plen != 186 )
+	{
+		log_error( LOG_ERROR, "L2ClientThread: recv Init: received %d bytes instead of %d! Maybe wrong loginserver!\n",
+			plen, 186 );
+		goto netErrorRecv;
+	}
+	p_init = new L2Login_Init();
+	p_init->setBytes( packbuffer, plen );
+	if( p_init->decodeBlowfish( true ) )
+	{
+		if( p_init->decodeXOR() )
+		{
+			p_init->read_SessionID( ls_sessionID );
+			memcpy( &ls_sessionIDUInt, ls_sessionID, sizeof(ls_sessionID) );
+			ls_protoVer = p_init->read_ProtoVer();
+			p_init->read_RSA_pubKeyMod( ls_RSA_pubKeyMod );
+			p_init->read_GGShit( ls_ggShit );
+			p_init->read_DynamicBFKey( ls_newBFKey );
+		}
+		else log_error( LOG_ERROR, "L2ClientThread: XOR decode failed\n" );
+	}
+	else log_error( LOG_ERROR, "L2ClientThread: BF decode failed\n" );
+	delete p_init;
+	p_init = NULL;
+
+	// reply RequestGGAuth
+	p_rgga = new L2Login_RequestGGAuth();
+	p_rgga->create( ls_sessionID );
+	p_rgga->padPacketTo8ByteLen();
+	p_rgga->appendChecksum( true );
+	p_rgga->appendMore8Bytes();
+	//p_rgga->writeEnd8Bytes();
+	p_rgga->setDynamicBFKey( ls_newBFKey, 16 );
+	p_rgga->encodeBlowfish( false );
+	r = L2PacketSend2( p_rgga->getBytesPtr(), pcls->sock, sendTimeoutMsec, &plen );
+	delete p_rgga;
+	p_rgga = NULL;
+	if( r == -1 ) goto netErrorSend;
+
+	// recv GGAuthResponse
+	r = L2PacketReceive_buffer( pcls->sock, recvTimeoutMsec, &plen, packbuffer );
+	if( r <= 0 ) goto netErrorRecv;
+	p_ggar = new L2Login_GGAuthResponse();
+	p_ggar->setBytes( packbuffer, plen );
+	p_ggar->setDynamicBFKey( ls_newBFKey, 16 );
+	p_ggar->decodeBlowfish( false );
+	ptype = p_ggar->getPacketType();
+	if( ptype != 0x0B )
+		log_error( LOG_WARNING, "L2ClientThread: login: Unknown GGAuthResponse code 0x%02X!!!!\n",
+			(unsigned int)ptype );
+	else
+		log_error( LOG_OK, "L2ClientThread: login: GGAuthResponse: bypass GameGuard authorization...\n" );
+	ls_ggAuthResponse = p_ggar->read_Response();
+	if( ls_ggAuthResponse != ls_sessionIDUInt )
+	{
+		log_error( LOG_WARNING, "L2ClientThread: login: sessionID != ggAuthResponse (%04X != %04X)\n",
+			ls_sessionIDUInt, ls_ggAuthResponse );
+	}
+	else
+	{
+		log_error( LOG_DEBUG, "L2ClientThread: login: sessionID == ggAuthResponse, good\n" );
+		pcls->addChatToTab( L2Client::CHAT_SYS, L"lol gameguard :)" );
+	}
+	delete p_ggar;
+	p_ggar = NULL;
+
+	// convert charset
+	char al2login[32], al2pass[32];
+	memset( al2login, 0, sizeof(al2login) );
+	memset( al2pass, 0, sizeof(al2pass) );
+	WideCharToMultiByte( CP_ACP, 0, pcls->account.login, -1, al2login, 31, NULL, NULL );
+	WideCharToMultiByte( CP_ACP, 0, pcls->account.pass, -1, al2pass, 31, NULL, NULL );
+	log_error( LOG_DEBUG, "L2ClientThread: login.. [%s] [%s]\n", al2login, al2pass );
+	L2LoginPacket::unscramble_RSA_PubKeyMod( ls_RSA_pubKeyMod );
+	// response with RequestAuthLogin
+	p_ral = new L2Login_RequestAuthLogin();
+	p_ral->create( al2login, al2pass, ls_ggAuthResponse, ls_RSA_pubKeyMod );
+	p_ral->padPacketTo8ByteLen();
+	p_ral->appendChecksum( true );
+	p_ral->appendMore8Bytes();
+	p_ral->setDynamicBFKey( ls_newBFKey, 16 );
+	p_ral->encodeBlowfish( false );
+	r = L2PacketSend2( p_ral->getBytesPtr(), pcls->sock, sendTimeoutMsec, &plen );
+	delete p_ral;
+	p_ral = NULL;
+	if( r == -1 ) goto netErrorSend;
+
+	// recv response to RequestAuthLogin
+	// it will be LoginOK or LoginFail
+	r = L2PacketReceive_buffer( pcls->sock, recvTimeoutMsec, &plen, packbuffer );
+	if( r <= 0 ) goto netErrorRecv;
+	pack = new L2LoginPacket( packbuffer, plen );
+	pack->setDynamicBFKey( ls_newBFKey, 16 );
+	pack->decodeBlowfish( false );
+	ptype = pack->getPacketType();
+	log_error( LOG_DEBUGDUMP, "L2ClientThread: response to RequestAuthLogin is 0x%02X\n", ptype );
+	if( ptype == 0x03 ) // login ok
+	{
+		log_error( LOG_DEBUG, "L2ClientThread: Login OK\n" );
+		p_lok = new L2Login_LoginOK( pack->getBytesPtr(), pack->getPacketSize() );
+		p_lok->getPacketType();
+		p_lok->read_sessionKey1( ls_sessionKey1 );
+		delete p_lok;
+		p_lok = NULL;
+		pcls->addChatToTab( L2Client::CHAT_SYS, L"Login OK" );
+		pcls->setState( STATE_AUTHED_LOGIN );
+	}
+	else if( ptype == 0x01 )
+	{
+		p_lfail = new L2Login_LoginFail( pack->getBytesPtr(), pack->getPacketSize() );
+		p_lfail->getPacketType();
+		unsigned int reason = p_lfail->read_reason();
+		log_error( LOG_ERROR, "L2ClientThread: Login failed: 0x%02X\n", reason );
+		wchar_t strReason[64] = {0};
+		switch( reason )
+		{
+		case L2LF_REASON_SYSTEM_ERROR         : wcscpy( strReason, L"REASON_SYSTEM_ERROR" ); break;
+		case L2LF_REASON_PASS_WRONG           : wcscpy( strReason, L"REASON_PASS_WRONG" ); break;
+		case L2LF_REASON_USER_OR_PASS_WRONG   : wcscpy( strReason, L"REASON_USER_OR_PASS_WRONG" ); break;
+		case L2LF_REASON_ACCESS_FAILED        : wcscpy( strReason, L"REASON_ACCESS_FAILED" ); break;
+		case L2LF_REASON_ACCOUNT_IN_USE       : wcscpy( strReason, L"REASON_ACCOUNT_IN_USE" ); break;
+		case L2LF_REASON_SERVER_OVERLOADED    : wcscpy( strReason, L"REASON_SERVER_OVERLOADED" ); break;
+		case L2LF_REASON_SERVER_MAINTENANCE   : wcscpy( strReason, L"REASON_SERVER_MAINTENANCE" ); break;
+		case L2LF_REASON_TEMP_PASS_EXPIRED    : wcscpy( strReason, L"REASON_TEMP_PASS_EXPIRED" ); break;
+		case L2LF_REASON_DUAL_BOX             : wcscpy( strReason, L"REASON_DUAL_BOX" ); break;
+		default                               : wcscpy( strReason, L"REASON_UNKNOWN" ); break;
+		}
+		wchar_t mes[128] = {0};
+		wsprintfW( mes, L"Login FAILED! Reason: [%s]", strReason );
+		pcls->addChatToTab( L2Client::CHAT_SYS, mes );
+		delete p_lfail;
+		p_lfail = NULL;
+		delete pack;
+		pack = NULL;
+		goto netErrorRecv;
+	}
+	else if( ptype = 0x02 )
+	{
+		p_acckick = new L2Login_AccountKicked( pack->getBytesPtr(), pack->getPacketSize() );
+		p_acckick->getPacketType();
+		unsigned int reason = p_acckick->read_reason();
+		log_error( LOG_ERROR, "L2ClientThread: Login failed: AccountKicked: 0x%02X\n", reason );
+		wchar_t strReason[64] = {0};
+		switch( reason )
+		{
+		case L2AC_REASON_DATA_STEALER       : wcscpy( strReason, L"REASON_DATA_STEALER" ); break;
+		case L2AC_REASON_GENERIC_VIOLATION  : wcscpy( strReason, L"REASON_GENERIC_VIOLATION" ); break;
+		case L2AC_REASON_7_DAYS_SUSPENDED   : wcscpy( strReason, L"REASON_7_DAYS_SUSPENDED" ); break;
+		case L2AC_REASON_PERMANENTLY_BANNED : wcscpy( strReason, L"REASON_PERMANENTLY_BANNED" ); break;
+		default                             : wcscpy( strReason, L"REASON_UNKNOWN" ); break;
+		}
+		wchar_t mes[128] = {0};
+		wsprintfW( mes, L"Login FAILED! Reason: [%s]", strReason );
+		pcls->addChatToTab( L2Client::CHAT_SYS, mes );
+		delete p_acckick;
+		p_acckick = NULL;
+		delete pack;
+		pack = NULL;
+		goto netErrorRecv;
+	}
+	else
+	{
+		wchar_t mes[128] = {0};
+		wsprintfW( mes, L"Login failed: Unknown response: 0x%02X\n", ptype );
+		pcls->addChatToTab( L2Client::CHAT_SYS, mes );
+		log_error( LOG_ERROR, "L2ClientThread: Login failed: Unknown response: 0x%02X\n", ptype );
+		delete pack;
+		pack = NULL;
+		goto netErrorRecv;
+	}
+	delete pack;
+	pack = NULL;
+
+	// request server list
+	p_rsl = new L2Login_RequestServerList();
+	p_rsl->create( ls_sessionKey1 );
+	p_rsl->padPacketTo8ByteLen();
+	p_rsl->appendChecksum( true );
+	p_rsl->appendMore8Bytes();
+	p_rsl->setDynamicBFKey( ls_newBFKey, 16 );
+	p_rsl->encodeBlowfish( false );
+	r = L2PacketSend2( p_rsl->getBytesPtr(), pcls->sock, sendTimeoutMsec, &plen );
+	delete p_rsl;
+	p_rsl = NULL;
+	if( r == -1 ) goto netErrorSend;
+
+	// receive server list
+	r = L2PacketReceive_buffer( pcls->sock, recvTimeoutMsec, &plen, packbuffer );
+	if( r <= 0 ) goto netErrorRecv;
+	p_sl = new L2Login_ServerList( packbuffer, plen );
+	p_sl->setDynamicBFKey( ls_newBFKey, 16 );
+	p_sl->decodeBlowfish( false );
+	p_sl->read_header( &ls_nGameServersCount, &ls_lastServerID );
+	for( i=0; i<ls_nGameServersCount; i++ )
+	{
+		p_sl->read_next_GS_Info( &ls_gameservers[i] );
+		log_error( LOG_DEBUGDUMP, "GS #%d: ", (int)ls_gameservers[i].gsID );
+		log_error_np( LOG_DEBUGDUMP, "Addr: %d.%d.%d.%d : %d;   ",
+			(int)ls_gameservers[i].gsIP[0], (int)ls_gameservers[i].gsIP[1],
+			(int)ls_gameservers[i].gsIP[2], (int)ls_gameservers[i].gsIP[3],
+			(int)ls_gameservers[i].gsPort );
+		log_error_np( LOG_DEBUGDUMP, "Online: %d / %d\n",
+			(int)ls_gameservers[i].gsPlayersOnline, (int)ls_gameservers[i].gsPlayersMax );
+	}
+	delete p_sl;
+	p_sl = NULL;
+
+	pcls->addChatToTab( L2Client::CHAT_SYS, L"Received ServerList" );
+
+	// now we must choose server
+	// in manual mode, run dialog
+	// in auto mode, use accoutn setting
+	if( pcls->account.gameserverSelectManual )
+	{
+		int sel_idx = ChooseServer( g_hWnd, ls_gameservers, ls_nGameServersCount );
+		if( sel_idx == -1 ) goto normalEnd;
+		ls_chosenGameServer = ls_gameservers[ sel_idx ].gsID;
+		log_error( LOG_DEBUG, "L2ClientThread: login: manual select game server idx[%d]: id = %d\n",
+			sel_idx, ls_chosenGameServer );
+		sprintf( pcls->login_selectedGsIP, "%d.%d.%d.%d",
+			ls_gameservers[ sel_idx ].gsIP[0], ls_gameservers[ sel_idx ].gsIP[1],
+			ls_gameservers[ sel_idx ].gsIP[2], ls_gameservers[ sel_idx ].gsIP[3] );
+		pcls->login_selectedGsPort = (int)ls_gameservers[ sel_idx ].gsPort;
+	}
+	else
+	{
+		ls_chosenGameServer = pcls->account.gameserverID;
+		log_error( LOG_DEBUG, "L2ClientThread: login: auto select game server id %d\n",
+			ls_chosenGameServer );
+		pcls->login_selectedGsId = ls_chosenGameServer;
+		int idx = -1;
+		for( i=0; i<ls_nGameServersCount; i++ )
+		{
+			if( ls_gameservers[i].gsID == ls_chosenGameServer ) idx = i;
+		}
+		sprintf( pcls->login_selectedGsIP, "%d.%d.%d.%d",
+			ls_gameservers[ idx ].gsIP[0], ls_gameservers[ idx ].gsIP[1],
+			ls_gameservers[ idx ].gsIP[2], ls_gameservers[ idx ].gsIP[3] );
+		pcls->login_selectedGsPort = (int)ls_gameservers[ idx ].gsPort;
+	}
+
+	// request server login
+	p_rgsl = new L2Login_RequestServerLogin();
+	p_rgsl->create( ls_sessionKey1, ls_chosenGameServer );
+	p_rgsl->padPacketTo8ByteLen();
+	p_rgsl->appendChecksum( true );
+	p_rgsl->appendMore8Bytes();
+	p_rgsl->setDynamicBFKey( ls_newBFKey, 16 );
+	p_rgsl->encodeBlowfish( false );
+	r = L2PacketSend2( p_rgsl->getBytesPtr(), pcls->sock, sendTimeoutMsec, &plen );
+	delete p_rgsl;
+	p_rgsl = NULL;
+	if( r == -1 ) goto netErrorSend;
+
+	// recv PalyOK / PlayFail
+	r = L2PacketReceive_buffer( pcls->sock, recvTimeoutMsec, &plen, packbuffer );
+	if( r <= 0 ) goto netErrorRecv;
+	pack = new L2LoginPacket( packbuffer, plen );
+	pack->setDynamicBFKey( ls_newBFKey, 16 );
+	pack->decodeBlowfish( false );
+	ptype = pack->getPacketType();
+	if( ptype == 0x07 )
+	{
+		log_error( LOG_DEBUG, "L2ClientThread: login: PlayOK\n" );
+		pcls->addChatToTab( L2Client::CHAT_SYS, L"Play OK" );
+		p_pok = new L2Login_PlayOK( pack->getBytesPtr(), pack->getPacketSize() );
+		p_pok->getPacketType();
+		p_pok->read_sessionKey2( ls_sessionKey2 );
+		delete p_pok;
+		p_pok = NULL;
+	}
+	else if( ptype == 0x06 )
+	{
+		p_pfail = new L2Login_PlayFail( pack->getBytesPtr(), pack->getPacketSize() );
+		p_pfail->getPacketType();
+		unsigned int reason = (unsigned int)p_pfail->read_reason();
+		log_error( LOG_ERROR, "L2ClientThread: login: PlayFail: 0x%02X\n", reason );
+		wchar_t msg[128];
+		wchar_t strReason[128] = {0};
+		switch( reason )
+		{
+		case L2PF_REASON_SYSTEM_ERROR       : wcscpy( strReason, L"REASON_SYSTEM_ERROR" ); break;
+		case L2PF_REASON_USER_OR_PASS_WRONG : wcscpy( strReason, L"REASON_USER_OR_PASS_WRONG" ); break;
+		case L2PF_REASON3                   : wcscpy( strReason, L"REASON3" ); break;
+		case L2PF_REASON4                   : wcscpy( strReason, L"REASON4" ); break;
+		case L2PF_REASON_TOO_MANY_PLAYERS   : wcscpy( strReason, L"REASON_TOO_MANY_PLAYERS" ); break;
+		default: wcscpy( strReason, L"REASON_UNKNOWN" ); break;
+		}
+		wsprintfW( msg, L"PlayFail: %s", strReason );
+		pcls->addChatToTab( L2Client::CHAT_SYS, msg );
+		delete p_pfail;
+		p_pfail = NULL;
+		delete pack;
+		pack = NULL;
+		goto netErrorRecv;
+	}
+	else
+	{
+		log_error( LOG_DEBUG, "L2ClientThread: login: unknown response 0x%02X to RequestServerLogin\n",
+			(int)ptype );
+		wchar_t msg[128];
+		wsprintfW( msg, L"Unknown response 0x%02X to RequestServerLogin\n", (int)ptype );
+		pcls->addChatToTab( L2Client::CHAT_SYS, msg );
+		delete pack;
+		pack = NULL;
+		goto netErrorRecv;
+	}
+	delete pack;
+	pack = NULL;
+
+	L2PNet_shutdown( pcls->sock );
+	L2PNet_closesocket( pcls->sock );
+	pcls->sock = INVALID_SOCKET;
+
+	// save session vars
+	memcpy( pcls->login_sessionKey1, ls_sessionKey1, sizeof(ls_sessionKey1) );
+	memcpy( pcls->login_sessionKey2, ls_sessionKey2, sizeof(ls_sessionKey2) );
+
+	was_error = false;
+	goto normalEnd;
+	// error handlers
+netErrorRecv:
+	was_error = true;
+	log_error( LOG_ERROR, "L2ClientThread: recv failed; some network error?\n" );
+	pcls->addChatToTab( CHAT_SYS, L"Network error! (recv)" );
+	goto normalEnd;
+netErrorSend:
+	was_error = true;
+	log_error( LOG_ERROR, "L2ClientThread: send failed; some network error?\n" );
+	pcls->addChatToTab( CHAT_SYS, L"Network error! (send)" );
+normalEnd:
+	free( packbuffer );
+	packbuffer = NULL;
+	pcls->threadNetCleanup( pcls );
+	pcls->addChatToTab( CHAT_SYS, L"Login connection closed." );
+	if( was_error ) return false;
+	return true;
+}
+}}}
+
+== Game server packets loop ==
+{{{
+bool L2Client::L2ClientThread_Game( class L2Client *pcls )
+{
+	// vars
+	bool was_error = false;
+	int i = 0;
+	int rdyRead = 0, rdyWrite = 0;
+	unsigned char *packbuffer = NULL;
+	int r = -1;
+	//pcls->game_recvTimeoutMsec = 5000;
+	//pcls->game_sendTimeoutMsec = 5000;
+	long timerResolutionMsec = 250;
+	DWORD lastWorldTickTime = GetTickCount();
+	unsigned int plen = 0;
+	unsigned char ptype = 0;
+	// memsets
+	memset( pcls->game_key_send, 0, sizeof(pcls->game_key_send) );
+	memset( pcls->game_key_recv, 0, sizeof(pcls->game_key_recv) );
+	pcls->game_opcodeObfuscatorSeed = 0;
+	pcls->game_pCodeObfuscator = NULL;
+	pcls->game_logoutRequestSent = false;
+
+	// allocate recv packet buffer
+	packbuffer = (unsigned char *)malloc( 10240 ); // 10 kb;
+	if( !packbuffer )
+	{
+		log_error( LOG_ERROR, "Recv buffer malloc failed!\n" );
+		pcls->threadNetCleanup( pcls );
+		pcls->addChatToTab( CHAT_SYS, L"Recv buffer malloc failed!" );
+		return false;
+	}
+
+	pcls->sock = L2PNet_TCPsocket_create( true );
+	if( pcls->sock == INVALID_SOCKET )
+	{
+		log_error( LOG_ERROR, "Game: sock crt fail!\n" );
+		pcls->threadNetCleanup( pcls );
+		pcls->addChatToTab( CHAT_SYS, L"Socket create failed!" );
+		return false;
+	}
+
+	pcls->setState( L2Client::STATE_CONNECTING_GAME );
+	log_error( LOG_DEBUG, "Game: connecting to %s:%d...\n",
+		pcls->login_selectedGsIP, pcls->login_selectedGsPort );
+	pcls->addChatToTab( CHAT_SYS, L"Connecting to GS..." );
+
+	L2PNet_connect( pcls->sock, pcls->login_selectedGsIP, pcls->login_selectedGsPort );
+	L2PNet_select( pcls->sock, L2PNET_SELECT_WRITE, 10000, &rdyRead, &rdyWrite );
+	if( !rdyWrite )
+	{
+		log_error( LOG_ERROR, "Game: connect failed!\n" );
+		pcls->threadNetCleanup( pcls );
+		pcls->addChatToTab( CHAT_SYS, L"Connect to GS failed!" );
+		return false;
+	}
+
+	pcls->setState( L2Client::STATE_CONNECTED_GAME );
+	log_error( LOG_DEBUG, "Game: connected to %s:%d.\n",
+		pcls->login_selectedGsIP, pcls->login_selectedGsPort );
+	pcls->addChatToTab( CHAT_SYS, L"Connected to GS." );
+
+	// packets
+	L2GamePacket *pack = NULL;
+	L2Game_ProtocolVersion *p_game_pv = NULL;
+	L2Game_KeyPacket *p_game_key = NULL;
+	L2Game_AuthLogin *p_game_al = NULL;
+	L2Game_CharSelectionInfo *p_game_charsel = NULL;
+	L2Game_CharacterSelect *p_game_charselect = NULL;
+	// vars
+	unsigned int nCharsInCharSelection = 0;
+	unsigned int nServerMaxChars = 0;
+	const int supported_MaxChars = 10;
+	CharSelectInfoBlock csb_chars[ supported_MaxChars ];
+	memset( csb_chars, 0, sizeof(csb_chars) );
+	int iSelectedChar = -1;
+	char szPacketName[256] = {0};
+
+	// send ProtocolVersion
+	p_game_pv = new L2Game_ProtocolVersion();
+	if( pcls->account.useDefaultProtocolVersion )
+	{
+		log_error( LOG_DEBUG, "Using default protocol version from config for L2_VERSION %d\n",
+			pcls->account.serverVersion );
+		switch( pcls->account.serverVersion )
+		{
+		case L2_VERSION_T1: p_game_pv->createDefaultKamael(); break;
+		case L2_VERSION_T15: p_game_pv->createDefaultHellbound(); break;
+		case L2_VERSION_T2: p_game_pv->createDefaultGracia1(); break;
+		case L2_VERSION_T22: p_game_pv->createDefaultGracia2(); break;
+		case L2_VERSION_T23: p_game_pv->createDefaultGracia3(); break;
+		default:
+			{
+				log_error( LOG_ERROR, "wrong serverVersion setting in config! creating default Kamael!\n" );
+				p_game_pv->createDefaultKamael();
+			} break;
+		}
+	}
+	else
+	{
+		log_error( LOG_DEBUG, "Creating manual protocolVersion %u\n", pcls->account.protocolVersion );
+		p_game_pv->createDefaultGracia2( pcls->account.protocolVersion );
+	}
+#ifdef _DEBUG
+	unsigned int sent_pv;
+	p_game_pv->read_protoVer( &sent_pv );
+#endif
+	r = L2PacketSend( pcls->sock, p_game_pv, pcls->game_sendTimeoutMsec, &plen );
+	delete p_game_pv;
+	p_game_pv = NULL;
+	if( r <= 0 ) goto netErrorSend;
+#ifdef _DEBUG
+	log_error( LOG_DEBUGDUMP, "Sent ProtocolVersion %u\n", sent_pv );
+#endif
+
+	// receive KeyPacket
+	r = L2PacketReceive_buffer( pcls->sock, pcls->game_recvTimeoutMsec, &plen, packbuffer );
+	if( r <= 0 ) goto netErrorRecv;
+	p_game_key = new L2Game_KeyPacket();
+	p_game_key->setBytesPtr( packbuffer, plen );
+	p_game_key->read_key( pcls->game_key_recv );
+	p_game_key->createInitialHellboundKey( pcls->game_key_recv, pcls->game_key_recv );
+	memcpy( pcls->game_key_send, pcls->game_key_recv, 16 );
+	p_game_key->read_GameServerID();
+	pcls->game_opcodeObfuscatorSeed = p_game_key->read_OpcodeObfuscator();
+#ifdef _DEBUG
+	log_error( LOG_DEBUGDUMP, "KeyPacket results:\nKey: " );
+	for( i=0; i<16; i++ ) log_error_np( LOG_DEBUGDUMP, "%02X ", pcls->game_key_recv[i] );
+	log_error_np( LOG_DEBUGDUMP, "\n" );
+	log_error( LOG_DEBUGDUMP, "Obfuscator: %08X\n", pcls->game_opcodeObfuscatorSeed );
+#endif
+
+	// obfuscator manage
+	if( pcls->game_opcodeObfuscatorSeed != 0 )
+	{
+		pcls->game_pCodeObfuscator = new L2PCodeObfuscator();
+		pcls->game_pCodeObfuscator->setVersionMode( pcls->account.serverVersion );
+		pcls->game_pCodeObfuscator->init_tables( pcls->game_opcodeObfuscatorSeed );
+		log_error( LOG_WARNING, "Opcode obfuscation enabled.\n" );
+		pcls->addChatToTab( CHAT_SYS, L"Notice: opcode obfuscation enabled. L2 off server >= HB?\n" );
+	}
+
+	// send AuthLogin
+	p_game_al = new L2Game_AuthLogin();
+	p_game_al->create( pcls->account.login, pcls->login_sessionKey1, pcls->login_sessionKey2 );
+	// obfuscate opcode if enabled before XOR enc
+	pcls->OpcodeObfuscate( p_game_al );
+	p_game_al->encodeXOR( pcls->game_key_send );
+	r = L2PacketSend( pcls->sock, p_game_al, pcls->game_sendTimeoutMsec, &plen );
+	delete p_game_al; p_game_al = NULL;
+	if( r <= 0 ) goto netErrorSend;
+
+netRestartOK:
+	// recv CharSelectionInfo?
+	r = L2PacketReceive_buffer( pcls->sock, pcls->game_recvTimeoutMsec, &plen, packbuffer );
+	if( r <= 0 ) goto netErrorRecv;
+	L2GamePacket::decodeXOR_buffer( packbuffer, plen, pcls->game_key_recv );
+	// deobfuscate opcode if enabled after XOR enc
+	pcls->OpcodeDeObfuscate( packbuffer, plen );
+	log_error( LOG_DEBUGDUMP, "Answer to AuthLogin: %u bytes, pcode %02X\n",
+		((unsigned int)packbuffer[0] | ((unsigned int)(packbuffer[1] << 8))),
+		(unsigned int)packbuffer[2]
+	);
+
+	if( packbuffer[2] != 0x09 ) // not CharSelectionInfo or decode error, or unknown opcode obfuscator
+	{
+		log_error( LOG_ERROR, "Unknown response to AuthLogin: 0x%02X or unknown opcode obfuscator\n",
+			packbuffer[2] );
+		pcls->addChatToTab( CHAT_SYS, L"Protocol error!" );
+		goto netErrorRecv;
+	}
+
+	// ok, we authorized ok
+	pcls->setState( STATE_AUTHED_GAME );
+	pcls->addChatToTab( CHAT_SYS, L"Received Char list" );
+
+	p_game_charsel = new L2Game_CharSelectionInfo();
+	p_game_charsel->setBytes( packbuffer, plen );
+	// parse CharSelectionInfo
+	p_game_charsel->read_nChars( &nCharsInCharSelection );
+	p_game_charsel->read_server_maxChars( &nServerMaxChars );
+	log_error( LOG_DEBUGDUMP, "Char sel: %d chars (max %d)\n", nCharsInCharSelection, nServerMaxChars );
+	memset( csb_chars, 0, sizeof(csb_chars) ); // clear buffer to save chars list to
+	for( i=0; i<(int)nCharsInCharSelection; i++ )
+	{
+		p_game_charsel->read_next_charSelectInfoBlock( &(csb_chars[i]) );
+		log_error( LOG_DEBUGDUMP, "%d: %S lv %d %s\n", i,
+			csb_chars[i].charName,
+			csb_chars[i].level,
+			L2Data_getClass( csb_chars[i].classID ) );
+	}
+	delete p_game_charsel;
+	p_game_charsel = NULL;
+
+	// let user choose char in manual mode
+	// or select char automatically if set so
+	if( pcls->account.charSelectManual )
+	{
+		iSelectedChar = ChooseChar( g_hWnd, csb_chars, nCharsInCharSelection );
+		if( iSelectedChar == -1 ) goto netErrorRecv;
+		log_error( LOG_DEBUG, "Manual choose char: %d [%S]\n", iSelectedChar, csb_chars[iSelectedChar].charName );
+	}
+	else
+	{
+		iSelectedChar = -1;
+		for( i=0; i<(int)nCharsInCharSelection; i++ )
+		{
+			if( wcscmp( pcls->account.charSelectName, csb_chars[i].charName ) == 0 ) iSelectedChar = i;
+		}
+		if( iSelectedChar == -1 )
+		{
+			log_error( LOG_DEBUG, "Auto select char: char [%S] not found!\n", pcls->account.charSelectName );
+			wchar_t msg[256];
+			wsprintfW( msg, L"Auto select char: char [%s] not found!", pcls->account.charSelectName );
+			pcls->addChatToTab( CHAT_SYS, msg );
+			log_error( LOG_DEBUG, "Running manual select...\n" );
+			iSelectedChar = ChooseChar( g_hWnd, csb_chars, nCharsInCharSelection );
+			if( iSelectedChar == -1 ) goto netErrorRecv;
+			log_error( LOG_DEBUG, "Manual choose char: %d [%S]\n", iSelectedChar, csb_chars[iSelectedChar].charName );
+		}
+		else
+		{
+			log_error( LOG_DEBUG, "Auto select char: %d [%S]\n", iSelectedChar, csb_chars[iSelectedChar].charName );
+		}
+	}
+
+	// send CharSelect
+	p_game_charselect = new L2Game_CharacterSelect();
+	p_game_charselect->create( (unsigned)iSelectedChar );
+	// obfuscate opcode if enabled before XOR enc
+	pcls->OpcodeObfuscate( p_game_charselect );
+	p_game_charselect->encodeXOR( pcls->game_key_send );
+	r = L2PacketSend( pcls->sock, p_game_charselect, pcls->game_sendTimeoutMsec, &plen );
+	delete p_game_charselect; p_game_charselect = NULL;
+	if( r <= 0 ) goto netErrorSend;
+
+	pcls->game_logoutRequestSent = false;
+
+	while( 1 )
+	{
+		if( pcls->threadSignal != 0 )
+		{
+			if( pcls->threadSignal == THREAD_SIGNAL_FORCE_DISCONNECT )
+			{
+				// send Logout, not needed, but...
+				pack = new L2GamePacket();
+				pack->writeChar( 0x00 );
+				pcls->sendPacket( pack, true );
+				delete pack; pack = NULL;
+				break;
+			}
+			if( pcls->threadSignal == THREAD_SIGNAL_DISCONNECT )
+			{
+				if( pcls->game_logoutRequestSent == false )
+				{
+					// send Logout
+					pack = new L2GamePacket();
+					pack->writeChar( 0x00 ); // Logout
+					pcls->sendPacket( pack, true );
+					pcls->OpcodeObfuscate( pack );
+					delete pack; pack = NULL;
+					pcls->game_logoutRequestSent = true;
+				}
+			}
+			if( pcls->threadSignal == THREAD_SIGNAL_LOGOUT )
+			{
+				if( pcls->game_logoutRequestSent == false )
+				{
+					// send RequestRestart
+					pack = new L2GamePacket();
+					pack->writeChar( 0x57 ); // RequestRestart
+					pcls->sendPacket( pack, true );
+					delete pack; pack = NULL;
+					pcls->game_logoutRequestSent = true;
+				}
+			}
+		}
+		//
+		r = L2PNet_select( pcls->sock, L2PNET_SELECT_READ, timerResolutionMsec, &rdyRead, &rdyWrite );
+		DWORD curTick = GetTickCount();
+		if( curTick - lastWorldTickTime >= (unsigned)timerResolutionMsec )
+		{
+			//log_error_np( LOG_OK, "Tick: process world tick\n" );
+			lastWorldTickTime = curTick;
+			pcls->worldTick();
+		}
+		// select result
+		if( r == -1 ) break;
+		if( r == 0 ) continue;
+		//
+		//if( !rdyRead ) continue;
+		r = L2PacketReceive_buffer( pcls->sock, pcls->game_recvTimeoutMsec, &plen, packbuffer );
+		if( r <= 0 ) goto netErrorRecv;
+		L2GamePacket::decodeXOR_buffer( packbuffer, plen, pcls->game_key_recv );
+		// deobfuscate opcode if enabled after XOR enc
+		pcls->OpcodeDeObfuscate( packbuffer, plen );
+		unsigned char opcode1 = packbuffer[2];
+		unsigned short int opcode2 = ( ((unsigned short int)packbuffer[3]) |
+			(((unsigned short int)packbuffer[4]) << 8) );
+
+		L2Packets_GetL2PacketName_fromServer( opcode1, opcode2, szPacketName, 255 );
+		if( opcode1 != 0xFE ) log_error( LOG_PACKETNAME, "Server: %02X %s\n", opcode1, szPacketName );
+		else log_error( LOG_PACKETNAME, "Server: FE:%02X %s\n", opcode2, szPacketName );
+
+		// create packet object
+		pack = new L2GamePacket();
+		pack->setBytes( packbuffer, plen );
+		// dispatch packet to handlers
+		switch( pcls->getState() )
+		{
+
+			case L2Client::STATE_OFFLINE:
+			case L2Client::STATE_CONNECTING_LOGIN:
+			case L2Client::STATE_CONNECTED_LOGIN:
+			case L2Client::STATE_AUTHED_LOGIN:
+			case L2Client::STATE_CONNECTING_GAME:
+			case L2Client::STATE_CONNECTED_GAME:
+				break; // not used here
+
+			case L2Client::STATE_AUTHED_GAME:
+			{
+				switch( opcode1 )
+				{
+				case 0x73: pcls->ph_SSQInfo( pcls, pack ); break;
+				case 0x0b: pcls->ph_CharSelected( pcls, pack ); break;
+				}
+			} break;
+			/* STATE_AUTHED_GAME */
+
+			case L2Client::STATE_IN_GAME:
+			{
+				switch( opcode1 )
+				{
+				case 0x00: pcls->ph_Die( pcls, pack ); break;
+				case 0x05: pcls->ph_SpawnItem( pcls, pack ); break;
+				case 0x08: pcls->ph_DeleteObject( pcls, pack ); break;
+				case 0x0c: pcls->ph_NpcInfo( pcls, pack ); break;
+				case 0x11: pcls->ph_ItemList( pcls, pack ); break;
+				case 0x16: pcls->ph_DropItem( pcls, pack ); break;
+				case 0x17: pcls->ph_GetItem( pcls, pack ); break;
+				case 0x18: pcls->ph_StatusUpdate( pcls, pack ); break;
+				case 0x19: pcls->ph_NpcHtmlMessage( pcls, pack ); break;
+				case 0x21: pcls->ph_InventoryUpdate( pcls, pack ); break;
+				case 0x22: pcls->ph_TeleportToLocation( pcls, pack ); break;
+				case 0x23: pcls->ph_TargetSelected( pcls, pack ); break;
+				case 0x24: pcls->ph_TargetUnselected( pcls, pack ); break;
+				case 0x28: pcls->ph_ChangeMoveType( pcls, pack ); break;
+				case 0x29: pcls->ph_ChangeWaitType( pcls, pack ); break;
+				case 0x2F: pcls->ph_MoveToLocation( pcls, pack ); break;
+				case 0x31: pcls->ph_CharInfo( pcls, pack ); break;
+				case 0x32: pcls->ph_UserInfo( pcls, pack ); break;
+				case 0x39: pcls->ph_AskJoinParty( pcls, pack ); break;
+				case 0x3a: pcls->ph_JoinParty( pcls, pack ); break;
+				case 0x47: pcls->ph_StopMove( pcls, pack ); break;
+				case 0x48: pcls->ph_MagicSkillUse( pcls, pack ); break;
+				case 0x49: pcls->ph_MagicSkillCanceld( pcls, pack ); break;
+				case 0x4a: pcls->ph_CreatureSay( pcls, pack ); break;
+				case 0x4E: pcls->ph_PartySmallWindowAll( pcls, pack ); break;
+				case 0x4F: pcls->ph_PartySmallWindowAdd( pcls, pack ); break;
+				case 0x50: pcls->ph_PartySmallWindowDeleteAll( pcls, pack ); break;
+				case 0x51: pcls->ph_PartySmallWindowDelete( pcls, pack ); break;
+				case 0x52: pcls->ph_PartySmallWindowUpdate( pcls, pack ); break;
+				case 0x5f: pcls->ph_SkillList( pcls, pack ); break;
+				case 0x62: pcls->ph_SystemMessage( pcls, pack ); break;
+				case 0x6B: pcls->ph_SetupGauge( pcls, pack ); break;
+				case 0x71: // RestartResponse
+					{
+						if( pcls->threadSignal == THREAD_SIGNAL_LOGOUT )
+						{
+							pcls->threadSignal = 0;
+							pcls->addChatToTab( CHAT_SYS, L"Restart OK" );
+							goto netRestartOK;
+						}
+					} break;
+				case 0x72: pcls->ph_MoveToPawn( pcls, pack ); break;
+				case 0x79: pcls->ph_ValidateLocation( pcls, pack ); break;
+				case 0x84: // LeaveWorld
+					{
+						if( pcls->threadSignal == THREAD_SIGNAL_DISCONNECT )
+						{
+							pcls->threadSignal = 0;
+							pcls->addChatToTab( CHAT_SYS, L"Disconnect OK" );
+							goto netLeaveWorld;
+						}
+					} break;
+				case 0x85: pcls->ph_AbnormalStatusUpdate( pcls, pack ); break;
+				case 0x89: pcls->ph_PledgeInfo( pcls, pack ); break;
+				case 0xBA: pcls->ph_PartyMemberPosition( pcls, pack ); break;
+				case 0xC7: pcls->ph_SkillCoolTime( pcls, pack ); break;
+				case 0xF4: pcls->ph_PartySpelled( pcls, pack ); break;
+				case 0xF9: pcls->ph_EtcStatusUpdate( pcls, pack ); break;
+				case 0xFA: pcls->ph_ShortBuffStatusUpdate( pcls, pack ); break;
+				case 0xFE:
+					{
+						switch( opcode2 )
+						{
+						case 0x002f: pcls->ph_ExStorageMaxCount( pcls, pack ); break;
+						}
+					} break;
+				}
+			} break;
+			/* STATE_IN_GAME */
+
+		} // switch state
+
+		// delete packet object
+		delete pack;
+		pack = NULL;
+
+	} // while( 1 )
+
+netLeaveWorld:
+
+	//
+	was_error = false;
+	goto normalEnd;
+	// error handlers
+netErrorRecv:
+	was_error = true;
+	log_error( LOG_ERROR, "L2ClientThread: recv failed; some network error?\n" );
+	pcls->addChatToTab( CHAT_SYS, L"Network error! (recv)" );
+	goto normalEnd;
+netErrorSend:
+	was_error = true;
+	log_error( LOG_ERROR, "L2ClientThread: send failed; some network error?\n" );
+	pcls->addChatToTab( CHAT_SYS, L"Network error! (send)" );
+	goto normalEnd;
+normalEnd:
+	if( pcls->game_pCodeObfuscator ) delete pcls->game_pCodeObfuscator;
+	pcls->game_pCodeObfuscator = NULL;
+	pcls->addChatToTab( CHAT_SYS, L"Disconnected." );
+	free( packbuffer );
+	packbuffer = NULL;
+	pcls->threadNetCleanup( pcls );
+	if( was_error ) return false;
+	return true;
+}
+
+bool L2Client::sendPacket( L2GamePacket *pack, bool obfuscateAndXOREncode )
+{
+	if( (this->state != STATE_IN_GAME) && (this->state != STATE_AUTHED_GAME) ) return false;
+	if( this->sock == INVALID_SOCKET ) return false;
+	unsigned int nBytesSent = 0;
+	if( obfuscateAndXOREncode )
+	{
+		this->OpcodeObfuscate( pack );
+		pack->encodeXOR( this->game_key_send );
+	}
+	EnterCriticalSection( &this->cs_sendPacket );
+	L2PacketSend( this->sock, pack, this->game_sendTimeoutMsec, &nBytesSent );
+	LeaveCriticalSection( &this->cs_sendPacket );
+	return (nBytesSent > 0);
+}
+}}}
+
+== Example of UserInfo handler ==
+{{{
+bool UserInfo::parse_UserUnfo( void *l2_game_packet, int L2_Version )
+{
+	if( !l2_game_packet ) return false;
+	unsigned int tempUINT;
+	unsigned int i;
+	L2GamePacket *p = (L2GamePacket *)l2_game_packet;
+	p->getPacketType();
+	
+	this->x = p->readInt(); // writeD(_activeChar.getX());
+    this->y = p->readInt(); // writeD(_activeChar.getY());
+    this->z = p->readInt(); // writeD(_activeChar.getZ());
+	this->heading = p->readUInt();  // writeD(_activeChar.getHeading());
+	this->objectID = p->readUInt(); // writeD(_activeChar.getObjectId());
+	wcscpy( this->charName, p->readUnicodeStringPtr() ); // writeS(_activeChar.getName());
+	this->race = p->readInt(); // writeD(_activeChar.getRace().ordinal());
+	this->sex = p->readInt();  // writeD(_activeChar.getAppearance().getSex()? 1 : 0);
+
+	this->baseClassID = p->readUInt(); // writeD(_activeChar.getClassId().getId());
+
+	this->level = p->readInt(); // writeD(_activeChar.getLevel());
+	this->exp = p->readUInt64(); // writeQ(_activeChar.getExp());
+
+	this->s_STR = p->readInt(); // writeD(_activeChar.getSTR());
+	this->s_DEX = p->readInt(); // writeD(_activeChar.getDEX());
+	this->s_CON = p->readInt(); // writeD(_activeChar.getCON());
+    this->s_INT = p->readInt(); // writeD(_activeChar.getINT());
+    this->s_WIT = p->readInt(); // writeD(_activeChar.getWIT());
+	this->s_MEN = p->readInt(); // writeD(_activeChar.getMEN());
+
+	this->maxHp = (double)p->readInt(); // writeD(_activeChar.getMaxHp());
+    this->curHp = (double)p->readInt(); // writeD((int) _activeChar.getCurrentHp());
+	this->maxMp = (double)p->readInt(); // writeD(_activeChar.getMaxMp());
+    this->curMp = (double)p->readInt(); //writeD((int) _activeChar.getCurrentMp());
+    this->sp = p->readUInt(); // writeD(_activeChar.getSp());
+	this->curLoad = p->readUInt(); // writeD(_activeChar.getCurrentLoad());
+	this->maxLoad = p->readUInt(); // writeD(_activeChar.getMaxLoad());
+
+	//writeD(_activeChar.getActiveWeaponItem() != null ? 0x40 : 0x20); // 0x20 no weapon, 0x40 weapon equipped
+	this->isWeaponEquipped = false;
+	tempUINT = p->readUInt();
+	if( tempUINT == 0x40 ) isWeaponEquipped = true;
+
+	// paperdoll and its augments
+	// paperdoll objectIDs (25 items)
+	paperdoll_oid[L2_PAPERDOLL_UNDER] = p->readUInt(); // Inventory.PAPERDOLL_UNDER));
+    paperdoll_oid[L2_PAPERDOLL_REAR] = p->readUInt(); // writeD(....PAPERDOLL_REAR));
+    paperdoll_oid[L2_PAPERDOLL_LEAR] = p->readUInt(); // writeD(....PAPERDOLL_LEAR));
+    paperdoll_oid[L2_PAPERDOLL_NECK] = p->readUInt(); // writeD(....PAPERDOLL_NECK));
+    paperdoll_oid[L2_PAPERDOLL_RFINGER] = p->readUInt(); // writeD(....PAPERDOLL_RFINGER));
+    paperdoll_oid[L2_PAPERDOLL_LFINGER] = p->readUInt(); // writeD(....PAPERDOLL_LFINGER));
+    paperdoll_oid[L2_PAPERDOLL_HEAD] = p->readUInt(); // writeD(....PAPERDOLL_HEAD));
+    paperdoll_oid[L2_PAPERDOLL_RHAND] = p->readUInt(); // writeD(....PAPERDOLL_RHAND));
+    paperdoll_oid[L2_PAPERDOLL_LHAND] = p->readUInt(); // writeD(....PAPERDOLL_LHAND));
+    paperdoll_oid[L2_PAPERDOLL_GLOVES] = p->readUInt(); // writeD(....PAPERDOLL_GLOVES));
+    paperdoll_oid[L2_PAPERDOLL_CHEST] = p->readUInt(); // writeD(....PAPERDOLL_CHEST));
+    paperdoll_oid[L2_PAPERDOLL_LEGS] = p->readUInt(); // writeD(....PAPERDOLL_LEGS));
+    paperdoll_oid[L2_PAPERDOLL_FEET] = p->readUInt(); // writeD(....PAPERDOLL_FEET));
+    paperdoll_oid[L2_PAPERDOLL_BACK] = p->readUInt(); // writeD(....PAPERDOLL_BACK));
+    paperdoll_oid[L2_PAPERDOLL_LRHAND] = p->readUInt(); // writeD(....PAPERDOLL_LRHAND));
+    paperdoll_oid[L2_PAPERDOLL_HAIR] = p->readUInt(); // writeD(....PAPERDOLL_HAIR));
+    paperdoll_oid[L2_PAPERDOLL_HAIR2] = p->readUInt(); // writeD(....PAPERDOLL_HAIR2));
+    // T1 new D's
+    paperdoll_oid[L2_PAPERDOLL_RBRACELET] = p->readUInt(); // writeD(....PAPERDOLL_RBRACELET));
+    paperdoll_oid[L2_PAPERDOLL_LBRACELET] = p->readUInt(); // writeD(....PAPERDOLL_LBRACELET));
+    paperdoll_oid[L2_PAPERDOLL_DECO1] = p->readUInt(); // writeD(....PAPERDOLL_DECO1));
+    paperdoll_oid[L2_PAPERDOLL_DECO2] = p->readUInt(); // writeD(....PAPERDOLL_DECO2));
+    paperdoll_oid[L2_PAPERDOLL_DECO3] = p->readUInt(); // writeD(....PAPERDOLL_DECO3));
+    paperdoll_oid[L2_PAPERDOLL_DECO4] = p->readUInt(); // writeD(....PAPERDOLL_DECO4));
+    paperdoll_oid[L2_PAPERDOLL_DECO5] = p->readUInt(); // writeD(....PAPERDOLL_DECO5));
+    paperdoll_oid[L2_PAPERDOLL_DECO6] = p->readUInt(); // writeD(....PAPERDOLL_DECO6));
+
+	// paperdoll itemIDs (25 items)
+	paperdoll_iid[L2_PAPERDOLL_UNDER] = p->readUInt(); // Inventory.PAPERDOLL_UNDER));
+    paperdoll_iid[L2_PAPERDOLL_REAR] = p->readUInt(); // writeD(....PAPERDOLL_REAR));
+    paperdoll_iid[L2_PAPERDOLL_LEAR] = p->readUInt(); // writeD(....PAPERDOLL_LEAR));
+    paperdoll_iid[L2_PAPERDOLL_NECK] = p->readUInt(); // writeD(....PAPERDOLL_NECK));
+    paperdoll_iid[L2_PAPERDOLL_RFINGER] = p->readUInt(); // writeD(....PAPERDOLL_RFINGER));
+    paperdoll_iid[L2_PAPERDOLL_LFINGER] = p->readUInt(); // writeD(....PAPERDOLL_LFINGER));
+    paperdoll_iid[L2_PAPERDOLL_HEAD] = p->readUInt(); // writeD(....PAPERDOLL_HEAD));
+    paperdoll_iid[L2_PAPERDOLL_RHAND] = p->readUInt(); // writeD(....PAPERDOLL_RHAND));
+    paperdoll_iid[L2_PAPERDOLL_LHAND] = p->readUInt(); // writeD(....PAPERDOLL_LHAND));
+    paperdoll_iid[L2_PAPERDOLL_GLOVES] = p->readUInt(); // writeD(....PAPERDOLL_GLOVES));
+    paperdoll_iid[L2_PAPERDOLL_CHEST] = p->readUInt(); // writeD(....PAPERDOLL_CHEST));
+    paperdoll_iid[L2_PAPERDOLL_LEGS] = p->readUInt(); // writeD(....PAPERDOLL_LEGS));
+    paperdoll_iid[L2_PAPERDOLL_FEET] = p->readUInt(); // writeD(....PAPERDOLL_FEET));
+    paperdoll_iid[L2_PAPERDOLL_BACK] = p->readUInt(); // writeD(....PAPERDOLL_BACK));
+    paperdoll_iid[L2_PAPERDOLL_LRHAND] = p->readUInt(); // writeD(....PAPERDOLL_LRHAND));
+    paperdoll_iid[L2_PAPERDOLL_HAIR] = p->readUInt(); // writeD(....PAPERDOLL_HAIR));
+    paperdoll_iid[L2_PAPERDOLL_HAIR2] = p->readUInt(); // writeD(....PAPERDOLL_HAIR2));
+    // T1 new D's
+    paperdoll_iid[L2_PAPERDOLL_RBRACELET] = p->readUInt(); // writeD(....PAPERDOLL_RBRACELET));
+    paperdoll_iid[L2_PAPERDOLL_LBRACELET] = p->readUInt(); // writeD(....PAPERDOLL_LBRACELET));
+    paperdoll_iid[L2_PAPERDOLL_DECO1] = p->readUInt(); // writeD(....PAPERDOLL_DECO1));
+    paperdoll_iid[L2_PAPERDOLL_DECO2] = p->readUInt(); // writeD(....PAPERDOLL_DECO2));
+    paperdoll_iid[L2_PAPERDOLL_DECO3] = p->readUInt(); // writeD(....PAPERDOLL_DECO3));
+    paperdoll_iid[L2_PAPERDOLL_DECO4] = p->readUInt(); // writeD(....PAPERDOLL_DECO4));
+    paperdoll_iid[L2_PAPERDOLL_DECO5] = p->readUInt(); // writeD(....PAPERDOLL_DECO5));
+    paperdoll_iid[L2_PAPERDOLL_DECO6] = p->readUInt(); // writeD(....PAPERDOLL_DECO6));
+
+	// paperdoll augmentation IDs (25 items) (ignore now)
+	for( i=0; i<25; i++ ) p->readUInt();
+
+	this->pAtk = p->readInt();    // writeD(_activeChar.getPAtk(null));
+	this->pAtkSpd = p->readInt(); // writeD(_activeChar.getPAtkSpd());
+    this->pDef = p->readInt();    // writeD(_activeChar.getPDef(null));
+	this->evasion = p->readInt(); // writeD(_activeChar.getEvasionRate(null));
+	this->accuracy = p->readInt(); // writeD(_activeChar.getAccuracy());
+    this->critical = p->readInt(); // writeD(_activeChar.getCriticalHit(null, null));
+	this->mAtk = p->readInt();     // writeD(_activeChar.getMAtk(null, null));
+
+	this->mAtkSpd = p->readInt(); // writeD(_activeChar.getMAtkSpd());
+	this->pAtkSpd = p->readInt(); // writeD(_activeChar.getPAtkSpd());
+
+    this->mDef = p->readInt(); // writeD(_activeChar.getMDef(null, null));
+
+	this->pvpFlag = p->readInt(); // writeD(_activeChar.getPvpFlag()); // 0-non-pvp  1-pvp = violett name
+	this->karma = p->readInt(); // writeD(_activeChar.getKarma());
+
+	this->runSpeed = p->readInt();  // writeD(_runSpd);
+	this->walkSpeed = p->readInt(); // writeD(_walkSpd);
+    p->readInt(); // writeD(_swimRunSpd); // swimspeed
+    p->readInt(); // writeD(_swimWalkSpd); // swimspeed
+    p->readInt(); // writeD(_flRunSpd);
+    p->readInt(); // writeD(_flWalkSpd);
+    p->readInt(); // writeD(_flyRunSpd);
+    p->readInt(); // writeD(_flyWalkSpd);
+    p->readDouble(); // writeF(_moveMultiplier);
+    p->readDouble(); // writeF(_activeChar.getAttackSpeedMultiplier());
+
+    p->readDouble(); // writeF(_activeChar.getBaseTemplate().collisionRadius);
+    p->readDouble(); // writeF(_activeChar.getBaseTemplate().collisionHeight);
+
+    p->readInt(); // writeD(_activeChar.getAppearance().getHairStyle());
+    p->readInt(); // writeD(_activeChar.getAppearance().getHairColor());
+    p->readInt(); // writeD(_activeChar.getAppearance().getFace());
+    this->isGm = p->readInt(); // writeD(_activeChar.isGM() ? 1 : 0); // builder level
+
+	wcscpy( this->charTitle, p->readUnicodeStringPtr() ); // writeS(title);
+
+	this->clanID = p->readUInt(); // writeD(_activeChar.getClanId());
+    p->readUInt(); // writeD(_activeChar.getClanCrestId());
+    p->readUInt(); // writeD(_activeChar.getAllyId());
+    p->readUInt(); // writeD(_activeChar.getAllyCrestId()); // ally crest id
+    // 0x40 leader rights
+    // siege flags: attacker - 0x180 sword over name, defender - 0x80 shield, 0xC0 crown (|leader), 0x1C0 flag (|leader)
+	this->relation = p->readUInt(); // writeD(_relation);
+	this->mountType = p->readUChar(); // writeC(_activeChar.getMountType()); // mount type
+    p->readUChar(); // writeC(_activeChar.getPrivateStoreType());
+	this->hasDwarvenCraft = p->readUChar(); // writeC(_activeChar.hasDwarvenCraft() ? 1 : 0);
+    this->pkKills = p->readInt(); // writeD(_activeChar.getPkKills());
+    this->pvpKills = p->readInt(); // writeD(_activeChar.getPvpKills());
+
+    this->numCubics = p->readUShort(); // writeH(_activeChar.getCubics().size());
+    //for (int id : _activeChar.getCubics().keySet()) writeH(id);
+	for( i=0; i<numCubics; i++ ) p->readUShort();
+
+    p->readUChar(); // writeC(0x00); //1-find party members
+
+	this->abnormalEffect = p->readUInt(); // writeD(_activeChar.getAbnormalEffect());
+    p->readChar(); // writeC(0x00);
+
+    this->clanPrivs = p->readUInt(); // writeD(_activeChar.getClanPrivileges());
+
+	this->recomLeft = p->readUShort(); // writeH(_activeChar.getRecomLeft()); //c2  recommendations remaining
+    this->recomHave = p->readUShort(); // writeH(_activeChar.getRecomHave()); //c2  recommendations received
+    this->mountNpcId = p->readUInt(); // writeD(_activeChar.getMountNpcId() + 1000000);
+	this->inventoryLimit = p->readUShort(); // writeH(_activeChar.getInventoryLimit());
+
+	this->classID = p->readUInt(); // writeD(_activeChar.getClassId().getId());
+    p->readUInt(); // writeD(0x00); // special effects? circles around player...
+    this->maxCp = (double)p->readInt(); // writeD(_activeChar.getMaxCp());
+    this->curCp = (double)p->readInt(); // writeD((int) _activeChar.getCurrentCp());
+	this->enchantEffect = p->readUChar(); // writeC(_activeChar.getEnchantEffect());
+
+    p->readUChar(); // writeC(0x00); //team circle around feet 1= Blue, 2 = red
+
+    p->readUInt(); // writeD(_activeChar.getClanCrestLargeId());
+	this->isNoble = p->readUChar(); // writeC(_activeChar.isNoble() ? 1 : 0); //0x01: symbol on char menu ctrl+I
+    this->isHero = p->readUChar(); // writeC(_activeChar.isHero() || (_activeChar.isGM() && Config.GM_HERO_AURA) ? 1 : 0); //0x01: Hero Aura
+
+    p->readUChar(); // writeC(_activeChar.isFishing() ? 1 : 0); //Fishing Mode
+    p->readUInt(); // writeD(_activeChar.getFishx()); //fishing x
+    p->readUInt(); // writeD(_activeChar.getFishy()); //fishing y
+    p->readUInt(); // writeD(_activeChar.getFishz()); //fishing z
+    p->readUInt(); // writeD(_activeChar.getAppearance().getNameColor());
+
+	//new c5
+	this->isRunning = (int)p->readUChar(); // writeC(_activeChar.isRunning() ? 0x01 : 0x00); //changes the Speed display on Status Window
+
+    p->readUInt(); // writeD(_activeChar.getPledgeClass()); //changes the text above CP on Status Window
+    p->readUInt(); // writeD(_activeChar.getPledgeType());
+
+    p->readUInt(); // writeD(_activeChar.getAppearance().getTitleColor());
+
+    //if (_activeChar.isCursedWeaponEquipped())
+    //	writeD(CursedWeaponsManager.getInstance().getLevel(_activeChar.getCursedWeaponEquippedId()));
+    //else
+    //	writeD(0x00);
+	p->readUInt(); // cursedWeaponLevel?
+    
+    // T1 Starts
+    p->readUInt(); // writeD(_activeChar.getTransformationId());
+    
+	attackElementType = p->readUInt();  // writeD(_activeChar.getAttackElement());
+	attackElementValue = p->readUInt(); // writeD(_activeChar.getAttackElementValue());
+	defAttrFire = p->readUInt();        // writeD(_activeChar.getDefAttrFire());
+	defAttrWater = p->readUInt();       // writeD(_activeChar.getDefAttrWater());
+	defAttrWind = p->readUInt();        // writeD(_activeChar.getDefAttrWind());
+	defAttrEarth = p->readUInt();       // writeD(_activeChar.getDefAttrEarth());
+	defAttrHoly = p->readUInt();        // writeD(_activeChar.getDefAttrHoly());
+	defAttrUnholy = p->readUInt();      // writeD(_activeChar.getDefAttrUnholy());
+    
+    agathionId = p->readUInt();  // writeD(_activeChar.getAgathionId());
+    
+	// T2
+	if( L2_Version >= L2_VERSION_T2 )
+	{
+		fame = p->readUInt();          // writeD(_activeChar.getFame());  // Fame
+		p->readUInt();                 // writeD(0x00); // Unknown
+		vitalityLevel = p->readUInt(); // writeD(_activeChar.getVitalityLevel());  // Vitality Level
+	}
+
+	return true;
+}
+}}}
