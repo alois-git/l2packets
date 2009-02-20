@@ -1,7 +1,11 @@
 = Introduction =
-TODO :)
+This library allows to write applications for Lineage II game. It can be used to write server or client emulator, but mostly it was designed to use from client side.
+Library can help you to:
+ * Send and receive packets
+ * Encrypt and decrypt login/game packets
+ * Parse packets data
 
 = Docs =
   * [http://code.google.com/p/l2packets/wiki/Compiling Compiling] library
-  * Unsing library
-  * Examples of usage
+  * [http://code.google.com/p/l2packets/wiki/Using Using] library
+  * [http://code.google.com/p/l2packets/wiki/UsageExamples Examples] of usage
