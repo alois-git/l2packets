@@ -3,7 +3,7 @@
 = Examples =
 Examples from real program, maybe difficult to understand :)
 
-== Login Server conection ==
+== Login Server connection ==
 {{{
 bool L2Client::L2ClientThread_Login( class L2Client *pcls )
 {
