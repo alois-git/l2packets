@@ -162,15 +162,15 @@ unsigned char *L2PacketReceive_malloc( SOCKET sock, long lWaitMilliSecs, unsigne
 	int rdyR = 0, rdyS = 0;
 	
 	// first try to receive packet len
-	r = L2PNet_select( (unsigned int)sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
+	r = L2PNet_select( sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
 	if( r <= 0 ) return NULL;
-	r = L2PNet_recv( (unsigned int)sock, (unsigned char *)(&plen), 1 );
+	r = L2PNet_recv( sock, (unsigned char *)(&plen), 1 );
 	if( r != 1 ) return NULL;
 	(*rcvdLen) = 1;
 	
-	r = L2PNet_select( (unsigned int)sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
+	r = L2PNet_select( sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
 	if( r <= 0 ) return NULL;
-	r = L2PNet_recv( (unsigned int)sock, (unsigned char *)(&plen) + 1, 1 );
+	r = L2PNet_recv( sock, (unsigned char *)(&plen) + 1, 1 );
 	if( r != 1 ) return NULL;
 	(*rcvdLen) = 2;
 	
@@ -188,10 +188,10 @@ unsigned char *L2PacketReceive_malloc( SOCKET sock, long lWaitMilliSecs, unsigne
 	while( nBytesRcvd < plen )
 	{
 		(*rcvdLen) = nBytesRcvd;
-		r = L2PNet_select( (unsigned int)sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
+		r = L2PNet_select( sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
 		if( r > 0 ) // select() OK
 		{
-			rr = L2PNet_recv( (unsigned int)sock, (unsigned char *)bufptr, (plen - nBytesRcvd) );
+			rr = L2PNet_recv( sock, (unsigned char *)bufptr, (plen - nBytesRcvd) );
 			if( rr > 0 ) // recv() OK, received rr bytes
 			{
 				bufptr += rr;
@@ -243,25 +243,25 @@ unsigned char *L2PacketReceive_malloc( SOCKET sock, long lWaitMilliSecs, unsigne
 */
 int L2PacketReceive_buffer( SOCKET sock, long lWaitMilliSecs, unsigned int *rcvdLen, unsigned char *recvBuffer )
 {
-	if( !rcvdLen || !recvBuffer ) return -1; // assert
+	if( !rcvdLen || !recvBuffer ) return NULL; // assert
 	(*rcvdLen) = 0;                       // zero bytes received
 	recvBuffer[0] = recvBuffer[1] = 0;    // zero 1st 2 bytes in packet
-	if( sock == 0xFFFFFFFF ) return -1; // assert
+	if( sock == 0xFFFFFFFF ) return NULL; // assert
 	unsigned int plen = 0;                // receiving packet len
 	int r = 0, rr = 0;                    // net functions results return codes
 	unsigned char *bufptr = NULL;         // current receive buffer pointer
 	int rdyR = 0, rdyS = 0;               // ready to recv, ready to send
 	
 	// first try to receive packet len. receive 1st byte
-	r = L2PNet_select( (unsigned int)sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
+	r = L2PNet_select( sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
 	if( r <= 0 ) return r;
-	r = L2PNet_recv( (unsigned int)sock, (unsigned char *)(&plen), 1 );
+	r = L2PNet_recv( sock, (unsigned char *)(&plen), 1 );
 	if( r <= 0 ) return r;
 	(*rcvdLen) = 1;
 	// receive 2nd byte
-	r = L2PNet_select( (unsigned int)sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
+	r = L2PNet_select( sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
 	if( r <= 0 ) return r;
-	r = L2PNet_recv( (unsigned int)sock, (unsigned char *)(&plen) + 1, 1 );
+	r = L2PNet_recv( sock, (unsigned char *)(&plen) + 1, 1 );
 	if( r <= 0 ) return r;
 	(*rcvdLen) = 2;
 	
@@ -280,10 +280,10 @@ int L2PacketReceive_buffer( SOCKET sock, long lWaitMilliSecs, unsigned int *rcvd
 	while( nBytesRcvd < plen )
 	{
 		(*rcvdLen) = nBytesRcvd;
-		r = L2PNet_select( (unsigned int)sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
+		r = L2PNet_select( sock, L2PNET_SELECT_READ, lWaitMilliSecs, &rdyR, &rdyS );
 		if( r > 0 ) // select() OK
 		{
-			rr = L2PNet_recv( (unsigned int)sock, (unsigned char *)bufptr, (plen - nBytesRcvd) );
+			rr = L2PNet_recv( sock, (unsigned char *)bufptr, (plen - nBytesRcvd) );
 			if( rr > 0 ) // recv() OK, received rr bytes
 			{
 				bufptr += rr;

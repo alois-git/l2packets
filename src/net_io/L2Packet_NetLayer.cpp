@@ -43,16 +43,16 @@ int L2PNet_InitDefault()
 			return 0;
 		}
 	}
-	ws2_func[L2PFUNC_CONNECT]     = (void *)GetProcAddress( l2pnet_hws2_32, "connect" );
-	ws2_func[L2PFUNC_SEND]        = (void *)GetProcAddress( l2pnet_hws2_32, "send" );
-	ws2_func[L2PFUNC_RECV]        = (void *)GetProcAddress( l2pnet_hws2_32, "recv" );
-	ws2_func[L2PFUNC_SHUTDOWN]    = (void *)GetProcAddress( l2pnet_hws2_32, "shutdown" );
-	ws2_func[L2PFUNC_CLOSESOCKET] = (void *)GetProcAddress( l2pnet_hws2_32, "closesocket" );
-	ws2_func[L2PFUNC_BIND]        = (void *)GetProcAddress( l2pnet_hws2_32, "bind" );
-	ws2_func[L2PFUNC_ACCEPT]      = (void *)GetProcAddress( l2pnet_hws2_32, "accept" );
-	ws2_func[L2PFUNC_SELECT]      = (void *)GetProcAddress( l2pnet_hws2_32, "select" );
-	ws2_func[L2PFUNC_SOCKET]      = (void *)GetProcAddress( l2pnet_hws2_32, "socket" );
-	ws2_func[L2PFUNC_LISTEN]      = (void *)GetProcAddress( l2pnet_hws2_32, "listen" );
+	ws2_func[L2PFUNC_CONNECT]     = GetProcAddress( l2pnet_hws2_32, "connect" );
+	ws2_func[L2PFUNC_SEND]        = GetProcAddress( l2pnet_hws2_32, "send" );
+	ws2_func[L2PFUNC_RECV]        = GetProcAddress( l2pnet_hws2_32, "recv" );
+	ws2_func[L2PFUNC_SHUTDOWN]    = GetProcAddress( l2pnet_hws2_32, "shutdown" );
+	ws2_func[L2PFUNC_CLOSESOCKET] = GetProcAddress( l2pnet_hws2_32, "closesocket" );
+	ws2_func[L2PFUNC_BIND]        = GetProcAddress( l2pnet_hws2_32, "bind" );
+	ws2_func[L2PFUNC_ACCEPT]      = GetProcAddress( l2pnet_hws2_32, "accept" );
+	ws2_func[L2PFUNC_SELECT]      = GetProcAddress( l2pnet_hws2_32, "select" );
+	ws2_func[L2PFUNC_SOCKET]      = GetProcAddress( l2pnet_hws2_32, "socket" );
+	ws2_func[L2PFUNC_LISTEN]      = GetProcAddress( l2pnet_hws2_32, "listen" );
 	for( i=1; i<l2pnet_ft_size; i++ )
 	{
 		if( ws2_func[i] == NULL )
@@ -110,7 +110,7 @@ void L2PNet_setFunction( int funcNo, void *func_addr )
  ** returns 0xFFFFFFFF on error, on success - [1..0xFFFFFFFE] :) */
 unsigned int L2PNet_TCPsocket_create( bool bUse_NonBlock_IO_Mode )
 {
-	unsigned int sock = 0xFFFFFFFF;
+	unsigned int sock = -1;
 	if( l2pnet_ft[L2PFUNC_SOCKET] )
 	{
 		//ret = ( (int (__stdcall*)( unsigned int, void *, int ) )connect_orig)( sock, sockaddr, addrlen );
@@ -119,9 +119,9 @@ unsigned int L2PNet_TCPsocket_create( bool bUse_NonBlock_IO_Mode )
 	else
 	{
 		sock = ( (SOCKET (__stdcall*)(int,int,int))(ws2_func[L2PFUNC_SOCKET]))( AF_INET, SOCK_STREAM, IPPROTO_TCP );
-		if( (sock != 0xFFFFFFFF) && bUse_NonBlock_IO_Mode )
+		if( (sock != -1) && bUse_NonBlock_IO_Mode )
 		{
-			void *s_ioctl = (void *)GetProcAddress( l2pnet_hws2_32, "ioctlsocket" );
+			void *s_ioctl = GetProcAddress( l2pnet_hws2_32, "ioctlsocket" );
 			if( s_ioctl )
 			{
 				// If iMode = 0, blocking is enabled; 
@@ -164,12 +164,12 @@ int L2PNet_select( unsigned int sock,            // socket descriptor
 		struct fd_set *prfds = NULL, *pwfds = NULL;
 		FD_ZERO(&readFds);
 		FD_ZERO(&writeFds);
-		if( (dwSelFlags & L2PNET_SELECT_READ) == L2PNET_SELECT_READ )
+		if( dwSelFlags & L2PNET_SELECT_READ )
 		{
 			FD_SET( sock, &readFds );
 			prfds = &readFds;
 		}
-		if( (dwSelFlags & L2PNET_SELECT_WRITE) == L2PNET_SELECT_WRITE )
+		if( dwSelFlags & L2PNET_SELECT_WRITE )
 		{
 			FD_SET( sock, &writeFds );
 			pwfds = &writeFds;
@@ -198,7 +198,7 @@ int L2PNet_select_multi( unsigned int *socks_array,    // socket descriptors arr
 						int *pbReadyForRead,           // array! will be 1, if ready to read, 0 otherwise
 						int *pbReadyForWrite )         // array! will be 1, if ready to write, 0 otherwise
 {
-	if( (!socks_array) || (socks_count == 0) || (dwSelFlags == 0) ) return -1;
+	if( (!socks_array) || (socks_count<0) || (dwSelFlags == 0) ) return -1;
 	if( pbReadyForRead )  memset( pbReadyForRead,  0, sizeof(int)*socks_count );
 	if( pbReadyForWrite ) memset( pbReadyForWrite, 0, sizeof(int)*socks_count );
 	struct fd_set readFds;
@@ -208,12 +208,12 @@ int L2PNet_select_multi( unsigned int *socks_array,    // socket descriptors arr
 	FD_ZERO(&writeFds);
 	unsigned int i = 0;
 	int ret = 0;
-	if( (dwSelFlags & L2PNET_SELECT_READ) == L2PNET_SELECT_READ )
+	if( dwSelFlags & L2PNET_SELECT_READ )
 	{
 		for( i=0; i<socks_count; i++ ) FD_SET( socks_array[i], &readFds );
 		prfds = &readFds;
 	}
-	if( (dwSelFlags & L2PNET_SELECT_WRITE) == L2PNET_SELECT_WRITE )
+	if( dwSelFlags & L2PNET_SELECT_WRITE )
 	{
 		for( i=0; i<socks_count; i++ ) FD_SET( socks_array[i], &writeFds );
 		pwfds = &writeFds;

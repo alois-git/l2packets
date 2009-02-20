@@ -37,7 +37,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\include&quot;"
+				AdditionalIncludeDirectories="..\src\sqlite3;..\include"
 				PreprocessorDefinitions="_DEBUG;_CRT_SECURE_NO_DEPRECATE"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -103,7 +103,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="&quot;..\include&quot;"
+				AdditionalIncludeDirectories="..\src\sqlite3;..\include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="2"

@@ -92,7 +92,7 @@ bool L2GamePacket::decodeXOR_buffer( unsigned char *decodeBytes, unsigned int by
 										   unsigned char *key )
 {
 	//if( !key ) return false;
-	//unsigned int sz  = bytesLen;
+	unsigned int sz  = bytesLen;
 	unsigned int dsz = bytesLen - 2;
 	//if( sz < 3 ) return false;
 	unsigned char temp = 0, temp2 = 0;
@@ -129,7 +129,7 @@ bool L2GamePacket::encodeXOR_buffer( unsigned char *encodeBytes, unsigned int by
 										   unsigned char *key )
 {
 	//if( !key ) return false;
-	//unsigned int  sz  = bytesLen;
+	unsigned int  sz  = bytesLen;
 	unsigned int  dsz = bytesLen - 2;
 	//if( sz < 3 ) return false;
 	unsigned char temp = 0, temp2 = 0;
