@@ -132,7 +132,7 @@ void L2BasePacket::writeShort( short int s )
 	char leftByte = (char)(s & (short)0x00FF);
 	char rightByte = (char)( (s & (short)0xFF00) >> 8 );
 	this->writeChar( leftByte );
-	this->writeUChar( rightByte );
+	this->writeChar( rightByte );
 }
 
 void L2BasePacket::writeUShort( unsigned short int s )

@@ -527,10 +527,10 @@ void L2Packets_GetL2PacketName_fromServer(
 {
 	if( opcode1 != 0xFE )
 	{
-		strncpy( outPacketName, l2_packet_names_server[opcode1], cchMax );
+		strcpy( outPacketName, l2_packet_names_server[opcode1] );
 	}
 	else
 	{
-		strncpy( outPacketName, l2_packet_names_server2[opcode2], cchMax );
+		strcpy( outPacketName, l2_packet_names_server2[opcode2] );
 	}
 }

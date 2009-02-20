@@ -26,7 +26,7 @@ class L2Npc : public L2Character
 {
 public:
 	L2Npc();
-	virtual ~L2Npc() { /*L2Character::~L2Character();*/ templateID = 0; }
+	virtual ~L2Npc() { L2Character::~L2Character(); templateID = 0; }
 public:
 	virtual void setUnused();
 public:

@@ -1,5 +1,4 @@
-#ifndef PCH_H_
-#define PCH_H_
+#pragma once
 
 #define _CRT_NON_CONFORMING_SWPRINTFS
 
@@ -18,5 +17,3 @@
 #include <openssl/rsa.h>
 #include <openssl/engine.h>
 #include <openssl/blowfish.h>
-
-#endif

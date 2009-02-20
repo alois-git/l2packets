@@ -195,7 +195,7 @@ void ByteArray::memset( unsigned char c )
 bool ByteArray::setBytes( const unsigned char *newBytes, unsigned int length )
 {
 	if( length < 1 ) return false;
-	//unsigned int i = 0;
+	unsigned int i = 0;
 	//
 	//printf( "ByteArray::setBytes( 0x%p, %u )\n", newBytes, length );
 	//printf( "ByteArray::setBytes(): %u < %u?\n", this->byteCount, length );
