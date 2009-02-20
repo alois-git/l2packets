@@ -1,4 +1,5 @@
-#pragma once
+#ifndef H_STDAFX
+#define H_STDAFX
 
 #define _CRT_NON_CONFORMING_SWPRINTFS
 
@@ -17,3 +18,5 @@
 #include <openssl/rsa.h>
 #include <openssl/engine.h>
 #include <openssl/blowfish.h>
+
+#endif

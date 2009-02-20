@@ -374,7 +374,7 @@ bool L2LoginPacket::encodeBlowfish( bool bUseStaticBFKey )
 	if( !buf ) return false; // TODO: throw
 	unsigned int blen = getPacketSize();
 	if( blen < 1 ) return false; // TODO: throw
-	unsigned int datalen = blen - 2;
+	//unsigned int datalen = blen - 2; // C4189: local variable is initialized but not referenced
 	//this->padPacketTo8ByteLen(); // manually
 	
 	// initialize Blowfish key
