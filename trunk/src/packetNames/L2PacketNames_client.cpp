@@ -239,10 +239,10 @@ void L2Packets_GetL2PacketName_fromClient(
 {
 	if( opcode1 != 0xD0 )
 	{
-		strcpy( outPacketName, l2_packet_names_client[opcode1] );
+		strncpy( outPacketName, l2_packet_names_client[opcode1], cchMax );
 	}
 	else
 	{
-		strcpy( outPacketName, l2_packet_names_client2[opcode2] );
+		strncpy( outPacketName, l2_packet_names_client2[opcode2], cchMax );
 	}
 }

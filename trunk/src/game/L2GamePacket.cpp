@@ -27,8 +27,6 @@ bool L2GamePacket::decodeXOR( unsigned char *key )
 	data += 2;
 	for( i = 0; i < dsz; i++ )
 	{
-		//temp2 = this->getByteAt( i );
-		//this->setByteAt( i, (unsigned char)(temp2 ^ key[i&15] ^ temp) );
 		temp2 = data[i];
 		data[i] = (temp2 ^ (key[i & 15]) ^ temp);
 		temp = temp2;
@@ -66,8 +64,6 @@ bool L2GamePacket::encodeXOR( unsigned char *key )
 	for( i = 0; i < dsz; i++ )
 	{
 		temp2 = data[i];
-		//temp = (temp2 ^ key[i&15] ^ temp);
-		//this->setByteAt( i, (unsigned char)temp );
 		data[i] = (temp2 ^ (key[i & 15]) ^ temp );
 		temp = data[i];
 	}
@@ -92,7 +88,6 @@ bool L2GamePacket::decodeXOR_buffer( unsigned char *decodeBytes, unsigned int by
 										   unsigned char *key )
 {
 	//if( !key ) return false;
-	unsigned int sz  = bytesLen;
 	unsigned int dsz = bytesLen - 2;
 	//if( sz < 3 ) return false;
 	unsigned char temp = 0, temp2 = 0;
@@ -102,8 +97,6 @@ bool L2GamePacket::decodeXOR_buffer( unsigned char *decodeBytes, unsigned int by
 	data += 2;
 	for( i = 0; i < dsz; i++ )
 	{
-		//temp2 = this->getByteAt( i );
-		//this->setByteAt( i, (unsigned char)(temp2 ^ key[i&15] ^ temp) );
 		temp2 = data[i];
 		data[i] = (temp2 ^ (key[i & 15]) ^ temp);
 		temp = temp2;
@@ -129,7 +122,6 @@ bool L2GamePacket::encodeXOR_buffer( unsigned char *encodeBytes, unsigned int by
 										   unsigned char *key )
 {
 	//if( !key ) return false;
-	unsigned int  sz  = bytesLen;
 	unsigned int  dsz = bytesLen - 2;
 	//if( sz < 3 ) return false;
 	unsigned char temp = 0, temp2 = 0;
@@ -140,8 +132,6 @@ bool L2GamePacket::encodeXOR_buffer( unsigned char *encodeBytes, unsigned int by
 	for( i = 0; i < dsz; i++ )
 	{
 		temp2 = data[i];
-		//temp = (temp2 ^ key[i&15] ^ temp);
-		//this->setByteAt( i, (unsigned char)temp );
 		data[i] = (temp2 ^ (key[i & 15]) ^ temp );
 		temp = data[i];
 	}

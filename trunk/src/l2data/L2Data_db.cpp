@@ -91,6 +91,7 @@ typedef struct st_L2DATA_2PARAM
 
 int L2Data_sqlite_callback_2param( void *arg, int argc, char **argv, char **argvCol )
 {
+	argvCol = NULL; // unreferenced formal parameter
 	PL2DATA_2PARAM pst = (PL2DATA_2PARAM)arg;
 	if( !pst ) return 0;
 	if( !argv ) return 0;
@@ -176,6 +177,7 @@ bool L2Data_DB_GetSkillNameByID( unsigned int skillID, char *name )
 
 int L2Data_sqlite_result_callback( void *pvResult, int colCount, char **colData, char **colName )
 {
+	colName = NULL; // unreferenced formal parameter
 	L2Data_DB_Result *pResult = (L2Data_DB_Result *)pvResult;
 	if( !pResult ) return 0;
 	if( pResult->rowCount == 0 ) // current row number is 0, func called first time

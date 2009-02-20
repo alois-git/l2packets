@@ -243,10 +243,10 @@ unsigned char *L2PacketReceive_malloc( SOCKET sock, long lWaitMilliSecs, unsigne
 */
 int L2PacketReceive_buffer( SOCKET sock, long lWaitMilliSecs, unsigned int *rcvdLen, unsigned char *recvBuffer )
 {
-	if( !rcvdLen || !recvBuffer ) return NULL; // assert
+	if( !rcvdLen || !recvBuffer ) return 0; // assert
 	(*rcvdLen) = 0;                       // zero bytes received
 	recvBuffer[0] = recvBuffer[1] = 0;    // zero 1st 2 bytes in packet
-	if( sock == 0xFFFFFFFF ) return NULL; // assert
+	if( sock == 0xFFFFFFFF ) return 0;    // assert
 	unsigned int plen = 0;                // receiving packet len
 	int r = 0, rr = 0;                    // net functions results return codes
 	unsigned char *bufptr = NULL;         // current receive buffer pointer
