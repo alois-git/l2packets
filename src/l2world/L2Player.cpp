@@ -4,20 +4,31 @@
 
 L2Player::L2Player()
 {
-	//memset( this, 0, sizeof(class L2Player) );
-	//stopMove();
 	setUnused();
 }
 
 void L2Player::setUnused()
 {
 	L2Character::setUnused();
-	classID = baseClassID = clanID = 0;
+	classID = baseClassID = 0;
+	clanID = clanCrestID = clanCrestLargeID = allyID = allyCrestID = 0;
 	race = sex = 0;
+	hairStyle = hairColor = face = 0;
 	relation = RELATION_NONE;
 	autoAttackable = 0;
 	int i;
-	for( i=0; i<32; i++ ) paperdoll_iid[i] = 0;
+	for( i=0; i<32; i++ )
+	{
+		paperdoll_iid[i] = 0;
+		paperdoll_augid[i] = 0;
+	}
+	isFishing = 0;
+	fishX = fishY = fishZ = 0;
+	privateStoreType = 0;
+	privateStoreMsgBuy[0] = privateStoreMsgSell[0] = privateStoreMsgRecipe[0] = 0;
+	mountType = mountNpcId = 0;
+	recomLeft = recomHave = 0;
+	isNoble = isHero = 0;
 }
 
 void L2Player::getRaceStr( wchar_t *out ) const
