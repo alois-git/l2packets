@@ -36,6 +36,7 @@ copy %src%\game\client\*.h %dn%\game\client > NUL
 copy %src%\game\server\*.h %dn%\game\server > NUL
 rem l2data
 copy %src%\l2data\L2Data.h %dn%\l2data\L2Data.h > NUL
+copy %src%\l2data\L2Data_Recipes.h %dn%\l2data\L2Data_Recipes.h > NUL
 rem l2world
 copy %src%\l2world\*.h %dn%\l2world > NUL
 rem login
