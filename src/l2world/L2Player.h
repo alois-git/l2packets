@@ -52,6 +52,7 @@ public:
 	virtual void getBaseClassStr( wchar_t *out ) const;
 
 public:
+	// relation to current user constants
 	static const int RELATION_NONE         = 0;
 	static const int RELATION_PVP_FLAG     = 0x00002; // pvp ???
 	static const int RELATION_HAS_KARMA    = 0x00004; // karma ???
@@ -62,6 +63,12 @@ public:
 	static const int RELATION_ENEMY        = 0x01000; // true when red icon, doesn't matter with blue
 	static const int RELATION_MUTUAL_WAR   = 0x08000; // double fist
 	static const int RELATION_1SIDED_WAR   = 0x10000; // single fist
+	// private store type constants
+	static const int PRIVATE_STORE_NONE        = 0;
+	static const int PRIVATE_STORE_SELL        = 1;
+	static const int PRIVATE_STORE_BUY         = 3;
+	static const int PRIVATE_STORE_CRAFT       = 5;
+	static const int PRIVATE_STORE_PACKAGESALE = 8;
 
 public:
 	unsigned int classID;
