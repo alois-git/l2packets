@@ -1,6 +1,8 @@
 #ifndef L2DATA_H_
 #define L2DATA_H_
 
+#include "L2Data_Recipes.h"
+
 #define L2MaxRaces 6
 #define L2MaxClasses 137
 #define L2MaxSexes 2

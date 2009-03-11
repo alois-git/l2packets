@@ -18,6 +18,8 @@ Every L2Character has its base stats: INT WIT MEN CON STR DEX
 Every L2Character has its stats: pAtk, mAtk, ..., curHp, maxHp, ...
 Every L2Character has abnormalEffect
 Every L2Character has its target
+Every L2Character can be in combat
+Every L2Character has its collision radius and height
 
 */
 
@@ -76,6 +78,9 @@ public:
 	double maxCp;
 	unsigned int abnormalEffect;
 	unsigned int targetObjectID;
+	int isInCombat;
+	double collisionRadius;
+	double collisionHeight;
 };
 
 #endif

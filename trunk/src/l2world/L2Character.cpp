@@ -24,6 +24,8 @@ void L2Character::setUnused()
 	isAlikeDead = 0;
 	isSitting = 0;
 	isRunning = 0;
+	isInCombat = 0;
+	collisionRadius = collisionHeight = 1.0;
 }
 
 void L2Character::setName( const wchar_t *name )
