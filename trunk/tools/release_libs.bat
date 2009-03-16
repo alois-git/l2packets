@@ -15,8 +15,8 @@ echo Created dir
 
 copy %dist%\Debug\mingw32\*.a %dn%
 copy %dist%\Release\mingw32\*.a %dn%
-copy %dist%\Debug\vc2005\*.lib %dn%
-copy %dist%\Release\vc2005\*.lib %dn%
+copy %dist%\Debug\vc\*.lib %dn%
+copy %dist%\Release\vc\*.lib %dn%
 echo Copy done to %dn%
 
 pause
