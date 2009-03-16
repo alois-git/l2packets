@@ -8,6 +8,6 @@
 // returns number of milliseconds of current time
 // in windows - since Windows Start (uptime)
 // in Lunux - in current day
-unsigned int OS_GetTickCount();
+unsigned long long int OS_GetTickCount();
 
 #endif
