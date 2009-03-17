@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include "L2Character.h"
 #include "../game/L2GamePacket.h"
+#include "../os/os_abstraction.h"
 
 L2Character::L2Character()
 {
-	//memset( this, 0, sizeof(class L2Character) );
-	//stopMove();
 	setUnused();
 }
 
@@ -16,14 +15,13 @@ void L2Character::setUnused()
 	charName[0] = charTitle[0] = 0;
 	level = 0;
 	heading = 0;
-	runSpeed = walkSpeed = isRunning = 0;
+	runSpeed = walkSpeed = isRunning = isSitting = isAlikeDead = 0;
 	lastMoveTickTime = 0;
+	s_STR = s_DEX = s_CON = s_INT = s_WIT = s_MEN = 0;
+	pAtk = pDef = mAtk = mDef = pAtkSpd = mAtkSpd = accuracy = evasion = critical = 0;
 	curHp = maxHp = curMp = maxMp = curCp = maxCp = 0.0;
 	abnormalEffect = 0;
 	targetObjectID = 0;
-	isAlikeDead = 0;
-	isSitting = 0;
-	isRunning = 0;
 	isInCombat = 0;
 	collisionRadius = collisionHeight = 1.0;
 }
@@ -70,14 +68,14 @@ bool L2Character::parse_MoveToLocation( void *l2_game_packet )
 	x = p->readInt();
 	y = p->readInt();
 	z = p->readInt();
-	this->lastMoveTickTime = GetTickCount(); // last time when x,y,z, xDst,yDst,zDst were known exactly
+	this->lastMoveTickTime = OS_GetTickCount(); // last time when x,y,z, xDst,yDst,zDst were known exactly
 	return true;
 }
 
 void L2Character::processMoveTick()
 {
-	unsigned int curTick = GetTickCount();
-	unsigned int millisecsPassed = curTick - lastMoveTickTime;
+	unsigned long long int curTick = OS_GetTickCount();
+	unsigned long long int millisecsPassed = curTick - lastMoveTickTime;
 	if( millisecsPassed < 100 ) return;
 	lastMoveTickTime = curTick;
 	const int near_range = 50;
@@ -119,5 +117,5 @@ void L2Character::startMoveTo( int mxd, int myd, int mzd, int mx, int my, int mz
 	xDst = mxd;
 	yDst = myd;
 	zDst = mzd;
-	lastMoveTickTime = GetTickCount();
+	lastMoveTickTime = OS_GetTickCount();
 }
