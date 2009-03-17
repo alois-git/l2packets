@@ -54,7 +54,7 @@ public:
 	int isRunning;
 	int isSitting;
 	int isAlikeDead;
-	unsigned int lastMoveTickTime;
+	unsigned long long int lastMoveTickTime;
 	int s_STR;
 	int s_DEX;
 	int s_CON;
