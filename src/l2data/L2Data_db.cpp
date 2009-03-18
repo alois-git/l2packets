@@ -7,7 +7,15 @@ int      l2data_sqlite3_was_init    = 0;
 sqlite3 *l2data_sqlite3_conn_items  = NULL;
 sqlite3 *l2data_sqlite3_conn_npcs   = NULL;
 sqlite3 *l2data_sqlite3_conn_skills = NULL;
+
+// synchronisation
+#ifdef L2PACKETS_WINDOWS
 CRITICAL_SECTION l2data_db_cs;
+#endif
+#ifdef L2PACKETS_LINUX
+// TODO: need semaphore synchronisation:
+// TODO: sem_open(), sem_close(), sem_wait(), ...
+#endif
 
 
 bool L2Data_DB_Init( char *outErrMsg,
@@ -57,14 +65,32 @@ bool L2Data_DB_Init( char *outErrMsg,
 		}
 		//
 		l2data_sqlite3_was_init = 1;
+#ifdef L2PACKETS_WINDOWS
 		InitializeCriticalSection( &l2data_db_cs );
+#endif
+#ifdef L2PACKETS_LINUX
+		// TODO: Linux: create & init semaphore
+#endif
 		return true;
 	}
 	return true;
 }
 
+#ifdef L2PACKETS_WINDOWS
 void L2Data_DB_Lock() { EnterCriticalSection( &l2data_db_cs ); }
 void L2Data_DB_UnLock() { LeaveCriticalSection( &l2data_db_cs ); }
+#endif
+
+#ifdef L2PACKETS_LINUX
+// TODO: lock/unlock semaphore (mutex?)
+void L2Data_DB_Lock()
+{
+}
+
+void L2Data_DB_UnLock()
+{
+}
+#endif
 
 void L2Data_DB_Free()
 {
@@ -79,7 +105,12 @@ void L2Data_DB_Free()
 		l2data_sqlite3_conn_skills = NULL;
 		l2data_sqlite3_was_init = 0;
 		L2Data_DB_UnLock();
+#ifdef L2PACKETS_WINDOWS
 		DeleteCriticalSection( &l2data_db_cs );
+#endif
+#ifdef L2PACKETS_LINUX
+		// TODO: linux: delete sync object
+#endif
 	}
 }
 
@@ -124,7 +155,12 @@ bool L2Data_DB_GetNPCNameTitleByID( unsigned int npcID, char *name, char *title 
 	int r = sqlite3_exec( l2data_sqlite3_conn_npcs, query, L2Data_sqlite_callback_2param, (void *)&st, &errmsg );
 	if( errmsg )
 	{
+#if defined(_DEBUG) && defined(L2PACKETS_WINDOWS)
 		MessageBoxA( NULL, errmsg, "sqlite3 error (get NPC by ID)", MB_ICONSTOP );
+#endif
+#if defined(_DEBUG) && defined(L2PACKETS_LINUX)
+		fprintf( stderr, "sqlite3 error (get NPC by ID): %s\n", errmsg );
+#endif
 		sqlite3_free( errmsg );
 	}
 	L2Data_DB_UnLock(); // unlock
@@ -145,7 +181,12 @@ bool L2Data_DB_GetItemNamePicByID( unsigned int itemID, char *name, char *pic )
 	int r = sqlite3_exec( l2data_sqlite3_conn_items, query, L2Data_sqlite_callback_2param, (void *)&st, &errmsg );
 	if( errmsg )
 	{
+#if defined(_DEBUG) && defined(L2PACKETS_WINDOWS)
 		MessageBoxA( NULL, errmsg, "sqlite3 error (get item by id)", MB_ICONSTOP );
+#endif
+#if defined(_DEBUG) && defined(L2PACKETS_LINUX)
+		fprintf( stderr, "sqlite3 error (get item by ID): %s\n", errmsg );
+#endif
 		sqlite3_free( errmsg );
 	}
 	L2Data_DB_UnLock(); // unlock
@@ -165,7 +206,12 @@ bool L2Data_DB_GetSkillNameByID( unsigned int skillID, char *name )
 	int r = sqlite3_exec( l2data_sqlite3_conn_skills, query, L2Data_sqlite_callback_2param, (void *)&st, &errmsg );
 	if( errmsg )
 	{
-		MessageBoxA( NULL, errmsg, "sqlite3 error (get skill by id)", MB_ICONSTOP );
+#if defined(_DEBUG) && defined(L2PACKETS_WINDOWS)
+		MessageBoxA( NULL, errmsg, "sqlite3 error (get skill by ID)", MB_ICONSTOP );
+#endif
+#if defined(_DEBUG) && defined(L2PACKETS_LINUX)
+		fprintf( stderr, "sqlite3 error (get skill by ID): %s\n", errmsg );
+#endif
 		sqlite3_free( errmsg );
 	}
 	L2Data_DB_UnLock(); // unlock
@@ -198,7 +244,12 @@ int L2Data_sqlite_result_callback( void *pvResult, int colCount, char **colData,
 	for( iCol = 0; iCol < colCount; iCol++ )
 	{
 		if( colData[iCol] != NULL )
+#ifdef L2PACKETS_WINDOWS
 			pResult->rows[ pResult->rowCount ][ iCol ] = _strdup( colData[iCol] ); // copy string to result set
+#else // write own strdup() :)
+			pResult->rows[ pResult->rowCount ][ iCol ] = (char *)malloc( strlen( colData[iCol] ) + 1 );
+			if( pResult->rows[ pResult->rowCount ][ iCol ] ) strcpy( pResult->rows[ pResult->rowCount ][ iCol ], colData[iCol] );
+#endif
 		else
 			pResult->rows[ pResult->rowCount ][ iCol ] = NULL; // NULL column value
 	}
@@ -227,7 +278,12 @@ bool L2Data_DB_Query_NPCs_ByName( const char *request, L2Data_DB_Result *pResult
 		&errmsg );
 	if( errmsg )
 	{
+#if defined(_DEBUG) && defined(L2PACKETS_WINDOWS)
 		MessageBoxA( NULL, errmsg, "sqlite3 error (L2Data_DB_Query_NPCs_ByName)", MB_ICONSTOP );
+#endif
+#if defined(_DEBUG) && defined(L2PACKETS_LINUX)
+		fprintf( stderr, "sqlite3 error (L2Data_DB_Query_NPCs_ByName): %s\n", errmsg );
+#endif
 		sqlite3_free( errmsg );
 	}
 	L2Data_DB_UnLock(); // unlock
@@ -252,7 +308,12 @@ bool L2Data_DB_Query_Items_ByName( const char *request, L2Data_DB_Result *pResul
 		&errmsg );
 	if( errmsg )
 	{
+#if defined(_DEBUG) && defined(L2PACKETS_WINDOWS)
 		MessageBoxA( NULL, errmsg, "sqlite3 error (L2Data_DB_Query_Items_ByName)", MB_ICONSTOP );
+#endif
+#if defined(_DEBUG) && defined(L2PACKETS_LINUX)
+		fprintf( stderr, "sqlite3 error (L2Data_DB_Query_Items_ByName): %s\n", errmsg );
+#endif
 		sqlite3_free( errmsg );
 	}
 	L2Data_DB_UnLock(); // unlock
@@ -277,7 +338,12 @@ bool L2Data_DB_Query_Skills_ByName( const char *request, L2Data_DB_Result *pResu
 		&errmsg );
 	if( errmsg )
 	{
+#if defined(_DEBUG) && defined(L2PACKETS_WINDOWS)
 		MessageBoxA( NULL, errmsg, "sqlite3 error (L2Data_DB_Query_Skills_ByName)", MB_ICONSTOP );
+#endif
+#if defined(_DEBUG) && defined(L2PACKETS_LINUX)
+		fprintf( stderr, "sqlite3 error (L2Data_DB_Query_Skills_ByName): %s\n", errmsg );
+#endif
 		sqlite3_free( errmsg );
 	}
 	L2Data_DB_UnLock(); // unlock

@@ -83,10 +83,14 @@ bool L2Game_AuthLogin::read_login( char *loginOut )
 	if( this->read_login(loginU) )
 	{
 		if( loginU[0] == 0 ) return true;
-#ifdef WIN32
+#ifdef L2PACKETS_WINDOWS
 		sprintf( loginOut, "%S", loginU );
-#else // linux
-		sprintf( loginOut, 32, "%ls", loginU );
+#else
+#ifdef L2PACKETS_LINUX
+		sprintf( loginOut, "%ls", loginU );
+#else
+#error Unknown OS? O_o
+#endif
 #endif
 		return true;
 	}

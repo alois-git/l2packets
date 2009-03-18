@@ -1,6 +1,15 @@
 #ifndef L2PACKETS_H_
 #define L2PACKETS_H_
 
+// detect OS
+#if defined(_WIN32) || defined(WIN32) || defined(WINVER) || defined(_WIN32_WINNT)
+#undef L2PACKETS_WINDOWS
+#define L2PACKETS_WINDOWS
+#else
+#undef L2PACKETS_LINUX
+#define L2PACKETS_LINUX
+#endif
+
 /* some #defines come here
  * they determine some behaviour of L2Packets library
  *

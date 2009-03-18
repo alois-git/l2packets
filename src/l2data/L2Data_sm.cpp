@@ -33,6 +33,18 @@ const char *L2Data_SM_get( unsigned int systemMessageID )
 	return l2_systemmessage[systemMessageID];
 }
 
+#ifdef L2PACKETS_LINUX
+#define _strdup l2data_strdup
+char *l2data_strdup( const char *s )
+{
+	if( !s ) return NULL;
+	size_t ll = strlen( s );
+	char *ret = (char *)malloc( ll+1 );
+	if( ret ) strcpy( ret, s );
+	return ret;
+}
+#endif
+
 void L2Data_SM_initStrings()
 {
 l2_systemmessage[ 0 ] = _strdup( "You have been disconnected from the server." );

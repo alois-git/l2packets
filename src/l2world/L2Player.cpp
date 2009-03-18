@@ -36,7 +36,12 @@ void L2Player::getRaceStr( wchar_t *out ) const
 	if( !out ) return;
 	out[0] = 0;
 	const char *ansi = L2Data_getRace( this->race );
+#ifdef L2PACKETS_WINDOWS
 	if( ansi ) MultiByteToWideChar( CP_ACP, 0, ansi, -1, out, 64 );
+#endif
+#ifdef L2PACKETS_LINUX
+	swprintf( out, 64, L"%ls", ansi );
+#endif
 }
 
 void L2Player::getSexStr( wchar_t *out ) const
@@ -44,7 +49,12 @@ void L2Player::getSexStr( wchar_t *out ) const
 	if( !out ) return;
 	out[0] = 0;
 	const char *ansi = L2Data_getSex( this->sex );
+#ifdef L2PACKETS_WINDOWS
 	if( ansi ) MultiByteToWideChar( CP_ACP, 0, ansi, -1, out, 64 );
+#endif
+#ifdef L2PACKETS_LINUX
+	swprintf( out, 64, L"%ls", ansi );
+#endif
 }
 
 void L2Player::getClassStr( wchar_t *out ) const
@@ -52,7 +62,12 @@ void L2Player::getClassStr( wchar_t *out ) const
 	if( !out ) return;
 	out[0] = 0;
 	const char *ansi = L2Data_getClass( this->classID );
+#ifdef L2PACKETS_WINDOWS
 	if( ansi ) MultiByteToWideChar( CP_ACP, 0, ansi, -1, out, 64 );
+#endif
+#ifdef L2PACKETS_LINUX
+	swprintf( out, 64, L"%ls", ansi );
+#endif
 }
 
 void L2Player::getBaseClassStr( wchar_t *out ) const
@@ -60,5 +75,10 @@ void L2Player::getBaseClassStr( wchar_t *out ) const
 	if( !out ) return;
 	out[0] = 0;
 	const char *ansi = L2Data_getClass( this->baseClassID );
+#ifdef L2PACKETS_WINDOWS
 	if( ansi ) MultiByteToWideChar( CP_ACP, 0, ansi, -1, out, 64 );
+#endif
+#ifdef L2PACKETS_LINUX
+	swprintf( out, 64, L"%ls", ansi );
+#endif
 }

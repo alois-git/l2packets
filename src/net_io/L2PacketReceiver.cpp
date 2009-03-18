@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "L2PacketReceiver.h"
 #include "L2Packet_NetLayer.h"
+#include "L2PacketReceiver.h"
 
 //unsigned char l2p_packetReceive_dummyBuffer[2] = {0,0};
 
