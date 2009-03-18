@@ -1,6 +1,11 @@
 #ifndef H_L2P_NET_LAYER
 #define H_L2P_NET_LAYER
 
+// define SOCKET type for Linux
+#ifdef L2PACKETS_LINUX
+typedef unsigned int SOCKET;
+#endif
+
 /** Initializes L2Packets network layer.
  ** By default network functions L2PNet_* will be used,
  ** which use corresponding Winsock2 functions.
@@ -10,6 +15,8 @@ int L2PNet_InitDefault();
 /** Closes winsock (wrapper around WSACleanup() **/
 int L2PNet_Cleanup();
 
+#ifdef L2PACKETS_WINDOWS
+// only under Windows
 /** Overrides specified function for L2Packets network layer.
  ** New function must have the same prototype as corresponding
  ** L2PNet_* function! */
@@ -24,6 +31,7 @@ int L2PNet_Cleanup();
 #define L2PFUNC_SOCKET        9
 #define L2PFUNC_LISTEN        10
 void L2PNet_setFunction( int funcNo, void *func_addr );
+#endif
 
 /** Creates TCP socket
  ** returns 0xFFFFFFFF on error, on success - [1..0xFFFFFFFE] :) */
@@ -118,6 +126,6 @@ unsigned long L2PNet_inet_addr( const char *cp );
 char *L2PNet_inet_ntoa( struct in_addr in );
 
 /* FD_ISSET macro replacement */
-int L2PNet_FD_ISSET( unsigned int sock, struct fd_set *set );
+int L2PNet_FD_ISSET( unsigned int sock, fd_set *set );
 
 #endif /* H_L2P_NET_LAYER */

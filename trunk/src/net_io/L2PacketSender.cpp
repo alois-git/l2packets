@@ -1,7 +1,7 @@
 #include "stdafx.h"
+#include "L2Packet_NetLayer.h"
 #include "../base/L2BasePacket.h"
 #include "L2PacketSender.h"
-#include "L2Packet_NetLayer.h"
 
 // return values:
 // > 0 on OK
