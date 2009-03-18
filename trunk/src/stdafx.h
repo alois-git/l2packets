@@ -10,6 +10,14 @@
 #define L2PACKETS_LINUX
 #endif
 
+// before including windows and CRT headers, we must
+// kill warnings for Visual Studio
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_DEPRECATE // vc2005
+#define _CRT_SECURE_NO_WARNINGS // vc2008
+#define _CRT_NON_CONFORMING_SWPRINTFS // really?
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -18,10 +26,6 @@
 #include <wchar.h>
 
 #if defined(_WIN32) || defined(WIN32) || defined(WINVER) || defined(_WIN32_WINNT)
-// kill warnings for Visual Studio
-#define _CRT_SECURE_NO_DEPRECATE // vc2005
-#define _CRT_SECURE_NO_WARNINGS // vc2008
-#define _CRT_NON_CONFORMING_SWPRINTFS // really?
 #define WIN32_LEAN_AND_MEAN // for windows headers
 #include "targetver.h"
 #include <winsock2.h>
