@@ -16,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\dist\Debug\vc2005"
-			IntermediateDirectory="..\build\Debug\vc2005"
+			OutputDirectory="..\dist\Debug\vc"
+			IntermediateDirectory="..\build\Debug\vc"
 			ConfigurationType="4"
 			>
 			<Tool
@@ -39,7 +39,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\src\sqlite3;..\include"
-				PreprocessorDefinitions="_DEBUG;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="_DEBUG"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="false"
 				RuntimeLibrary="1"
@@ -81,8 +81,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\dist\Release\vc2005"
-			IntermediateDirectory="..\build\Release\vc2005"
+			OutputDirectory="..\dist\Release\vc"
+			IntermediateDirectory="..\build\Release\vc"
 			ConfigurationType="4"
 			>
 			<Tool
@@ -105,7 +105,6 @@
 				Optimization="0"
 				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories="..\src\sqlite3;..\include"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
@@ -589,6 +588,18 @@
 			</File>
 			<File
 				RelativePath="..\src\targetver.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="os"
+			>
+			<File
+				RelativePath="..\src\os\os_abstraction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\os\os_abstraction.h"
 				>
 			</File>
 		</Filter>
