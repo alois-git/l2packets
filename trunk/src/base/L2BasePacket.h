@@ -2,7 +2,6 @@
 #define H_L2BASEPACKET
 
 #include "ByteArray.h"
-//#include "../pcode_obfuscator/L2PCodeObfuscator.h"
 
 class L2BasePacket
 {
@@ -51,15 +50,15 @@ public: // read funcs
 	virtual wchar_t       *readUnicodeString(); // allocates buffer, reads string, and returns buffer
 	virtual const wchar_t *readUnicodeStringPtr(); // returns read-only pointer to wchar_t into internal buffer
 	virtual bool           readBytes( unsigned char *bytes, unsigned int num );
-//public:
-//	virtual bool           opcodeObfuscate( L2PCodeObfuscator *obfuscator );
-//	virtual bool           opcodeDeObfuscate( L2PCodeObfuscator *obfuscator );
+public: // parsers
+	virtual bool           parse();
+// DEBUG funcs
 public:
 	virtual void           dumpToFile( FILE *f );
 	virtual void           saveToFileRaw( const char *filename );
 	virtual void           displaySelfNice( FILE *f );
 public: // typeconv
-	virtual operator const unsigned char *() const;
+	//virtual operator const unsigned char *() const;
 	virtual const unsigned char *getBytesPtr() const;
 protected:
 	virtual void _initNull();
