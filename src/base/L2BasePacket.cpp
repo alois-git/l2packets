@@ -129,16 +129,16 @@ void L2BasePacket::writeBytes( const unsigned char *bytes, unsigned int len )
 
 void L2BasePacket::writeShort( short int s )
 {
-	char leftByte = (char)(s & (short)0x00FF);
-	char rightByte = (char)( (s & (short)0xFF00) >> 8 );
+	char leftByte = (char)(s & 0x00FF);
+	char rightByte = (char)( (s & 0xFF00) >> 8 );
 	this->writeChar( leftByte );
 	this->writeChar( rightByte );
 }
 
 void L2BasePacket::writeUShort( unsigned short int s )
 {
-	unsigned char leftByte  = (unsigned char)(  s & (short)0x00FF);
-	unsigned char rightByte = (unsigned char)( (s & (short)0xFF00) >> 8 );
+	unsigned char leftByte  = (unsigned char)(  s & (unsigned short)0x00FF);
+	unsigned char rightByte = (unsigned char)( (s & (unsigned short)0xFF00) >> 8 );
 	this->writeUChar( leftByte );
 	this->writeUChar( rightByte );
 }
@@ -561,9 +561,16 @@ inline const unsigned char *L2BasePacket::getBytesPtr() const
 	return b.getBytesPtr();
 }
 
-L2BasePacket::operator const unsigned char *() const
+/*L2BasePacket::operator const unsigned char *() const
 {
 	return this->getBytesPtr();
-}
+}*/
 
+// must be overrided in child classes
+bool L2BasePacket::parse()
+{
+	this->readReset();
+	this->readUChar();
+	return true;
+}
 
