@@ -15,3 +15,6 @@ After Makefile appears (nt.mak), cancel build. Open nt.mak, edit CFLAGS/CPPFLAGS
 nmake -f nt.mak clean
 nmake -f nt.mak
  }}}
+
+= Warning =
+The steps described above are not exact and these instructions may be incomplete or not working :)
