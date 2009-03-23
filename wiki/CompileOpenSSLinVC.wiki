@@ -6,7 +6,7 @@ _(L2Packets uses Multi-Threading CRT in Release build (/MT), and Multi-Threading
 
 = Details =
 
-To compile OpenSSL with Visual Studio, download sources from http://www.openssl.org. Run something like _Start -> All Programs -> MS Visual Studio -> Tools -> Visual Studio Command Promt_. There cd into *folder_with_openssl_sources\ms* and run
+To compile OpenSSL with Visual Studio, download sources from http://www.openssl.org/source/. Run something like _Start -> All Programs -> MS Visual Studio -> Tools -> Visual Studio Command Promt_. There cd into *folder_with_openssl_sources\ms* and run
  {{{
 do_masm.bat
  }}}
