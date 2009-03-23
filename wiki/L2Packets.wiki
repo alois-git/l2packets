@@ -1,0 +1,21 @@
+#L2Packets
+
+= Introduction =
+
+C++ Library to work with Lineage II MMORPG game protocol.
+
+
+= Library features: =
+  * send/receive packets
+  * encrypt, decrypt, basic reading/writing packets.
+  * Supports T1/T1.5/T2/T2.2 (Kamael, Hellbound, Gracia, Gracia part 2).
+  * Language: C++
+  * OS: Windows (Linux support coming)
+
+Library uses some information from [http://www.l2jserver.com L2J Lineage server] and [http://www.l2jdp.com L2J-Datapack].
+
+
+Also library uses crypto API from [http://www.openssl.org OpenSSL Project] and [http://www.sqlite.org sqlite3] as file-based database engine.
+
+= Wiki =
+[http://code.google.com/p/l2packets/wiki/Start Start]
