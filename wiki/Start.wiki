@@ -5,7 +5,8 @@ Library can help you to:
  * Encrypt and decrypt login/game packets
  * Parse packets data
 
-= Docs =
+= Some Docs =
+under costruction, no time to do it... :(
   * [http://code.google.com/p/l2packets/wiki/Compiling Compiling] library
   * [http://code.google.com/p/l2packets/wiki/Using Using] library
   * [http://code.google.com/p/l2packets/wiki/UsageExamples Examples] of usage
