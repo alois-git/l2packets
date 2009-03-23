@@ -1,14 +1,15 @@
 #summary Compile guide
 = Supported OS, compilers =
-At this moment !L2Packets supports only Win32.
-There are 2 ways of compiling: [http://www.mingw.org/ Mingw32] and [http://www.microsoft.com/express/vc/ Visual C++].
+At this moment !L2Packets is tested only under Win32, but it can be compiled under Linux.
+Win32: There are 2 ways of compiling: [http://www.mingw.org/ Mingw32] and [http://www.microsoft.com/express/vc/ Visual C++]. 
+Linux: tested to compile OK with gcc4.
 
 
 = Mingw32 =
 Download source archive, in console cd into subdir *project_mingw32*, execute:
- {{{> make_release}}}
+ {{{make_release.bat}}}
 or
- {{{> mingw32-make -s -f Makefile_release.mingw32}}}
+ {{{mingw32-make -s -f Makefile_release.mingw32}}}
 Result static library will be in folder *dist/Release/mingw32*. 
 Building as DLL is not supported now (no real need, imho).
 
@@ -18,7 +19,9 @@ Debug build by default uses /MTd (Multi-threaded debug) C runtime, release - /MT
 Building as DLL is not supported now (no real need, imho).
 
 = Linux =
-cd into folder *project_linux* and execute make -f Makefile_release. Result library will be in folder *dist/Release/linux*.
+cd into folder *project_linux* and execute
+ {{{make -f Makefile_release.}}}
+Result library will be in folder *dist/Release/linux*.
 
 = sqlite3 compile warnings =
 Yes, during build you will see lots of warnings in file sqlite3.c. sqlite devs think it is normal, see [http://www.sqlite.org/faq.html#q17 (17) I get hundreds of compiler warnings when I compile SQLite. Isn't this a problem? Doesn't it indicate poor code quality?]
