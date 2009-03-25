@@ -1,6 +1,12 @@
 #ifndef H_L2PLAYER_PAPERDOLL_
 #define H_L2PLAYER_PAPERDOLL_
 
+/** \file L2PlayerPaperDoll.h
+* Defines paperdoll items indexes in arrays:
+* unsigned int L2Player::paperdoll_iid[32];
+* unsigned int L2Player::paperdoll_augid[32];
+*/
+
 #define L2_PAPERDOLL_UNDER      0
 #define L2_PAPERDOLL_REAR       1
 #define L2_PAPERDOLL_LEAR       2

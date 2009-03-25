@@ -46,9 +46,9 @@ void L2PCodeObfuscator::init_tables( unsigned int seed )
 	m_s1 = 0xD0;
 	m_s2 = 0x4E; // T1.5 Hellbound
 
-/**	if gSys.Protocol = 871 then _init_tables(GInt(_dBuff, $16, 4), $58); // CT2.2
+/*	if gSys.Protocol = 871 then _init_tables(GInt(_dBuff, $16, 4), $58); // CT2.2
 	if gSys.Protocol = 851 then _init_tables(GInt(_dBuff, $16, 4), $55); // CT2
-	if gSys.Protocol = 831 then _init_tables(GInt(_dBuff, $16, 4), $4E); // CT1.5+ **/
+	if gSys.Protocol = 831 then _init_tables(GInt(_dBuff, $16, 4), $4E); // CT1.5+ */
 	if( m_version == L2_VERSION_T2  ) m_s2 = 0x55; // T2   Gracia Part 1
 	if( m_version == L2_VERSION_T22 ) m_s2 = 0x58; // T2.2 Gracia Part 2
 

@@ -4,8 +4,6 @@
 
 L2Npc::L2Npc()
 {
-	//memset( this, 0, sizeof(class L2Npc) );
-	//stopMove();
 	setUnused();
 }
 

@@ -40,8 +40,8 @@ protected:
 	unsigned char *m_EncodeTable2;
 
 	unsigned int   m_seed;
-	unsigned int   m_s1; // size of 1-byte pcode obfuscator table
-	unsigned int   m_s2; // size of 2-byte pcode obfuscator table
+	unsigned int   m_s1; ///< size of 1-byte opcode obfuscator table
+	unsigned int   m_s2; ///< size of 2-byte opcode obfuscator table
 };
 
 #endif /* L2PCODEOBFUSCATOR_H_ */

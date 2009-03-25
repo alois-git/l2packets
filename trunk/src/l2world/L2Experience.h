@@ -1,9 +1,18 @@
 #ifndef H_L2_EXPERIENCE_
 #define H_L2_EXPERIENCE_
 
+/** \class L2Experience
+* Some functions and constants to work with player exp values.
+*/
+
 class L2Experience
 {
 public:
+	/**
+	* Converts exp value to current exp percent.
+	* \param exp current experience value
+	* \return precent value in current level
+	*/
 	static double getExpPercent( long long exp );
 	
 public:

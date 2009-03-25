@@ -1,6 +1,11 @@
 #ifndef H_L2_CHAT_MESSAGE_TYPES
 #define H_L2_CHAT_MESSAGE_TYPES
 
+/** \class L2_CHAT_MESSAGE
+* Defines constants used in S->C CreatureSay and C->S Say2 packets.\n
+* Chat message type.
+*/
+
 class L2_CHAT_MESSAGE
 {
 public:
@@ -20,27 +25,6 @@ public:
 	static const unsigned int HERO_VOICE = 17;
 	static const unsigned int L2_CHAT_MESSAGE_LAST = HERO_VOICE;
 };
-
-/*const char *L2_CHAT_NAMES = {
-  "ALL  ",
-  "SHOUT",
-  "TELL ",
-  "PARTY",
-  "CLAN ",
-  "GM   ",
-  "PETITION_PLAYER",
-  "PETITION_GM",
-  "TRADE",
-  "ALLIANCE",
-  "ANNOUNCEMENT", //10
-  "WILLCRASHCLIENT:)",
-  "FAKEALL?",
-  "FAKEALL?",
-  "FAKEALL?",
-  "PARTYROOM_ALL",
-  "PARTYROOM_COMMANDER",
-  "HERO_VOICE"
-};*/
 
 
 #endif
