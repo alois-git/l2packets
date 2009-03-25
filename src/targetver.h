@@ -1,6 +1,11 @@
 #ifndef _H_TARGET_VER
 #define _H_TARGET_VER
 
+/** \file targetver.h
+* Defines version of Windows headers to use. Only under Win32.\n
+* Targets WinXP.
+*/
+
 // target WinXP
 
 #ifndef WINVER

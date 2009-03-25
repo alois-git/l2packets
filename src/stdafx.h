@@ -1,6 +1,10 @@
 #ifndef H_STDAFX
 #define H_STDAFX
 
+/** \file stdafx.h
+* precompiled header
+*/
+
 // detect OS
 #if defined(_WIN32) || defined(WIN32) || defined(WINVER) || defined(_WIN32_WINNT)
 #undef L2PACKETS_WINDOWS

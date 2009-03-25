@@ -1,6 +1,10 @@
 #ifndef L2PACKETS_H_
 #define L2PACKETS_H_
 
+/** \file L2Packets.h
+* Main include file to include all other library files.
+*/
+
 // detect OS
 #if defined(_WIN32) || defined(WIN32) || defined(WINVER) || defined(_WIN32_WINNT)
 #undef L2PACKETS_WINDOWS

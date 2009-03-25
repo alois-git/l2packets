@@ -478,6 +478,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\net_io\L2Packet_NetLayer_linux.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\src\net_io\L2PacketReceiver.cpp"
 				>
 			</File>
