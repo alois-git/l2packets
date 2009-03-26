@@ -2,9 +2,9 @@
 #define H_OS_ABSTRCTION
 
 /** \file os_abstraction.h
-* uses #defines to determine under which OS it is compiled:
-* #ifdef WIN32 | _WIN32 ... - Windows
-* #else - Linux :)
+* uses defines to determine under which OS it is compiled:
+* ifdef WIN32 | _WIN32 ... - Windows
+* else - Linux :)
 */
 
 /** Os abstracted function GetTickCount() from Win32 API.\n

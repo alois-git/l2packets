@@ -1,12 +1,9 @@
 #include "stdafx.h"
 #include "L2Game_AuthLogin.h"
 
-/**
- * L2J:
- * interlude pcode is 08
- * hellbound pcode is 2b
- * 	@param decrypt
-	@Override
+/* interlude pcode is 08
+   hellbound pcode is 2b
+   L2J:
 	protected void readImpl()
 	{
 		_loginName = readS().toLowerCase();
@@ -15,7 +12,7 @@
 		_loginKey1 = readD();
 		_loginKey2 = readD();
 	}
- */
+*/
 
 L2Game_AuthLogin::L2Game_AuthLogin()
 {

@@ -1,6 +1,12 @@
 #ifndef H_BYTEARRAY
 #define H_BYTEARRAY
 
+/** \class ByteArray
+* Represents array of bytes with variable size.\n
+* L2Packets programmer does not work with ByteArray directly.
+* This object is used inside L2BasePacket to hold packet data.
+*/
+
 class ByteArray
 {
 public: // constructors/destructors
