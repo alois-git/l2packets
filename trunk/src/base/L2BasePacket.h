@@ -3,11 +3,19 @@
 
 #include "ByteArray.h"
 
+/** \class L2BasePacket
+* Represents base class for all L2 packets. Provides way to create packets,
+* write data to packets, read data from them.
+*/
+
 class L2BasePacket
 {
 public:
+	/** Default constructor for empty packet */
 	L2BasePacket();
+	/** Copies length bytes to packet */
 	L2BasePacket( const unsigned char *bytes, unsigned int length ); // does memcpy()
+	/** Frees object memory */
 	virtual ~L2BasePacket();
 public:
 	virtual unsigned char  getByteAt( unsigned int index );
@@ -66,12 +74,12 @@ protected:
 	virtual bool _growBuffer();
 	virtual void _freeSelf();
 protected:
-	unsigned int buffer_size;
-	unsigned int real_size; // number of used bytes in buffer
-	unsigned int write_ptr; // index of next byte that will bw written (in buffer)
-	unsigned int read_ptr;  // index of next byte that will be read from buffer
-	unsigned int datasize;  // number of data bytes in packet (excluding 1st 2)
-	ByteArray b;
+	unsigned int buffer_size; ///< current buffer size
+	unsigned int real_size; ///< number of used bytes in buffer
+	unsigned int write_ptr; ///< index of next byte that will bw written (in buffer)
+	unsigned int read_ptr;  ///< index of next byte that will be read from buffer
+	unsigned int datasize;  ///< number of data bytes in packet (excluding first 2 bytes that hold packet size)
+	ByteArray b; ///< buffer to hold raw packet data
 };
 
 #endif
