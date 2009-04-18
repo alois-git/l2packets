@@ -181,4 +181,11 @@ char *L2PNet_inet_ntoa( struct in_addr in );
 /** Cross-platform FD_ISSET() macro replacement */
 int L2PNet_FD_ISSET( unsigned int sock, fd_set *set );
 
+/** Resolves hostname, places result in in_addr struct.\n
+* If string in hostname is ip, works like inet_addr() :)
+* \param hostname input string with hostname
+* \param pinAddr output struct. pinAddr->s_addr will be resulting IP address
+*/
+bool L2PNet_resolveHostname( const char *hostname, struct in_addr *pinAddr );
+
 #endif /* H_L2P_NET_LAYER */
