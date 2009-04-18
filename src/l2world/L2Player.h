@@ -1,7 +1,7 @@
 #ifndef H_L2PLAYER
 #define H_L2PLAYER
 #include "L2Character.h"
-#include "L2PlayerpaperDoll.h"
+#include "L2PlayerPaperDoll.h"
 
 /** \class L2Player
 Every L2Npc is L2Character:\n

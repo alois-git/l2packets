@@ -32,7 +32,7 @@ PCHC          = $(SRC)/$(PCH).h.gch
 PCHDEPS       = $(PCHSRC) $(PCHC)
 BASEDEPS      = $(PCHDEPS) $(SRC)/base/ByteArray.h $(SRC)/base/L2BasePacket.h
 LOGINDEPS     = $(BASEDEPS) $(SRC)/login/L2LoginPacket.h
-GAMEDEPS      = $(BASEDEPS) $(SRC)/game/L2gamePacket.h
+GAMEDEPS      = $(BASEDEPS) $(SRC)/game/L2GamePacket.h
 NETIODEPS     = $(BASEDEPS) $(SRC)/net_io/L2Packet_NetLayer.h
 DATADEPS      = $(BASEDEPS) $(SRC)/l2data/L2Data.h
 OBJECTS       = $(BUILDDIR)/ByteArray.o $(BUILDDIR)/L2BasePacket.o \
@@ -77,7 +77,8 @@ OBJECTS       = $(BUILDDIR)/ByteArray.o $(BUILDDIR)/L2BasePacket.o \
 	$(BUILDDIR)/L2PacketNames_client.o \
 	$(BUILDDIR)/L2PacketNames_server.o \
 	$(BUILDDIR)/L2PCodeObfuscator.o \
-	$(BUILDDIR)/sqlite3.o
+	$(BUILDDIR)/sqlite3.o \
+	$(BUILDDIR)/os_abstraction.o
 
 $(TARGET): $(PCHC) $(OBJECTS)
 	echo [LIB] $(TARGET)
@@ -179,7 +180,7 @@ $(BUILDDIR)/L2Game_KeyPacket.o: $(SRC)/game/server/L2Game_KeyPacket.cpp $(SRC)/g
 $(BUILDDIR)/L2Game_SSQInfo.o: $(SRC)/game/server/L2Game_SSQInfo.cpp $(SRC)/game/server/L2Game_SSQInfo.h $(GAMEDEPS)
 	echo [C++] $(SRC)/game/server/L2Game_SSQInfo.cpp
 	$(COMPILE) $(SRC)/game/server/L2Game_SSQInfo.cpp -o $(BUILDDIR)/L2Game_SSQInfo.o
-	
+
 $(BUILDDIR)/L2Game_Action.o: $(SRC)/game/client/L2Game_Action.cpp $(SRC)/game/client/L2Game_Action.h $(GAMEDEPS)
 	echo [C++] $(SRC)/game/client/L2Game_Action.cpp
 	$(COMPILE) $(SRC)/game/client/L2Game_Action.cpp -o $(BUILDDIR)/L2Game_Action.o
@@ -282,6 +283,12 @@ $(BUILDDIR)/L2PCodeObfuscator.o: $(PCHDEPS) $(SRC)/pcode_obfuscator/L2PCodeObfus
 $(BUILDDIR)/sqlite3.o: $(PCHDEPS) $(SRC)/sqlite3/sqlite3.c $(SRC)/sqlite3/sqlite3.h $(SRC)/sqlite3/sqlite3ext.h
 	echo [CC ] $(SRC)/sqlite3/sqlite3.c
 	$(COMPILE_C) $(SRC)/sqlite3/sqlite3.c -o $(BUILDDIR)/sqlite3.o
+
+
+$(BUILDDIR)/os_abstraction.o: $(SRC)/os/os_abstraction.cpp $(SRC)/os/os_abstraction.h
+	echo [CC ] $(SRC)/os/os_abstraction.cpp
+	$(COMPILE_C) $(SRC)/os/os_abstraction.cpp -o $(BUILDDIR)/os_abstraction.o
+
 
 clean:
 	$(DEL_FILE) $(BUILDDIR)/*.o

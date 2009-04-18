@@ -73,11 +73,11 @@
 #include "game/client/L2Game_RequestJoinParty.h"
 #include "game/client/L2Game_RequestUserCommand.h"
 
-#include "pcode_obfuscator/L2PcodeObfuscator.h"
+#include "pcode_obfuscator/L2PCodeObfuscator.h"
 
 #include "l2data/L2Data.h"
 
-#include "l2world/l2world.h"
+#include "l2world/L2World.h"
 
 #include "packetNames/L2PacketNames.h"
 

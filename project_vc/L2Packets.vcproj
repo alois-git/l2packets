@@ -46,9 +46,12 @@
 				StructMemberAlignment="0"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
+				ProgramDataBaseFileName="$(IntDir)\L2Packets_d.pdb"
+				BrowseInformation="0"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4127"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -108,6 +111,8 @@
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
+				ProgramDataBaseFileName="$(IntDir)\L2Packets.pdb"
+				BrowseInformation="0"
 				WarningLevel="3"
 			/>
 			<Tool
