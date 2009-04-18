@@ -286,8 +286,8 @@ $(BUILDDIR)/sqlite3.o: $(PCHDEPS) $(SRC)/sqlite3/sqlite3.c $(SRC)/sqlite3/sqlite
 
 
 $(BUILDDIR)/os_abstraction.o: $(SRC)/os/os_abstraction.cpp $(SRC)/os/os_abstraction.h
-	echo [CC ] $(SRC)/os/os_abstraction.cpp
-	$(COMPILE_C) $(SRC)/os/os_abstraction.cpp -o $(BUILDDIR)/os_abstraction.o
+	echo [C++] $(SRC)/os/os_abstraction.cpp
+	$(COMPILE) $(SRC)/os/os_abstraction.cpp -o $(BUILDDIR)/os_abstraction.o
 
 clean:
 	$(DEL_FILE) $(BUILDDIR)/*.o
