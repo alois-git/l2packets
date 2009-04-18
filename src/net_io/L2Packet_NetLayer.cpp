@@ -16,8 +16,9 @@ typedef int  (__stdcall *WSAGetLastError_func)(void);
 typedef void (__stdcall *WSASetLastError_func)( int );
 typedef int  (__stdcall *WSAStartup_func)( WORD, WSADATA * );
 typedef int  (__stdcall *WSACleanup_func)(void);
-typedef void *(__stdcall *gethostbyname_func)( const char * );
-typedef int (__stdcall *getaddrinfo_func)( const char *, const char *, void *, void * ); /* Success returns zero. Failure returns error code */
+//typedef void *(__stdcall *gethostbyname_func)( const char * );
+typedef int  (__stdcall *getaddrinfo_func)( const char *, const char *, void *, void * ); /* Success returns zero. Failure returns error code */
+typedef void (__stdcall *freeaddrinfo_func)( void * );
 
 //select_func select_winsock = NULL;
 
@@ -324,6 +325,11 @@ int L2PNet_connect( unsigned int sock, const char *ip, unsigned short port )
 		addr.sin_family = AF_INET;
 		addr.sin_port = L2PNet_htons( port );
 		addr.sin_addr.s_addr = L2PNet_inet_addr( ip );
+		if( addr.sin_addr.s_addr == INADDR_NONE )
+		{
+			// try to resolve
+			L2PNet_resolveHostname( ip, &addr.sin_addr );
+		}
 		ret = ( (int (__stdcall*)(SOCKET,const struct sockaddr*,int))(ws2_func[L2PFUNC_CONNECT]))
 			( sock, (const struct sockaddr *)&addr, sizeof(addr) );
 	}
@@ -346,6 +352,11 @@ int L2PNet_bind( unsigned int sock, const char *ip, unsigned short port )
 		addr.sin_family = AF_INET;
 		addr.sin_port = L2PNet_htons( port );
 		addr.sin_addr.s_addr = L2PNet_inet_addr( ip );
+		if( addr.sin_addr.s_addr == INADDR_NONE )
+		{
+			// try to resolve
+			L2PNet_resolveHostname( ip, &addr.sin_addr );
+		}
 		ret = ( (int (__stdcall*)(SOCKET,const struct sockaddr *,int))(ws2_func[L2PFUNC_BIND]))
 			( sock, (const struct sockaddr *)&addr, sizeof(addr) );
 	}
@@ -588,18 +599,36 @@ bool L2PNet_resolveHostname( const char *hostname, struct in_addr *pinAddr )
 			addr_hints.ai_socktype = SOCK_STREAM;
 			addrinfo *retAddr = NULL;
 			int ret = getaddrinfo_ws2( hostname, NULL, &addr_hints, &retAddr );
-			if( ret == 0 ) /* OK */
+			if( ret == 0 ) // OK
 			{
 				if( retAddr )
 				{
 					pinAddr->s_addr = ((sockaddr_in *)retAddr->ai_addr)->sin_addr.s_addr;
+					freeaddrinfo_func freeaddr_ws2 = (freeaddrinfo_func)GetProcAddress( l2pnet_hws2_32, "freeaddrinfo" );
+					if( freeaddr_ws2 ) freeaddr_ws2( retAddr );
+					return true;
 				}
-				else DebugBreak();
+				else
+				{
+					pinAddr->s_addr = INADDR_NONE;
+					return false;
+				}
 			}
-			else DebugBreak();
+			else
+			{
+				pinAddr->s_addr = INADDR_NONE;
+				return false;
+			}
 		}
-		else pinAddr->s_addr = INADDR_NONE;
+		else
+		{
+			pinAddr->s_addr = INADDR_NONE;
+			return false;
+		}
 	}
-	else pinAddr->s_addr = addr.s_addr;
+	else // hostname is already IP address
+	{
+		pinAddr->s_addr = addr.s_addr;
+	}
 	return true;
 }
