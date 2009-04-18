@@ -173,6 +173,11 @@ int L2PNet_connect( unsigned int sock, const char *ip, unsigned short port )
 	addr.sin_family = AF_INET;
 	addr.sin_port = L2PNet_htons( port );
 	addr.sin_addr.s_addr = L2PNet_inet_addr( ip );
+	if( addr.sin_addr.s_addr == INADDR_NONE )
+	{
+		// try to resolve
+		L2PNet_resolveHostname( ip, &addr.sin_addr );
+	}
 	ret = connect( sock, (const sockaddr *)&addr, sizeof(addr) );
 	return ret;
 }
@@ -186,6 +191,11 @@ int L2PNet_bind( unsigned int sock, const char *ip, unsigned short port )
 	addr.sin_family = AF_INET;
 	addr.sin_port = L2PNet_htons( port );
 	addr.sin_addr.s_addr = L2PNet_inet_addr( ip );
+	if( addr.sin_addr.s_addr == INADDR_NONE )
+	{
+		// try to resolve
+		L2PNet_resolveHostname( ip, &addr.sin_addr );
+	}
 	int ret = bind( sock, (const sockaddr *)&addr, sizeof(addr) );
 	return ret;
 }
