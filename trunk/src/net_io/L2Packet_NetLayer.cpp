@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "L2Packet_NetLayer.h"
+#include <ws2tcpip.h>
 
 // network function pointers table
 #define l2pnet_ft_size 11
@@ -15,6 +16,8 @@ typedef int  (__stdcall *WSAGetLastError_func)(void);
 typedef void (__stdcall *WSASetLastError_func)( int );
 typedef int  (__stdcall *WSAStartup_func)( WORD, WSADATA * );
 typedef int  (__stdcall *WSACleanup_func)(void);
+typedef void *(__stdcall *gethostbyname_func)( const char * );
+typedef int (__stdcall *getaddrinfo_func)( const char *, const char *, void *, void * ); /* Success returns zero. Failure returns error code */
 
 //select_func select_winsock = NULL;
 
@@ -568,4 +571,35 @@ int L2PNet_FD_ISSET( unsigned int sock, struct fd_set *set )
 	for ( i = 0; i < set->fd_count; i++ )
 	if ( set->fd_array[i] == sock ) return 1;
 	return 0;
+}
+
+bool L2PNet_resolveHostname( const char *hostname, struct in_addr *pinAddr )
+{
+	in_addr addr;
+	addr.s_addr = L2PNet_inet_addr( hostname );
+	if( addr.s_addr == INADDR_NONE )
+	{
+		getaddrinfo_func getaddrinfo_ws2 = (getaddrinfo_func)GetProcAddress( l2pnet_hws2_32, "getaddrinfo" );
+		if( getaddrinfo_ws2 )
+		{
+			addrinfo addr_hints;
+			memset( &addr_hints, 0, sizeof(addr_hints) );
+			addr_hints.ai_family = AF_INET;
+			addr_hints.ai_socktype = SOCK_STREAM;
+			addrinfo *retAddr = NULL;
+			int ret = getaddrinfo_ws2( hostname, NULL, &addr_hints, &retAddr );
+			if( ret == 0 ) /* OK */
+			{
+				if( retAddr )
+				{
+					pinAddr->s_addr = ((sockaddr_in *)retAddr->ai_addr)->sin_addr.s_addr;
+				}
+				else DebugBreak();
+			}
+			else DebugBreak();
+		}
+		else pinAddr->s_addr = INADDR_NONE;
+	}
+	else pinAddr->s_addr = addr.s_addr;
+	return true;
 }
