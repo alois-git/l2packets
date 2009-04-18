@@ -372,7 +372,7 @@ int L2PNet_FD_ISSET( unsigned int sock, fd_set *set )
 // TODO: convert to linux code
 bool L2PNet_resolveHostname( const char *hostname, struct in_addr *pinAddr )
 {
-	in_addr addr;
+	/*in_addr addr;
 	addr.s_addr = L2PNet_inet_addr( hostname );
 	if( addr.s_addr == INADDR_NONE )
 	{
@@ -385,7 +385,7 @@ bool L2PNet_resolveHostname( const char *hostname, struct in_addr *pinAddr )
 			addr_hints.ai_socktype = SOCK_STREAM;
 			addrinfo *retAddr = NULL;
 			int ret = getaddrinfo_ws2( hostname, NULL, &addr_hints, &retAddr );
-			if( ret == 0 ) /* OK */
+			if( ret == 0 ) // OK
 			{
 				if( retAddr )
 				{
@@ -397,6 +397,6 @@ bool L2PNet_resolveHostname( const char *hostname, struct in_addr *pinAddr )
 		}
 		else pinAddr->s_addr = INADDR_NONE;
 	}
-	else pinAddr->s_addr = addr.s_addr;
+	else pinAddr->s_addr = addr.s_addr;*/
 	return true;
 }
