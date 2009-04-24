@@ -1,4 +1,5 @@
 #summary Compile guide
+#labels Phase-Implementation
 = Supported OS, compilers =
 At this moment !L2Packets is tested only under Win32, but it can be compiled under Linux.
 Win32: There are 2 ways of compiling: [http://www.mingw.org/ Mingw32] and [http://www.microsoft.com/express/vc/ Visual C++]. 
@@ -22,6 +23,7 @@ Building as DLL is not supported now (no real need, imho).
 cd into folder *project_linux* and execute
  {{{make -f Makefile_release.}}}
 Result library will be in folder *dist/Release/linux*.
+
 
 = sqlite3 compile warnings =
 Yes, during build you will see lots of warnings in file sqlite3.c. sqlite devs think it is normal, see [http://www.sqlite.org/faq.html#q17 (17) I get hundreds of compiler warnings when I compile SQLite. Isn't this a problem? Doesn't it indicate poor code quality?]
