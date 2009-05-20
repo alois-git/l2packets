@@ -1,1 +1,0 @@
-@mingw32-make -s -f Makefile_release.mingw32 %1
