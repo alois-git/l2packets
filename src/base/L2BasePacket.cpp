@@ -566,6 +566,16 @@ inline const unsigned char *L2BasePacket::getBytesPtr() const
 	return this->getBytesPtr();
 }*/
 
+ByteArray *L2BasePacket::readB( unsigned int count )
+{
+	ByteArray *pByteArray = new ByteArray();
+	if( !pByteArray ) return NULL;
+	pByteArray->setSize( count );
+	if( this->readBytes( pByteArray->getBytesPtr(), count ) ) return pByteArray;
+	delete pByteArray;
+	return NULL;
+}
+
 // must be overrided in child classes
 bool L2BasePacket::parse()
 {
