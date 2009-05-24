@@ -125,8 +125,12 @@ int L2PNet_listen( unsigned int sock );
  * \return accepted socket on OK, -1 on error */
 unsigned int L2PNet_accept( unsigned int sock, char *acceptedIP, unsigned short *acceptedPort );
 
-/** Wrapper around standard select() function.
-* \param nfds - see standard select() function documentation for parameters info :)
+/** Wrapper around standard WinSock select() function.
+* \param nfds - ignored on Win32
+* \param readFds - fd_set of sockets to test to readability
+* \param writeFds - fd_set of sockets to test to writeability
+* \param exceptFds - fd_set of sockets to test for errors
+* \param timeout - timeval struct, wait timeout
 * \warning !!! CANNOT BE OVERRIDED !!! by L2PNet_setFunction() (only for Win32)
 */
 int L2PNet_select_wrapper_DUMB( int nfds,

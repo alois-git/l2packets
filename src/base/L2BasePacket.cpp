@@ -82,9 +82,12 @@ void L2BasePacket::setPacketType( unsigned char type )
 bool L2BasePacket::ensureCanWriteBytes( unsigned int nBytes )
 {
 	if( nBytes == 0 ) return true;
-	unsigned int end_ptr = write_ptr + nBytes - 1;
-	if( end_ptr > buffer_size ) // not enough place in buffer
-		return this->_growBuffer();
+	unsigned int end_ptr = write_ptr + nBytes - 1; // calc write end pointer
+	// loop until end_ptr fits in buffer size
+	while( end_ptr > buffer_size ) // not enough place in buffer
+	{
+		if( !this->_growBuffer() ) return false; // _growBuffer() increases buffer_size
+	}
 	return true;
 }
 
@@ -467,7 +470,6 @@ void L2BasePacket::readReset()
 bool L2BasePacket::_preAllocateBuffer()
 {
 	if( !b.setSize( buffer_size ) ) return false; // TODO: or throw exception?
-	//b.memset( 0 ); // OMG!!!!!
 	return true;
 }
 
@@ -483,7 +485,6 @@ void L2BasePacket::_initNull()
 	datasize = 0;
 	writeReset();
 	readReset();
-	//_preAllocateBuffer(); // done by writeReset
 }
 
 void L2BasePacket::_freeSelf()
@@ -491,7 +492,6 @@ void L2BasePacket::_freeSelf()
 	buffer_size = 256;
 	writeReset();
 	readReset();
-	_preAllocateBuffer();
 }
 
 void L2BasePacket::dumpToFile( FILE *f )
