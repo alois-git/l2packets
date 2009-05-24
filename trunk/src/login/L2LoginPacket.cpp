@@ -6,7 +6,6 @@
 L2LoginPacket::L2LoginPacket()
 {
 	_initNull(); // static BF key is initialized there
-	// FIXED: dynamic BF initialization moved here from _initNull()
 	NEW_BLOWFISH_KEY_LEN = 0;
 	memset( (void *)NEW_BLOWFISH_KEY, 0, sizeof(NEW_BLOWFISH_KEY) );
 }
@@ -14,7 +13,6 @@ L2LoginPacket::L2LoginPacket()
 L2LoginPacket::L2LoginPacket( const unsigned char *bytes, unsigned int length )
 {
 	_initNull(); // static BF key is initialized there
-	// FIXED: dynamic BF initialization moved here from _initNull()
 	NEW_BLOWFISH_KEY_LEN = 0;
 	memset( (void *)NEW_BLOWFISH_KEY, 0, sizeof(NEW_BLOWFISH_KEY) );
 	this->setBytes( bytes, length );
@@ -46,10 +44,6 @@ void L2LoginPacket::_initNull()
 	STATIC_BLOWFISH_KEY[14] = 0x6C;
 	STATIC_BLOWFISH_KEY[15] = 0x6C;
 	STATIC_BLOWFISH_KEY_LEN = 16;
-	// FIXED: _initNull() should *NEVER* touch NEW_BLOWFISH_KEY
-	// FIXED: dynamic BF key is changed ONLY by setDynamicBFKey()!
-	//NEW_BLOWFISH_KEY_LEN = 0;
-	//memset( (void *)NEW_BLOWFISH_KEY, 0, sizeof(NEW_BLOWFISH_KEY) );
 	xor_key = 0;
 }
 
@@ -58,8 +52,8 @@ bool L2LoginPacket::decodeBlowfish( bool bUseStaticBFKey )
 	int blen = (int)getPacketSize(); // all array length
 	int datalen = blen - 2;      // only data len, w/o 1st 2 bytes - packet size
 	int n8bc = datalen / 8;      // 8-byte blocks count
-	int rest = datalen - n8bc*8; // ostatok
-	if( rest > 0 ) rest = 8;     // nado li dopolnenie
+	int rest = datalen - n8bc*8; // bytes left
+	if( rest > 0 ) rest = 8;     // do we need addition?
 	int newdatalen = datalen + rest; // dlina novogo u4astka dannih
 	int newbuflen = newdatalen + 2;  // dlina novogo paketa
 	if( blen < 1 ) return false; // TODO: throw?

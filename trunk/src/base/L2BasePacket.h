@@ -68,10 +68,11 @@ public:
 	 * \see ByteArray::setBytesFromPtrNoMemcpy() */
 	virtual bool           setBytesPtr( unsigned char *bytes, unsigned int length );
 	/** Sets 3rd byte of packet (which holds packet opcode).
-	 * Equivalent to call writeReset() and writeUChar(type).
+	 * Equivalent to call writeReset() and writeUChar() with parameter type. 
+	 * Moves write pointer to byte #3 (next after opcode)
 	 * \param type new packet opcode. */
 	virtual void           setPacketType( unsigned char type );
-	/** Reads packet opcode. Calls readReset(); readUChar()
+	/** Reads packet opcode. Moves read pointer to byte #3 (next after opcode). Equivalent calls: readReset(); readUChar()
 	 * \return read packet opcode. */
 	virtual unsigned char  getPacketType() { readReset(); return readUChar(); }
 	/** Gets packet length in bytes (not size of internal data buffer, which is larger)
@@ -83,68 +84,168 @@ public:
 	virtual unsigned short getDataSize() const { return (unsigned short)(this->datasize); }
 
 public: // write funcs
+	/** Checks if it is possible to write nBytes bytes to packet; if no, tries to increase buffer size.
+	 * Called automatically from write-functions.
+	 * \param nBytes checked size
+	 * \return false on memory error */
 	virtual bool           ensureCanWriteBytes( unsigned int nBytes );
+	/** Moves write pointer to the beginning of the packet, to byte #2, where starts opcode. 
+	 * First 2 bytes (byte #0, byte #1 - packet size) are always updated automatically, and 
+	 * they cannot be accessed by read/write-functions, only by setByteAt() / getByteAt().
+	 * Pre-allocates internal buffer, sets packet size to 2. */
 	virtual void           writeReset();
+	/** Writes single byte to packet. Moves write pointer one char right
+	 * \param c byte to write to packet. */
 	virtual void           writeChar( char c );
+	/** Writes single byte to packet. Moves write pointer one char right
+	 * \param c byte to write to packet. */
 	virtual void           writeUChar( unsigned char c );
+	/** Writes short integer to packet. Moves write pointer two chars right
+	 * \param s value to write to packet. */
 	virtual void           writeShort( short int s );
+	/** Writes short integer to packet. Moves write pointer two chars right
+	 * \param s value to write to packet. */
 	virtual void           writeUShort( unsigned short int s );
+	/** Writes 32-bit integer to packet. Moves write pointer 4 chars right
+	 * \param i value to write to packet. */
 	virtual void           writeInt( int i );
+	/** Writes 32-bit integer to packet. Moves write pointer 4 chars right
+	 * \param i value to write to packet. */
 	virtual void           writeUInt( unsigned int i );
+	/** Writes 64-bit integer to packet. Moves write pointer 8 chars right
+	 * \param i64 value to write to packet. */
 	virtual void           writeInt64( long long int i64 );
+	/** Writes 64-bit integer to packet. Moves write pointer 8 chars right
+	 * \param i64 value to write to packet. */
 	virtual void           writeUInt64( unsigned long long int i64 );
+	/** Writes double value to packet. Moves write pointer 8 chars right
+	 * \param d value to write to packet. */
 	virtual void           writeDouble( double d );
+	/** Writes ANSI string to packet, also NULL terminator. Moves write pointer right by string length
+	 * \param str string to write to packet. */
 	virtual void           writeString( const char *str );
+	/** Writes Unicode string to packet, also Unicode NULL terminator. Moves write pointer right by string length*2
+	 * \param ustr string to write to packet. */
 	virtual void           writeUnicodeString( const wchar_t *ustr );
+	/** Writes bytes array to packet (len bytes). Moves write pointer right by len bytes
+	 * \param bytes pointer to data to write to packet.
+	 * \param len data length. */
 	virtual void           writeBytes( const unsigned char *bytes, unsigned int len );
 public: // read funcs
+	/** Checks if there are some bytes left to read form current read position in packet.
+	 * \param nBytes number of bytes to test to readability.
+	 * \return true, if nBytes bytes can be read form current read position; false if there are less than 
+	 * nBytes left in buffer. */
 	virtual bool           canReadBytes( unsigned int nBytes );
+	/** Moves read pointer to byte #2 (opcode will be read next). */
 	virtual void           readReset();
+	/** Reads one byte from packet. Moves read pointer to next position
+	 * \return byte */
 	virtual char           readChar();
+	/** Reads one byte from packet. Moves read pointer to next position
+	 * \return byte */
 	virtual unsigned char  readUChar();
+	/** Reads 16-bit integer from packet. Moves read pointer to next position
+	 * \return short int */
 	virtual short int      readShort();
+	/** Reads 16-bit integer from packet. Moves read pointer to next position
+	 * \return short int */
 	virtual unsigned short int readUShort();
+	/** Reads 32-bit integer from packet. Moves read pointer to next position
+	 * \return int */
 	virtual int            readInt();
+	/** Reads 32-bit integer from packet. Moves read pointer to next position
+	 * \return int */
 	virtual unsigned int   readUInt();
+	/** Reads 64-bit integer from packet. Moves read pointer to next position
+	 * \return long long int */
 	virtual long long int  readInt64();
+	/** Reads 64-bit integer from packet. Moves read pointer to next position
+	 * \return long long int */
 	virtual unsigned long long int readUInt64();
+	/** Reads double value from packet. Moves read pointer to next position
+	 * \return double */
 	virtual double         readDouble();
+	/** Reads ANSI string from packet. Moves read pointer to next read position
+	 * \return pointer to allocated string */
 	virtual char          *readString();
-	virtual wchar_t       *readUnicodeString(); // allocates buffer, reads string, and returns buffer
-	virtual const wchar_t *readUnicodeStringPtr(); // returns read-only pointer to wchar_t into internal buffer
+	/** Reads Unicode string from packet. Moves read pointer to next read position. Allocates buffer.
+	 * \return pointer to allocated string. Calling function must free() this buffer. */
+	virtual wchar_t       *readUnicodeString();
+	/** Reads Unicode string from packet. Moves read pointer to next read position.\n
+	 * Function does not allocate buffer,
+	 * it just returns casted to (wchar_t *) pointer to internal data buffer as read-only.\n
+	 * Warning! Returning pointer will be invalid, because internal data buffer is freed when object is destroyed.\n
+	 * Warning! Data is read-only.\n
+	 * This function may be faster than readUnicodeString() because it does not do
+	 * memory allocation.
+	 * \return pointer to allocated string */
+	virtual const wchar_t *readUnicodeStringPtr();
+	/** Reads num bytes from packet
+	 * \param bytes pointer to buffer to store data
+	 * \param num number of bytes to read
+	 * \returns success state */
 	virtual bool           readBytes( unsigned char *bytes, unsigned int num );
 public: // L2J aliases
 	// writers
+	/** Alias to writeChar() */
 	virtual inline void writeC( char c )                 { writeChar( c ); }
+	/** Alias to writeShort() */
 	virtual inline void writeH( short h )                { writeShort( h ); }
+	/** Alias to writeInt() */
 	virtual inline void writeD( int d )                  { writeInt( d ); }
+	/** Alias to writeInt64() */
 	virtual inline void writeQ( long long int Q )        { writeInt64( Q ); }
+	/** Alias to writeDouble() */
 	virtual inline void writeF( double f )               { writeDouble( f ); }
+	/** Alias to writeUnicodeString() */
 	virtual inline void writeS( const wchar_t *string )  { writeUnicodeString( string ); }
+	/** Alias to writeBytes() */
 	virtual inline void writeB( const ByteArray& bytes ) { writeBytes( bytes.getBytesPtr(), bytes.getSize() ); }
 	// readers
+	/** Alias to readChar() */
 	virtual inline char           readC() { return readChar(); }
+	/** Alias to readShort() */
 	virtual inline short          readH() { return readShort(); }
+	/** Alias to readInt() */
 	virtual inline int            readD() { return readInt(); }
+	/** Alias to readDouble() */
 	virtual inline double         readF() { return readDouble(); }
+	/** Alias to readInt64() */
 	virtual inline long long int  readQ() { return readInt64(); }
+	/** Alias to readUnicodeString() */
 	virtual inline wchar_t       *readS() { return readUnicodeString(); }
+	/** Alias to readBytes() */
 	virtual        ByteArray     *readB( unsigned int count ); // not inline :)
 public: // parsers
+	/** Parses packet. Must be overriden in child classes */
 	virtual bool           parse();
 	
 	// DEBUG funcs
 public:
+	/** Writes packet dump to file f n HEX
+	 * \param f - file to write to */
 	virtual void           dumpToFile( FILE *f );
+	/** Saves all packet to file as binary data
+	 * \param filename - file name to save to */
 	virtual void           saveToFileRaw( const char *filename );
+	/** here calls dumpToFile(). Must be overriden in child classes
+	 * \param f - file to write to */
 	virtual void           displaySelfNice( FILE *f );
 public: // typeconv
 	//virtual operator const unsigned char *() const;
+	/** Returns pointer to all internal data buffer. Calls ByteArray::getBytesPtr()
+	 * \return pointer to all internal data buffer */
 	virtual const unsigned char *getBytesPtr() const;
 protected:
+	/** Internal function - called from constuctors. Initializes object state:
+	 * Sets buffer_size to 256, calls readReset(), writeReset() */
 	virtual void _initNull();
+	/** Internal function. Pre-allocates internal buffer to buffer_size */
 	virtual bool _preAllocateBuffer();
+	/** Internal function. Tries to increase buffer size twice */
 	virtual bool _growBuffer();
+	/** almost the same as _initNull()... */
 	virtual void _freeSelf();
 protected:
 	unsigned int buffer_size; ///< current buffer size
