@@ -4,13 +4,9 @@
 // keeps result of inet_ntoa
 char l2pnet_static_inet_ntoa_buffer[32];
 
-/** Initializes L2Packets network layer.
- ** By default network functions L2PNet_* will be used,
- ** which use corresponding Winsock2 functions.
- ** returns 1 on success, 0 on error */
 int L2PNet_InitDefault()
 {
-	// does nothing
+	l2pnet_static_inet_ntoa_buffer[0] = 0;
 	return 1;
 }
 
@@ -220,10 +216,10 @@ unsigned int L2PNet_accept( unsigned int sock, char *acceptedIP, unsigned short 
 	if( ret != -1 )
 	{
 		sprintf( acceptedIP, "%d.%d.%d.%d",
-			(int)( (addr.sin_addr.s_addr &0xFF000000) >> 24 ),
-			(int)( (addr.sin_addr.s_addr &0x00FF0000) >> 16),
-			(int)( (addr.sin_addr.s_addr &0x0000FF00) >> 8),
-			(int)( addr.sin_addr.s_addr & 0x000000FF )
+			(int)( (addr.sin_addr.s_addr & 0x000000FF) ),
+			(int)( (addr.sin_addr.s_addr & 0x0000FF00) >> 8),
+			(int)( (addr.sin_addr.s_addr & 0x00FF0000) >> 16),
+			(int)( (addr.sin_addr.s_addr & 0xFF000000) >> 24)
 		);
 		(*acceptedPort) = L2PNet_ntohs( addr.sin_port );
 	}
