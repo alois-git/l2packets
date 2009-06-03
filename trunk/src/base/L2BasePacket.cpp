@@ -584,3 +584,9 @@ bool L2BasePacket::parse()
 	return true;
 }
 
+// must be overrided in child classes
+bool L2BasePacket::create()
+{
+	this->writeReset();
+	return true;
+}

@@ -4,19 +4,111 @@
 L2Login_Init::L2Login_Init()
 {
 	_initNull();
+	_initPublicMembers();
 }
 
 L2Login_Init::L2Login_Init( const unsigned char *bytes, unsigned int length )
 {
 	_initNull();
+	_initPublicMembers();
 	this->setBytes( bytes, length );
+}
+
+bool L2Login_Init::decodeXOR()
+{
+	unsigned int   blen   = getPacketSize();
+	unsigned char *packet = b.getBytesPtr();
+	if( blen < 1 || !packet ) return false; // TODO: throw?
+	if( blen < 186 ) return false; // TODO: throw?
+	// get xor key
+	// XOR key position to the left from End-of-packet
+	unsigned int xor_offset = 8;
+	xor_key = 0;
+	unsigned char b = 0;
+	b = packet[ blen - xor_offset ];
+	xor_key |= (unsigned int)b;
+	b = packet[ blen - xor_offset + 1 ];
+	xor_key |= ( (unsigned int)b << 8 );
+	b = packet[ blen - xor_offset + 2 ];
+	xor_key |= ( (unsigned int)b << 16 );
+	b = packet[ blen - xor_offset + 3 ];
+	xor_key |= ( (unsigned int)b << 24 );
+	
+	// enc xor?
+	unsigned int offset = 2;
+	unsigned int edx = 0;
+	unsigned int ecx = xor_key;
+	
+	offset = blen - xor_offset - 4;
+	while( offset > 2 ) // offset > 3 ?
+	{
+		edx  = (packet[offset+0] & 0xFF);
+		edx |= (packet[offset+1] & 0xFF) << 8;
+		edx |= (packet[offset+2] & 0xFF) << 16;
+		edx |= (packet[offset+3] & 0xFF) << 24;
+
+		edx ^= ecx;
+		ecx -= edx;
+
+		packet[offset+0] = (unsigned char)((edx)       & 0xFF);
+		packet[offset+1] = (unsigned char)((edx >>  8) & 0xFF);
+		packet[offset+2] = (unsigned char)((edx >> 16) & 0xFF);
+		packet[offset+3] = (unsigned char)((edx >> 24) & 0xFF);
+		offset -= 4;
+	}
+	return true;
+}
+
+// static function used to decrypt RSA public key modulus from Init packet
+// data must be 128-byte long array
+bool L2Login_Init::unscramble_RSA_PubKeyMod( unsigned char *data )
+{
+	int i;
+	// step 4 xor last 0x40 bytes with first 0x40 bytes
+	for( i=0; i<0x40; i++ )
+		data[0x40 + i] = (unsigned char)(data[0x40 + i] ^ data[i]);
+	// step 3 xor bytes 0x0d-0x10 with bytes 0x34-0x38
+	for( i=0; i<4; i++ )
+		data[0x0d + i] = (unsigned char)(data[0x0d + i] ^ data[0x34 + i]);
+	// step 2 xor first 0x40 bytes with last 0x40 bytes
+	for( i=0; i<0x40; i++ )
+		data[i] = (unsigned char)(data[i] ^ data[0x40 + i]);
+	// step 1
+	for( i=0; i<4; i++ )
+	{
+		unsigned char temp = data[0x00 + i];
+		data[0x00 + i] = data[0x4d + i];
+		data[0x4d + i] = temp;
+	}
+	return true;
+}
+
+bool L2Login_Init::scramble_RSA_PubKeyMod( unsigned char *data )
+{
+	int i;
+	for( i=0; i<4; i++ )
+	{
+		unsigned char temp = data[0x00 + i];
+		data[0x00 + i] = data[0x4d + i];
+		data[0x4d + i] = temp;
+	}
+	// step 2 xor first 0x40 bytes with last 0x40 bytes
+	for( i=0; i<0x40; i++ )
+		data[i] = (unsigned char)(data[i] ^ data[0x40 + i]);
+	// step 3 xor bytes 0x0d-0x10 with bytes 0x34-0x38
+	for( i=0; i<4; i++ )
+		data[0x0d + i] = (unsigned char)(data[0x0d + i] ^ data[0x34 + i]);
+	// step 4 xor last 0x40 bytes with first 0x40 bytes
+	for( i=0; i<0x40; i++ )
+		data[0x40 + i] = (unsigned char)(data[0x40 + i] ^ data[i]);
+	return true;
 }
 
 bool L2Login_Init::read_SessionID( unsigned char *sidBytes )
 {
 	if( !sidBytes ) return false;
+	if( !canReadBytes( 4 ) ) return false;
 	this->readReset();
-	//this->readShort(); // pass packet len // already done by readReset()
 	this->readChar();  // pass packet type
 	sidBytes[0] = this->readUChar();
 	sidBytes[1] = this->readUChar();
@@ -36,15 +128,16 @@ unsigned int L2Login_Init::read_ProtoVer()
 bool L2Login_Init::read_RSA_pubKeyMod( unsigned char *RSApublicKeyMod )
 {
 	if( !RSApublicKeyMod ) return false;
+	if( !canReadBytes(128) ) return false;
 	int i = 0;
-	while( i < 128 )
-		RSApublicKeyMod[i++] = this->readUChar();
+	while( i < 128 ) RSApublicKeyMod[i++] = readUChar();
 	return true;
 }
 
 // ggShit - 16 bytes buffer; can be NULL
 bool L2Login_Init::read_GGShit( unsigned char *ggShit )
 {
+	if( !canReadBytes( 16 ) ) return false;
 	int i = 0;
 	char c = 0;
 	while( i < 16 )
@@ -60,6 +153,7 @@ bool L2Login_Init::read_GGShit( unsigned char *ggShit )
 bool L2Login_Init::read_DynamicBFKey( unsigned char *newBFKey )
 {
 	if( !newBFKey ) return false;
+	if( !canReadBytes(16) ) return false;
 	int i = 0;
 	while( i < 16 ) newBFKey[i++] = this->readUChar();
 	return true;
@@ -118,4 +212,51 @@ void L2Login_Init::displaySelfNice( FILE *f )
 	fprintf( f, "NULL terminator : %u (0x%02X)\n",
 		(unsigned int)nullTerm, (unsigned int)nullTerm );
 	fprintf( f, "Init packet dump end ;)\n\n" );
+}
+
+void L2Login_Init::_initPublicMembers()
+{
+	p_sessionId[0] = p_sessionId[1] = p_sessionId[2] = p_sessionId[3] = 0x00;
+	p_protoVer = 0x00000000;
+	memset( p_RSA_pubKeyMod, 0, sizeof(p_RSA_pubKeyMod) );
+	memset( p_GG_shit, 0, sizeof(p_GG_shit) );
+	memset( p_BF_dyn_key, 0, sizeof(p_BF_dyn_key) );
+}
+
+bool L2Login_Init::create()
+{
+	//int i;
+	scramble_RSA_PubKeyMod( p_RSA_pubKeyMod );
+	// write data
+	writeReset();
+	setPacketType( 0x00 );
+	writeBytes( p_sessionId, 4 );
+	writeUInt( p_protoVer );
+	writeBytes( p_RSA_pubKeyMod, 128 );
+	writeUInt( 0x29dd954e ); // 4e 95 dd 29 // GGshit? O_o
+	writeUInt( 0x77c39cfc ); // fc 9c c3 77
+	writeUInt( 0x97adb620 ); // 20 b6 ad 97
+	writeUInt( 0x07bde0f7 ); // f7 e0 bd 07
+	writeBytes( p_BF_dyn_key, 16 );
+	writeChar( 0x00 );
+	// TODO: encode xor...
+	return false;
+}
+
+bool L2Login_Init::parse()
+{
+	if( getPacketSize() != 186 ) return false;
+	if( getPacketType() != 0x00 ) return false;
+	// first remove blowfish using static BF key (hardcoded)
+	if( !decodeBlowfish( true ) ) return false;
+	if( !decodeXOR() ) return false;
+	// read data
+	_initPublicMembers();
+	if( !read_SessionID( p_sessionId ) ) return false;
+	p_protoVer = read_ProtoVer();
+	if( !read_RSA_pubKeyMod( p_RSA_pubKeyMod ) ) return false;
+	if( !read_GGShit( p_GG_shit ) ) return false;
+	if( !read_DynamicBFKey( p_BF_dyn_key ) ) return false;
+	unscramble_RSA_PubKeyMod( p_RSA_pubKeyMod );
+	return true;
 }

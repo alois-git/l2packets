@@ -5,12 +5,12 @@
 
 /** \class L2LoginPacket
  * A base class for all login server communication packets.
- * Includes functions to handle Blowfish encryption, Init packet XOR encryption,
- * RSA public key modulus scrambling/unscrambling, and checksum calculations. */
+ * Includes functions to handle Blowfish encryption/decryption and checksum calculations. */
 
 class L2LoginPacket: public L2BasePacket
 {
 public:
+	/** Default constructor */
 	L2LoginPacket();
 	/** Constructs object and calls setBytes() with parameters bytes, length
 	 * \param bytes data to set
@@ -23,19 +23,10 @@ public:
 	          Dynamic BF key must be set before by setDynamicBFKey()
 	 * \return success status */
 	virtual bool         decodeBlowfish( bool bUseStaticBFKey );
-	/** Used only when decoding init packet, immediately after BF decoding */
-	virtual bool         decodeXOR();
-public:
-	/** Static function used to decrypt RSA public key modulus from Init packet
-	 * \param data must be 128-bytes array */
-	static bool          unscramble_RSA_PubKeyMod( unsigned char *data );
-	/** Static function used to encrypt RSA public key modulus from Init packet
-	 * \param data must be 128-bytes array */
-	static bool          scramble_RSA_PubKeyMod( unsigned char *data );
 public:
 	/** Appends checksum to packet
-	 * \param append4bytes in Hellbound, set to true to keep packet data 8-byte border aligned */
-	virtual bool         appendChecksum( bool append4bytes );
+	 * \param append4bytes in Hellbound, set to true to keep packet data length 8-byte aligned */
+	virtual bool         appendChecksum( bool append4bytes = true );
 	/** Does padding of packet data by zeroes to 8-byte border (before BF encryption) */
 	virtual bool         padPacketTo8ByteLen();
 	/** In Hellbound, packets are padded by more 8 zero bytes after adding checksum & 4 bytes */
