@@ -217,9 +217,11 @@ public: // L2J aliases
 	virtual inline wchar_t       *readS() { return readUnicodeString(); }
 	/** Alias to readBytes() */
 	virtual        ByteArray     *readB( unsigned int count ); // not inline :)
-public: // parsers
+public: // parsers/creators
 	/** Parses packet. Must be overriden in child classes */
-	virtual bool           parse();
+	virtual bool parse();
+	/** Default method to create packet. Must be overriden in subclasses */
+	virtual bool create();
 	
 	// DEBUG funcs
 public:
