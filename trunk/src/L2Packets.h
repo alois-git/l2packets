@@ -38,6 +38,8 @@
 // these should be defined in net_io headers (in both)
 //#define L2P_NETWORK_DEBUGOUT
 
+#include "L2_versions.h"
+
 #include "base/ByteArray.h"
 #include "base/L2BasePacket.h"
 

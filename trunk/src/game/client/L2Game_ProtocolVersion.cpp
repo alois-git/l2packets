@@ -111,7 +111,7 @@ C->S Len  267
 FB 87 B9 4A 
 */
 
-bool L2Game_ProtocolVersion::createDefaultHellbound( unsigned int gameProtoVer /*= 831*/ )
+bool L2Game_ProtocolVersion::createDefaultHellbound( unsigned int gameProtoVer /*= 851*/ )
 {
 	this->writeReset();
 	// packet code 0x00 was in Interlude!!!!
@@ -141,7 +141,7 @@ bool L2Game_ProtocolVersion::createDefaultHellbound( unsigned int gameProtoVer /
 	return true;
 }
 
-bool L2Game_ProtocolVersion::createDefaultGracia1( unsigned int gameProtoVer /*= 851*/ )
+bool L2Game_ProtocolVersion::createDefaultGracia1( unsigned int gameProtoVer /*= 12*/ )
 {
 	this->writeReset();
 	// packet code 0x00 was in Interlude!!!!
@@ -172,7 +172,7 @@ bool L2Game_ProtocolVersion::createDefaultGracia1( unsigned int gameProtoVer /*=
 }
 
 // TODO: validate
-bool L2Game_ProtocolVersion::createDefaultGracia2( unsigned int gameProtoVer /*= 12*/ )
+bool L2Game_ProtocolVersion::createDefaultGracia2( unsigned int gameProtoVer /*= 17*/ )
 {
 	this->writeReset();
 	// packet code 0x00 was in Interlude!!!!
@@ -202,8 +202,7 @@ bool L2Game_ProtocolVersion::createDefaultGracia2( unsigned int gameProtoVer /*=
 	return true;
 }
 
-// TODO: in future
-bool L2Game_ProtocolVersion::createDefaultGracia3( unsigned int gameProtoVer /*= 15*/ ) // why 15 ? :)
+bool L2Game_ProtocolVersion::createDefaultGracia3( unsigned int gameProtoVer /*= 83*/ )
 {
 	this->writeReset();
 	// packet code 0x00 was in Interlude!!!!
@@ -228,7 +227,7 @@ bool L2Game_ProtocolVersion::createDefaultGracia3( unsigned int gameProtoVer /*=
 	0x01, 0x04, 0x54, 0x04,  0x00, 0x05, 0x02, 0x04, 0x54, 0x00, 0x09, 0x52, 0x53, 0x05, 0x04, 0x01, 
 	0x04, 0x05, 0x05, 0x01,  0x52, 0x51, 0x52, 0x0D, 0x06, 0x51, 0x08, 0x09, 0x54, 0x53, 0x00, 0x0D, 
 	0x01, 0x02, 0x03, 0x54,  0x53, 0x01, 0x05, 0x03, 0x08, 0x56, 0x54, 0x07, 0x02, 0x54, 0x0B, 0x06, 
-	0xFB, 0x87, 0xB9, 0x4A  }; // these last 4 bytes may differ
+	0x11, 0x5D, 0x1F, 0x60  }; // these last 4 bytes may differ
 	writeBytes( pv_array, sizeof(pv_array) );
 	return true;
 }

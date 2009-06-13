@@ -577,16 +577,18 @@ ByteArray *L2BasePacket::readB( unsigned int count )
 }
 
 // must be overrided in child classes
-bool L2BasePacket::parse()
+bool L2BasePacket::parse( L2_VERSION ver )
 {
+	UNREFERENCED_PARAMETER(ver);
 	this->readReset();
 	this->readUChar();
 	return true;
 }
 
 // must be overrided in child classes
-bool L2BasePacket::create()
+bool L2BasePacket::create( L2_VERSION ver )
 {
+	UNREFERENCED_PARAMETER(ver);
 	this->writeReset();
 	return true;
 }
