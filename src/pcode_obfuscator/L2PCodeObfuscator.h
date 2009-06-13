@@ -1,16 +1,7 @@
 #ifndef L2PCODEOBFUSCATOR_H_
 #define L2PCODEOBFUSCATOR_H_
 
-/** constant to set protocol version as Kamael */
-#define L2_VERSION_T1   0
-/** constant to set protocol version as Hellbound */
-#define L2_VERSION_T15  1
-/** constant to set protocol version as Gracia Part 1 */
-#define L2_VERSION_T2   2
-/** constant to set protocol version as Gracia Part 2 */
-#define L2_VERSION_T22  3
-/** constant to set protocol version as Gracia Part 3 */
-#define L2_VERSION_T23  4
+#include "../L2_versions.h"
 
 /** \class L2PCodeObfuscator
 * Manages opcode obfuscation engine.
@@ -30,7 +21,7 @@ public:
 	* \param new_version - specifies version to set. Must be one of: L2_VERSION_T1, L2_VERSION_T15, L2_VERSION_T2, L2_VERSION_T22, L2_VERSION_T23.
 	* \return none
 	*/
-	void           setVersionMode( int new_version ) { m_version = new_version; }
+	void           setVersionMode( L2_VERSION new_version ) { m_version = new_version; }
 	/** Set version Hellbound. Equvalent to setVersionMode( L2_VERSION_T15 ); */
 	void           setVersionMode_T15() { setVersionMode( L2_VERSION_T15 ); }
 	/** Set version Gracia Part 1. Equvalent to setVersionMode( L2_VERSION_T2 ); */
@@ -68,8 +59,8 @@ protected:
 	unsigned int   pseudo_rand();
 
 protected:
-	int            m_version; ///< game version.
-	int            m_enabled; ///< 1, if enabled (tables were initialized).
+	L2_VERSION     m_version; ///< game version.
+	int            m_enabled; ///< =1, if enabled (tables were initialized).
 
 	unsigned char *m_DecodeTable1;
 	unsigned char *m_DecodeTable2;

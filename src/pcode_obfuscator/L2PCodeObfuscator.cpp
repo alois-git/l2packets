@@ -3,7 +3,7 @@
 
 L2PCodeObfuscator::L2PCodeObfuscator()
 {
-	m_version = 0;
+	m_version = L2_VERSION_T1;
 	m_DecodeTable1 = m_DecodeTable2 = m_EncodeTable1 = m_EncodeTable2 = NULL;
 	m_seed = 0;
 	m_enabled = 0;
@@ -20,7 +20,7 @@ void L2PCodeObfuscator::clear()
 	if( m_DecodeTable2 ) free( m_DecodeTable2 );
 	if( m_EncodeTable1 ) free( m_EncodeTable1 );
 	if( m_EncodeTable2 ) free( m_EncodeTable2 );
-	m_version = 0;
+	m_version = L2_VERSION_T1;
 	m_DecodeTable1 = m_DecodeTable2 = m_EncodeTable1 = m_EncodeTable2 = NULL;
 	m_seed = 0;
 	m_enabled = 0;

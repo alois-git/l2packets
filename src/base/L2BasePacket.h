@@ -2,6 +2,7 @@
 #define H_L2BASEPACKET
 
 #include "ByteArray.h"
+#include "../L2_versions.h"
 
 /** \class L2BasePacket
 * Represents base class for all L2 packets. Provides way to create packets,
@@ -219,9 +220,9 @@ public: // L2J aliases
 	virtual        ByteArray     *readB( unsigned int count ); // not inline :)
 public: // parsers/creators
 	/** Parses packet. Must be overriden in child classes */
-	virtual bool parse();
+	virtual bool parse( L2_VERSION ver = L2_VERSION_T1 );
 	/** Default method to create packet. Must be overriden in subclasses */
-	virtual bool create();
+	virtual bool create( L2_VERSION ver = L2_VERSION_T1 );
 	
 	// DEBUG funcs
 public:
