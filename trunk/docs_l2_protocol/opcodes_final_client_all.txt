@@ -1,0 +1,331 @@
+State IN_GAME
+0e ProtocolVersion
+2b AuthLogin
+
+State IN_GAME
+00 Logout
+0c CharacterCreate
+0d CharacterDelete
+12 CharacterSelect
+13 NewCharacter
+36 RequestGotoLobby
+7b CharacterRestore
+
+Num usual opcodes: 170
+State IN_GAME
+00 Logout
+01 AttackRequest
+02 ...
+03 RequestStartPledgeWar
+04 RequestReplyStartPledgeWar
+05 RequestStopPledgeWar
+06 RequestReplyStopPledgeWar
+07 RequestSurrenderPledgeWar
+08 RequestReplySurrenderPledgeWar
+09 RequestSetPledgeCrest
+0a ...
+0b RequestGiveNickName
+0c ...
+0d ...
+0e ...
+0f MoveBackwardToLocation
+10 Say (unused)
+11 EnterWorld
+12 ...
+13 ...
+14 RequestItemList
+15 RequestEquipItem (unused)
+16 RequestUnEquipItem
+17 RequestDropItem
+18 ...
+19 UseItem
+1a TradeRequest
+1b AddTradeItem
+1c TradeDone
+1d ...
+1e ...
+1f Action
+20 ...
+21 ...
+22 RequestLinkHtml
+23 RequestBypassToServer
+24 RequestBBSwrite
+25 RequestCreatePledge (unused)
+26 RequestJoinPledge
+27 RequestAnswerJoinPledge
+28 RequestWithdrawalPledge
+29 RequestOustPledgeMember
+2a ...
+2b ...
+2c RequestGetItemFromPet
+2d ...
+2e RequestAllyInfo
+2f RequestCrystallizeItem
+30 RequestPrivateStoreManageSell
+31 SetPrivateStoreListSell
+32 AttackRequest
+33 RequestTeleportPacket (unused)
+34 RequestSocialAction
+35 ChangeMoveType2
+36 ChangeWaitType2
+37 RequestSellItem
+38 RequestMagicSkillList (unused)
+39 RequestMagicSkillUse
+3a Appearing
+3b SendWareHouseDepositList
+3c SendWareHouseWithDrawList
+3d RequestShortCutReg
+3e ...
+3f RequestShortCutDel
+40 RequestBuyItem
+41 RequestDismissPledge (unused)
+42 RequestJoinParty
+43 RequestAnswerJoinParty
+44 RequestWithDrawalParty
+45 RequestOustPartyMember
+46 RequestDismissParty (unused)
+47 CannotMoveAnymore
+48 RequestTargetCanceld
+49 Say2
+4a ...
+4b ...
+4c ...
+4d RequestPledgeMemberList
+4e ...
+4f RequestMagicList (unused)
+50 RequestSkillList
+51 ...
+52 MoveWithDelta
+53 RequestGetOnVehicle
+54 RequestGetOffVehicle
+55 AnswerTradeRequest
+56 RequestActionUse
+57 RequestRestart
+58 RequestSiegeInfo
+59 ValidatePosition
+5a RequestSEKCustom (unused)
+5b StartRotating (unused)
+5c FinishRotating (unused)
+5d ...
+5e RequestShowBoard
+5f RequestEnchantItem
+60 RequestDestroyItem
+61 ...
+62 RequestQuestList
+63 RequestQuestAbort
+64 ...
+65 RequestPledgeInfo
+66 RequestPledgeExtendedInfo
+67 RequestPledgeCrest
+68 ...
+69 ...
+6a ...
+6b RequestSendFriendMsg
+6c RequestShowMiniMap
+6d RequestSendMsnChatLog (unused)
+6e RequestRecordInfo
+6f RequestHennaEquip
+70 RequestHennaUnequipList (unused)
+71 RequestHennaUnequipInfo (unused)
+72 RequestHennaUnequip (unused)
+73 RequestAquireSkillInfo
+74 SendBypassBuildCmd
+75 RequestMoveToLocationInVehicle
+76 CannotMoveAnymoreInVehicle
+77 RequestFriendInvite
+78 RequestAnswerFriendInvite
+79 RequestFriendList
+7a RequestFriendDel
+7b ...
+7c RequestAquireSkill
+7d RequestRestartPoint
+7e RequestGMCommand
+7f RequestPartyMatchConfig
+80 RequestPartyMatchList
+81 RequestPartyMatchDetail
+82 ...
+83 RequestPrivateStoreBuy
+84 ...
+85 RequestTutorialLinkHtml
+86 RequestTutorialPassCmdToServer
+87 RequestTutorialQuestionMark
+88 RequestTutorialClientEvent
+89 RequestPetition
+8a RequestPetitionCancel
+8b RequestGmList
+8c RequestJoinAlly
+8d RequestAnswerJoinAlly
+8e AllyLeave
+8f AllyDismiss
+90 RequestDismissAlly
+91 RequestSetAllyCrest
+92 RequestAllyCrest
+93 RequestChangePetName
+94 RequestPetUseItem
+95 RequestGiveItemToPet
+96 RequestPrivateStoreQuitSell
+97 SetPrivateStoreMsgSell
+98 RequestPetGetItem
+99 RequestPrivateStoreManageBuy
+9a SetPrivateStoreList
+9b ...
+9c RequestPrivateStoreQuitBuy
+9d SetPrivateStoreMsgBuy
+9e ...
+9f RequestPrivateStoreSell
+a0 SendTimeCheckPacket (unused)
+a1 ...
+a2 ...
+a3 ...
+a4 ...
+a5 ...
+a6 RequestSkillCoolTime (unused)
+a7 RequestPackageSendableItemList
+a8 RequestPackageSend
+a9 RequestBlock
+aa RequestSiegeInfo
+ab RequestSiegeAttackerList
+ac RequestSiegeDefenderList
+ad RequestJoinSiege
+ae RequestConfirmSiegeWaitingList
+af RequestSetCastleSiegeTime (unused)
+b0 MultiSellChoose
+b1 NetPing (unused)
+b2 RequestRemainTime (unused)
+b3 BypassUserCmd
+b4 SnoopQuit
+b5 RequestRecipeBookOpen
+b6 RequestRecipeBookDestroy
+b7 RequestRecipeItemMakeInfo
+b8 RequestRecipeItemMakeSelf
+b9 RequestRecipeShopManageList (unused)
+ba RequestRecipeShopMessageSet
+bb RequestRecipeShopListSet
+bc RequestRecipeShopManageQuit
+bd RequestRecipeShopManageCancel (unused)
+be RequestRecipeShopMakeInfo
+bf RequestRecipeShopMakeItem
+c0 RequestRecipeShopManagePrev
+c1 ObserverReturn
+c2 RequestEvaluate
+c3 RequestHennaList
+c4 RequestHennaItemInfo
+c5 RequestBuySeed
+c6 DlgAnswer
+c7 RequestWearItem
+c8 RequestSSQStatus
+c9 PetitionVote (unused)
+ca ...
+cb GameGuardReply
+cc RequestPledgePower
+cd RequestMakeMacro
+ce RequestDeleteMacro
+cf RequestBuyProcure
+
+
+Double
+D0:01 RequestManorList
+D0:02 RequestProcureCropList
+D0:03 RequestSetSeed
+D0:04 RequestSetCrop
+D0:05 RequestWriteHeroWords
+D0:06 RequestExAskJoinMPCC
+D0:07 RequestExAcceptJoinMPCC
+D0:08 RequestExOustFromMPCC
+D0:09 RequestOustFromPartyRoom
+D0:0a RequestDismissPartyRoom
+D0:0b RequestWithdrawPartyRoom
+D0:0c RequestChangePartyLeader
+D0:0d RequestAutoSoulShot
+D0:0e RequestExEnchantSkillInfo
+D0:0f RequestExEnchantSkill
+D0:10 RequestExPledgeCrestLarge
+D0:11 RequestExSetPledgeCrestLarge
+D0:12 RequestPledgeSetAcademyMaster
+D0:13 RequestPledgePowerGradeList
+D0:14 RequestPledgeMemberPowerInfo
+D0:15 RequestPledgeSetMemberPowerGrade
+D0:16 RequestPledgeMemberInfo
+D0:17 RequestPledgeWarList
+D0:18 RequestExFishRanking
+D0:19 RequestPCCafeCouponUse
+D0:1b RequestDuelStart
+D0:1c RequestDuelAnswerStart
+D0:1d RequestExSetTutorial (unused)
+D0:1e RequestExRqItemLink
+D0:1f CanNotMoveAnymoreAirShip (unused)
+D0:20 MoveToLocationInAirShip
+D0:21 RequestKeyMapping
+D0:22 RequestSaveKeyMapping (unused)
+D0:23 RequestExRemoveItemAttribute
+D0:24 RequestSaveInventoryOrder
+D0:25 RequestExitPartyMatchingWaitingRoom
+D0:26 RequestConfirmTargetItem
+D0:27 RequestConfirmRefinerItem
+D0:28 RequestConfirmGemStone
+D0:29 RequestOlympiadObserverEnd
+D0:2a RequestCursedWeaponList
+D0:2b RequestCursedWeaponLocation
+D0:2c RequestPledgeReorganizeMember
+D0:2d RequestExMPCCShowPartyMembersInfo
+D0:2e RequestOlympiadMatchList
+D0:2f RequestAskJoinPartyRoom
+D0:30 AnswerJoinPartyRoom
+D0:31 RequestListPartyMatchingWaitingRoom
+D0:32 RequestExEnchantSkillSafe
+D0:33 RequestExEnchantSkillUntrain
+D0:34 RequestExEnchantSkillRouteChange
+D0:35 RequestExEnchantItemAttribute
+D0:36 ExGetOnAirShip
+D0:38 MoveToLocationAirShip (unused)
+D0:39 RequestBidItemAuction (unused)
+D0:3a RequestInfoItemAuction (unused)
+D0:3b RequestExChangeName (unused)
+D0:3c RequestAllCastleInfo
+D0:3d RequestAllFortressInfo
+D0:3e RequestAllAgitInfo
+D0:3f RequestFortressSiegeInfo
+D0:40 RequestGetBossRecord
+D0:41 RequestRefine
+D0:42 RequestConfirmCancelItem
+D0:43 RequestRefineCancel
+D0:44 RequestExMagicSkillUseGround
+D0:45 RequestDuelSurrender
+D0:46 RequestExEnchantSkillInfoDetail
+D0:48 RequestFortressMapInfo
+D0:49 RequestPVPMatchRecord (unused)
+D0:4a SetPrivateStoreWholeMsg
+D0:4b RequestDispel
+D0:4c RequestExTryToPutEnchantTargetItem
+D0:4d RequestExTryToPutEnchantSupportItem
+D0:4e RequestExCancelEnchantItem
+D0:4f RequestChangeNicknameColor
+D0:50 RequestResetNickname
+
+Triple
+D0:51:00 RequestBookMarkSlotInfo
+D0:51:01 RequestSaveBookMarkSlot
+D0:51:02 RequestModifyBookMarkSlot
+D0:51:03 RequestDeleteBookMarkSlot
+D0:51:04 RequestTeleportBookMark
+D0:51:05 RequestChangeBookMarkSlot (unused)
+D0:51:52 RequestWithDrawPremiumItem (unused)
+D0:51:53 RequestJump (unused)
+D0:51:54 RequestStartShowCrataeCubeRank (unused)
+D0:51:55 RequestStopShowCrataeCubeRank (unused)
+D0:51:56 NotifyStartMiniGame (unused)
+D0:51:57 RequestJoinDominionWar (unused)
+D0:51:58 RequestDominionInfo (unused)
+D0:51:59 RequestExCleftEnter (unused)
+D0:51:5a RequestExBlockGameEnter (unused)
+D0:51:5b EndScenePlayer (unused)
+D0:51:5c RequestExBlockGameVote (unused)
+D0:51:63 RequestSeedPhase (unused)
+D0:51:ee RequestChangePartyLeader (unused)
+
+Super commands
+4A:00 SuperCmdCharacterInfo (unused)
+4A:01 SuperCmdSummonCmd (unused)
+4A:02 SuperCmdServerStatus (unused)
+4A:03 SendL2ParamSetting (unused)
+

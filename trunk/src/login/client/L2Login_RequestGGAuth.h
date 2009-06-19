@@ -10,8 +10,10 @@ public:
 	L2Login_RequestGGAuth( const unsigned char *bytes, unsigned int length );
 	
 public:
-	// sesionID - 4 bytes array
-	virtual bool create( unsigned char *sessionID );
+	virtual bool create( L2_VERSION ver = L2_VERSION_T1 );
+	virtual bool parse( L2_VERSION ver = L2_VERSION_T1 );
+public:
+	unsigned char sessionId[4];
 };
 
 #endif /*LOGIN_REQUESTGGAUTH_H_*/

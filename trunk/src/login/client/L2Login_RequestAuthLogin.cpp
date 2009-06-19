@@ -94,3 +94,31 @@ bool L2Login_RequestAuthLogin::block_encode_RSA( unsigned char *block , unsigned
 	rsa = NULL;
 	return retVal;
 }
+
+bool L2Login_RequestAuthLogin::block_decode_RSA( unsigned char *block , unsigned int blockSize,
+		const unsigned char *RSA_pubKeyMod )
+{
+	if( !block || (blockSize<1) || !RSA_pubKeyMod ) return false;
+	bool retVal = true;
+	unsigned char blockE[128];
+	memset( blockE, 0, sizeof(blockE) );
+	// allocate & initialize RSA struct
+	RSA *rsa = RSA_new();
+	// set exponent and n
+	rsa->e = BN_new();
+	BN_dec2bn( &(rsa->e), "65537" ); // exponent is constant, 65537
+	rsa->n = BN_bin2bn( RSA_pubKeyMod, 128, NULL ); // n is taken from unscrambled RSA public key modulus from Init packet
+	int res = RSA_private_decrypt( 128, block, blockE, rsa, RSA_NO_PADDING );
+	if( res == -1 )
+	{
+		retVal = false;
+		fprintf( stderr, "RSA_private_decrypt res: %d\n", res );
+		ERR_print_errors_fp( stderr );
+	}
+	// store result...
+	memcpy( block, blockE, 128 );
+	// free RSA struct
+	RSA_free( rsa );
+	rsa = NULL;
+	return retVal;
+}

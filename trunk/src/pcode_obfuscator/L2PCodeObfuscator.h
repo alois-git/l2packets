@@ -28,6 +28,8 @@ public:
 	void           setVersionMode_T2()  { setVersionMode( L2_VERSION_T2  ); }
 	/** Set version Gracia Part 2. Equvalent to setVersionMode( L2_VERSION_T22 ); */
 	void           setVersionMode_T22() { setVersionMode( L2_VERSION_T22 ); }
+	/** Set version Gracia Part 2. Equvalent to setVersionMode( L2_VERSION_T23 ); */
+	void           setVersionMode_T23() { setVersionMode( L2_VERSION_T23 ); }
 	
 	/** Frees object memory
 	* \return none
@@ -52,9 +54,14 @@ public:
 	*/
 	int            encodeIDs( unsigned char *packet_data_raw );
 
+	bool           decodeOpcode( unsigned char &singleOpcode, unsigned short &doubleOpcode );
+	bool           encodeOpcode( unsigned char &singleOpcode, unsigned short &doubleOpcode );
+	bool           decodeOpcode( unsigned char &singleOpcode, unsigned short &doubleOpcode, unsigned short &tripleOpcode );
+	bool           encodeOpcode( unsigned char &singleOpcode, unsigned short &doubleOpcode, unsigned short &tripleOpcode );
+
 protected:
 	/** Internal function used to mix opcode tables */
-	void           pseudo_srand( unsigned int seed ) { m_seed = seed; }
+	void           pseudo_srand( unsigned int seed );
 	/** Internal function - generates next pseudo random value. Used to mix opcode tables */
 	unsigned int   pseudo_rand();
 
@@ -64,12 +71,16 @@ protected:
 
 	unsigned char *m_DecodeTable1;
 	unsigned char *m_DecodeTable2;
+	unsigned char *m_DecodeTable3;
+
 	unsigned char *m_EncodeTable1;
 	unsigned char *m_EncodeTable2;
+	unsigned char *m_EncodeTable3;
 
 	unsigned int   m_seed; ///< current PRNG seed
 	unsigned int   m_s1; ///< size of 1-byte opcode obfuscator table (depends on version)
 	unsigned int   m_s2; ///< size of 2-byte opcode obfuscator table (depends on version)
+	unsigned int   m_s3; ///< size of 2-byte opcode obfuscator table (depends on version)
 };
 
 #endif /* L2PCODEOBFUSCATOR_H_ */

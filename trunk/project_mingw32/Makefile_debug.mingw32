@@ -23,7 +23,7 @@ DEL_DIR       = rmdir /s /q
 WINDRES       = windres -O coff
 CFLAGS        = -g -W -Wall
 DEFINES       = -D_DEBUG -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0500 
-INC_DIRS      = -I$(SRC) -I../include -I../src/sqlite3
+INC_DIRS      = -I$(SRC) -I../src/sqlite3
 LIB           = ar
 LIBFLAGS      = rsc
 CHK_DIR_EXISTS= if not exist

@@ -57,11 +57,11 @@ public: // for debugging
 public: // easily create/parse Init packet using public class data members
 	/** Creates Init packet using public data members: p_sessionId, p_protoVer, p_RSA_pubKeyMod, p_GG_shit, p_BF_dyn_key.
 	 * Can be used by server app. */
-	virtual bool create();
+	virtual bool create( L2_VERSION ver = L2_VERSION_T1 );
 	/** Parses Init packet, received from server. Result will be in public data members: 
 	 * p_sessionId, p_protoVer, p_RSA_pubKeyMod, p_GG_shit, p_BF_dyn_key.\n
 	 * Performs BF & XOR decryption, reading data, unscrambles RSA public key modulus. */
-	virtual bool parse();
+	virtual bool parse( L2_VERSION ver = L2_VERSION_T1 );
 public:
 	unsigned char p_sessionId[4]; ///< session ID, used in some packets later in session.
 	unsigned int  p_protoVer; ///< login server protocol version. For >= Interlude it must be 0x0000c621
