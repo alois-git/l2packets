@@ -17,6 +17,12 @@ public:
 	unsigned int read_reason();
 	// str must point to buffer at 32 bytes long
 	static void getReasonStr( unsigned int code, char *str );
+	void getReasonStr( char *str );
+public:
+	virtual bool parse( L2_VERSION ver = L2_VERSION_T1 );
+	virtual bool create( L2_VERSION ver = L2_VERSION_T1 );
+public:
+	unsigned int responseCode;
 };
 
 #endif /*L2LOGIN_ACCOUNTKICKED_H_*/

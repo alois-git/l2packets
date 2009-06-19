@@ -223,8 +223,9 @@ void L2Login_Init::_initPublicMembers()
 	memset( p_BF_dyn_key, 0, sizeof(p_BF_dyn_key) );
 }
 
-bool L2Login_Init::create()
+bool L2Login_Init::create( L2_VERSION ver )
 {
+	UNREFERENCED_PARAMETER(ver); // login server packets may ignore this
 	//int i;
 	scramble_RSA_PubKeyMod( p_RSA_pubKeyMod );
 	// write data
@@ -243,8 +244,9 @@ bool L2Login_Init::create()
 	return false;
 }
 
-bool L2Login_Init::parse()
+bool L2Login_Init::parse( L2_VERSION ver )
 {
+	UNREFERENCED_PARAMETER(ver); // login server packets may ignore this
 	if( getPacketSize() != 186 ) return false;
 	if( getPacketType() != 0x00 ) return false;
 	// first remove blowfish using static BF key (hardcoded)

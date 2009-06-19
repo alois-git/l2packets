@@ -23,7 +23,7 @@ DEL_DIR       = rmdir
 WINDRES       = windres -O coff
 CFLAGS        = -W -Wall
 DEFINES       = -DSQLITE_THREADSAFE=1
-INC_DIRS      = -I$(SRC) -I../include -I../src/sqlite3
+INC_DIRS      = -I$(SRC) -I../src/sqlite3
 LIB           = ar
 LIBFLAGS      = rsc
 CHK_DIR_EXISTS= if [ -d

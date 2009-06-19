@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src\sqlite3;..\include"
+				AdditionalIncludeDirectories="..\src\sqlite3"
 				PreprocessorDefinitions="_DEBUG"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="false"
@@ -107,7 +107,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="..\src\sqlite3;..\include"
+				AdditionalIncludeDirectories="..\src\sqlite3"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
@@ -644,6 +644,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\src\L2_versions.h"
+			>
+		</File>
 		<File
 			RelativePath="..\src\L2Packets.h"
 			>

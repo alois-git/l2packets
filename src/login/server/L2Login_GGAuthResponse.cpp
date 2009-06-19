@@ -30,3 +30,23 @@ unsigned int L2Login_GGAuthResponse::read_Response()
 	this->getPacketType();
 	return this->readUInt();
 }
+
+bool L2Login_GGAuthResponse::parse( L2_VERSION ver )
+{
+	UNREFERENCED_PARAMETER(ver);
+	this->ggAuthResponse = read_Response();
+	return true;
+}
+
+bool L2Login_GGAuthResponse::create( L2_VERSION ver )
+{
+	UNREFERENCED_PARAMETER(ver);
+	this->writeReset();
+	writeC( 0x0b ); // packet code
+    writeD( ggAuthResponse );
+    writeD( 0x00 );
+    writeD( 0x00 );
+    writeD( 0x00 );
+    writeD( 0x00 );
+	return true;
+}

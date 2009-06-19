@@ -1,0 +1,8 @@
+19 00                      // plen = 25
+2E                         // pcode
+01                         // 00 - wrong proto, 01 - proto OK
+B6 4D 20 15  CE 0E BC 7A   // 1st 8 bytes of crypto key
+01 00 00 00                // 0x01
+09 00 00 00                // game serverID
+00                         // wtf?
+E3 D1 10 2F                // obfuscation key
