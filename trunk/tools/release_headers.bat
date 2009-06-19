@@ -27,6 +27,7 @@ echo Created dir tree
 
 :copy
 copy %src%\L2Packets.h %dn%\L2Packets.h > NUL
+copy %src%\L2_versions.h %dn%\L2_versions.h > NUL
 rem base
 copy %src%\base\ByteArray.h %dn%\base\ByteArray.h > NUL
 copy %src%\base\L2BasePacket.h %dn%\base\L2BasePacket.h > NUL

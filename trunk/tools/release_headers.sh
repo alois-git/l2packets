@@ -27,6 +27,7 @@ echo "Created dir tree"
 
 # main header
 cp $src/L2Packets.h $dn/L2Packets.h
+cp $src/L2_versions.h $dn/L2_versions.h
 # base
 cp $src/base/ByteArray.h    $dn/base/ByteArray.h
 cp $src/base/L2BasePacket.h $dn/base/L2BasePacket.h
