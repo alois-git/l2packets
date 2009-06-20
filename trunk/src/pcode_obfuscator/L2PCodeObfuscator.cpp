@@ -182,7 +182,7 @@ bool L2PCodeObfuscator::decodeOpcode( unsigned char &singleOpcode, unsigned shor
 	unsigned short prev_doubleOpcode = doubleOpcode;
 	if( singleOpcode >= m_s1 ) return false;
 	singleOpcode = m_DecodeTable1[ singleOpcode ];
-	if( prev_singleOpcode == 0xD0 ) // D0:xx
+	if( singleOpcode == 0xD0 ) // D0:xx
 	{
 		if( doubleOpcode >= m_s2 ) return false;
 		doubleOpcode = (unsigned short)m_DecodeTable2[ doubleOpcode ];
