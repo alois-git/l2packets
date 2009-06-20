@@ -178,8 +178,8 @@ bool L2PCodeObfuscator::encodeOpcode( unsigned char &singleOpcode, unsigned shor
 
 bool L2PCodeObfuscator::decodeOpcode( unsigned char &singleOpcode, unsigned short &doubleOpcode, unsigned short &tripleOpcode )
 {
-	unsigned char  prev_singleOpcode = singleOpcode;
-	unsigned short prev_doubleOpcode = doubleOpcode;
+	//unsigned char  prev_singleOpcode = singleOpcode;
+	//unsigned short prev_doubleOpcode = doubleOpcode;
 	if( singleOpcode >= m_s1 ) return false;
 	singleOpcode = m_DecodeTable1[ singleOpcode ];
 	if( singleOpcode == 0xD0 ) // D0:xx
@@ -189,7 +189,8 @@ bool L2PCodeObfuscator::decodeOpcode( unsigned char &singleOpcode, unsigned shor
 		// TODO: Gracia Final triple opcodes
 		if( m_version == L2_VERSION_T23 )
 		{
-			if( prev_doubleOpcode == 0x51 ) // D0:51:xx
+			//if( prev_doubleOpcode == 0x51 ) // D0:51:xx
+			if( doubleOpcode == 0x51 ) // D0:51:xx
 			{
 				if( tripleOpcode >= m_s3 ) return false;
 				tripleOpcode = (unsigned short)m_DecodeTable3[ tripleOpcode ];
