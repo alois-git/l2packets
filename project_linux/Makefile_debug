@@ -76,6 +76,8 @@ OBJECTS       = $(BUILDDIR)/ByteArray.o $(BUILDDIR)/L2BasePacket.o \
 	$(BUILDDIR)/L2PacketNames.o \
 	$(BUILDDIR)/L2PacketNames_client.o \
 	$(BUILDDIR)/L2PacketNames_server.o \
+	$(BUILDDIR)/L2PacketNames_client_t23.o \
+	$(BUILDDIR)/L2PacketNames_server_t23.o \
 	$(BUILDDIR)/L2PCodeObfuscator.o \
 	$(BUILDDIR)/sqlite3.o \
 	$(BUILDDIR)/os_abstraction.o
@@ -274,6 +276,13 @@ $(BUILDDIR)/L2PacketNames_server.o: $(PCHDEPS) $(SRC)/packetNames/L2PacketNames_
 	echo [C++] $(SRC)/packetNames/L2PacketNames_server.cpp
 	$(COMPILE) $(SRC)/packetNames/L2PacketNames_server.cpp -o $(BUILDDIR)/L2PacketNames_server.o
 
+$(BUILDDIR)/L2PacketNames_client_t23.o: $(PCHDEPS) $(SRC)/packetNames/L2PacketNames_client_t23.cpp $(SRC)/packetNames/L2PacketNames.h
+	echo [C++] $(SRC)/packetNames/L2PacketNames_client_t23.cpp
+	$(COMPILE) $(SRC)/packetNames/L2PacketNames_client_t23.cpp -o $(BUILDDIR)/L2PacketNames_client_t23.o
+
+$(BUILDDIR)/L2PacketNames_server_t23.o: $(PCHDEPS) $(SRC)/packetNames/L2PacketNames_server_t23.cpp $(SRC)/packetNames/L2PacketNames.h
+	echo [C++] $(SRC)/packetNames/L2PacketNames_server_t23.cpp
+	$(COMPILE) $(SRC)/packetNames/L2PacketNames_server_t23.cpp -o $(BUILDDIR)/L2PacketNames_server_t23.o
 
 $(BUILDDIR)/L2PCodeObfuscator.o: $(PCHDEPS) $(SRC)/pcode_obfuscator/L2PCodeObfuscator.cpp $(SRC)/pcode_obfuscator/L2PCodeObfuscator.h
 	echo [C++] $(SRC)/pcode_obfuscator/L2PCodeObfuscator.cpp

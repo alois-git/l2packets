@@ -584,7 +584,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\packetNames\L2PacketNames_client_t23.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\packetNames\L2PacketNames_server.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\packetNames\L2PacketNames_server_t23.cpp"
 				>
 			</File>
 		</Filter>
