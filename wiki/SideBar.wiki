@@ -1,0 +1,10 @@
+About:
+  * [http://code.google.com/p/l2packets/wiki/AboutL2Packets About L2Packets]
+  * [http://code.google.com/p/l2packets/wiki/L2Packets Library features]
+
+Compiling and installing:
+  * [http://code.google.com/p/l2packets/wiki/Compiling Compiling]
+  * [http://code.google.com/p/l2packets/wiki/Using Linking to application]
+
+Docs:
+  * TODO
