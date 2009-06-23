@@ -1,15 +1,16 @@
-#summary Using libary
+#summary Linking to application
 #labels Phase-Implementation
-== TODO: ==
 
 == Linking ==
-=== Win32-mingw ===
+=== Win32-mingw, Linux ===
 Link application with libL2Packets.a. 
 Also, because library uses OpenSSL crypto API, you will need openSSL's libs for mingw. 
 OpenSSL may require linking to winsock, so add also ws2_32. 
 You will have something like that:
 {{{g++ .... -lL2Packets -lssl32 -leay32 -lws2_32 ...}}} or
 {{{g++ .... -lL2Packets -lssl -lcrypto -lws2_32 ...}}}.
+
+Under Linux, command line will look the same, except that you don't need -lws2_32; and openssl headers/libs usually already exist in your system.
 
 === Win32-VC ===
 Link application with L2Packets.lib. 
