@@ -1,5 +1,3 @@
-#L2Packets
-
 = Introduction =
 
 C++ Library to work with Lineage II MMORPG game protocol.
