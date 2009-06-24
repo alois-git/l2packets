@@ -58,6 +58,7 @@ void L2Packets_GetL2PacketName(
 	switch( l2_version )
 	{
 	case L2_VERSION_T1:
+	case L2_VERSION_T15:
 	case L2_VERSION_T2:
 	case L2_VERSION_T22:
 		{

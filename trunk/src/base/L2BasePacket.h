@@ -4,6 +4,10 @@
 #include "ByteArray.h"
 #include "../L2_versions.h"
 
+#ifndef UNREFERENCED_PARAMETER
+#define UNREFERENCED_PARAMETER(x) (x);
+#endif
+
 /** \class L2BasePacket
 * Represents base class for all L2 packets. Provides way to create packets,
 * write data to packets, read data from them.\n
