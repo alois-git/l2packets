@@ -5,7 +5,7 @@
 #include "../L2_versions.h"
 
 #ifndef UNREFERENCED_PARAMETER
-#define UNREFERENCED_PARAMETER(x) (x);
+#define UNREFERENCED_PARAMETER(x) // will produce compiler warnings, anyway
 #endif
 
 /** \class L2BasePacket
