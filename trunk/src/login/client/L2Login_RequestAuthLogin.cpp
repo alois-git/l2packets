@@ -122,3 +122,10 @@ bool L2Login_RequestAuthLogin::block_decode_RSA( unsigned char *block , unsigned
 	rsa = NULL;
 	return retVal;
 }
+
+bool L2Login_RequestAuthLogin::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
+{
+	UNREFERENCED_PARAMETER(ver);
+	fprintf( stderr, "L2Login_RequestAuthLogin::parse() not implemented!\n" );
+	return false;
+}

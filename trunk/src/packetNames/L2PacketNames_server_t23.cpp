@@ -56,11 +56,11 @@ void L2PacketNames_InitServer_t23()
 	strcpy( l2_packet_names_server_t23[43], "CreatePledge" ); // 2b
 	strcpy( l2_packet_names_server_t23[44], "AskJoinPledge" ); // 2c
 	strcpy( l2_packet_names_server_t23[45], "JoinPledge" ); // 2d
-	strcpy( l2_packet_names_server_t23[46], "VersionCheck" ); // 2e
-	strcpy( l2_packet_names_server_t23[47], "MTL" ); // 2f
-	strcpy( l2_packet_names_server_t23[48], "NS" ); // 30
-	strcpy( l2_packet_names_server_t23[49], "CI" ); // 31
-	strcpy( l2_packet_names_server_t23[50], "UI" ); // 32
+	strcpy( l2_packet_names_server_t23[46], "KeyPacket" ); // 2e
+	strcpy( l2_packet_names_server_t23[47], "MoveToLocation" ); // 2f
+	strcpy( l2_packet_names_server_t23[48], "NpcSay" ); // 30
+	strcpy( l2_packet_names_server_t23[49], "CharInfo" ); // 31
+	strcpy( l2_packet_names_server_t23[50], "UserInfo" ); // 32
 	strcpy( l2_packet_names_server_t23[51], "Attack" ); // 33
 	strcpy( l2_packet_names_server_t23[52], "WithdrawalPledge" ); // 34
 	strcpy( l2_packet_names_server_t23[53], "OustPledgeMember" ); // 35
