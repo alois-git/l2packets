@@ -248,12 +248,13 @@ bool L2Login_Init::parse( L2_VERSION ver )
 {
 	UNREFERENCED_PARAMETER(ver); // login server packets may ignore this
 	if( getPacketSize() != 186 ) return false;
-	if( getPacketType() != 0x00 ) return false;
+	//if( getPacketType() != 0x00 ) return false; // >< we cannot know packet type before decoding
 	// first remove blowfish using static BF key (hardcoded)
 	if( !decodeBlowfish( true ) ) return false;
 	if( !decodeXOR() ) return false;
 	// read data
 	_initPublicMembers();
+	if( getPacketType() != 0x00 ) return false;
 	if( !read_SessionID( p_sessionId ) ) return false;
 	p_protoVer = read_ProtoVer();
 	if( !read_RSA_pubKeyMod( p_RSA_pubKeyMod ) ) return false;
