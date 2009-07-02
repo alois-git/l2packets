@@ -23,6 +23,11 @@ public:
 	          Dynamic BF key must be set before by setDynamicBFKey()
 	 * \return success status */
 	virtual bool         decodeBlowfish( bool bUseStaticBFKey );
+
+	/** Does Blowfish decryption of packet data.
+	 * \param blowfishKey - 16 bytes array, blowfish key to use to decrypt packet data
+	 * \return success status */
+	virtual bool         decodeBlowfish( unsigned char *blowfishKey );
 public:
 	/** Appends checksum to packet
 	 * \param append4bytes in Hellbound, set to true to keep packet data length 8-byte aligned */
@@ -40,6 +45,13 @@ public:
 	          Dynamic BF key must be set before by setDynamicBFKey()
 	 * \return success status */
 	virtual bool         encodeBlowfish( bool bUseStaticBFKey );
+
+public:
+	/** Encrypts packet with Blowfish, does all padding, appends checksum - after that packet may be sent
+	 * \param blowfishKey - Blowfish key to use for encryption (16 bytes)
+	 * \return success status */
+	virtual bool encodeAndPrepareToSend( unsigned char *blowfishKey );
+
 protected:
 	/** Also initializes STATIC_BF_KEY, which is constant. */
 	virtual void _initNull();

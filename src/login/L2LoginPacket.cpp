@@ -131,6 +131,12 @@ bool L2LoginPacket::setDynamicBFKey( unsigned char *newKey, unsigned int newKeyL
 	return true;
 }
 
+bool L2LoginPacket::decodeBlowfish( unsigned char *blowfishKey )
+{
+	setDynamicBFKey( blowfishKey, 16 );
+	return decodeBlowfish( false );
+}
+
 /*bool L2LoginPacket::appendChecksum()
 {
 	// save packet len bytes
@@ -338,3 +344,11 @@ bool L2LoginPacket::encodeBlowfish( bool bUseStaticBFKey )
 	return true;
 }
 
+bool L2LoginPacket::encodeAndPrepareToSend( unsigned char *blowfishKey )
+{
+	if( !setDynamicBFKey( blowfishKey, 16 ) ) return false;
+	if( !padPacketTo8ByteLen() ) return false;
+	appendChecksum( true );
+	appendMore8Bytes();
+	return encodeBlowfish( false );
+}
