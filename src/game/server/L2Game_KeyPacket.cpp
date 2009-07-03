@@ -1,22 +1,6 @@
 #include "stdafx.h"
 #include "L2Game_KeyPacket.h"
 
-/* L2J:
-public void writeImpl()
-{
-	writeC(0x2e);
-	writeC(0x01);
-	for (int i = 0; i < 8; i++)
-	{
-		writeC(_key[i]);
-	}
-	writeD(0x01);
-	writeD(0x01);
-	writeC(0x00);
-	writeD(0x00);
-}
-*/
-
 /**
  * ==========================================
 Retail NCSoft
@@ -77,9 +61,6 @@ void L2Game_KeyPacket::createInitialHellboundKey(
 {
 	if( !keyPacket || !keyResult ) return;
 	// first 8 bytes of key are from KeyPacket
-	//int i;
-	//for( i=0; i<8; i++ ) keyResult[i] = keyPacket[i];
-	// romeved for() loop - speed optimisation
 	keyResult[0] = keyPacket[0];
 	keyResult[1] = keyPacket[1];
 	keyResult[2] = keyPacket[2];
@@ -88,7 +69,7 @@ void L2Game_KeyPacket::createInitialHellboundKey(
 	keyResult[5] = keyPacket[5];
 	keyResult[6] = keyPacket[6];
 	keyResult[7] = keyPacket[7];
-	// last 8 bytes are constant in T1/T1.5/T2...
+	// last 8 bytes are constant in T1/T1.5/T2/T2.2/T2.3...
 	keyResult[8]  = (unsigned char)0xc8;
 	keyResult[9]  = (unsigned char)0x27;
 	keyResult[10] = (unsigned char)0x93;
@@ -97,4 +78,31 @@ void L2Game_KeyPacket::createInitialHellboundKey(
 	keyResult[13] = (unsigned char)0x6c;
 	keyResult[14] = (unsigned char)0x31;
 	keyResult[15] = (unsigned char)0x97;
+}
+
+/*** Format:
+19 00                      // plen = 25
+2E                         // pcode
+01                         // 00 - wrong proto, 01 - proto OK
+B6 4D 20 15  CE 0E BC 7A   // 1st 8 bytes of crypto key
+01 00 00 00                // 0x01
+09                         // game serverID
+00 00 00 00                // wtf?
+E3 D1 10 2F                // obfuscation key  ***/
+bool L2Game_KeyPacket::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
+{
+	UNREFERENCED_PARAMETER( ver );
+	readReset();
+	if( !canReadBytes( 23 ) ) return false; // packet size is 25 bytes O_o
+	getPacketType();
+	this->p_protocolIsOK = readUChar();  // 0x01 - proto OK, 0x00 - proto not supported
+	readBytes( this->p_initialKey, 8 );  // first 8 bytes of XOR key
+	readD();                             // 0x00000001
+	this->p_serverId = readUChar();      // server ID
+	readD();                             // 0x00000000;
+	this->p_obfuscatorSeed = readUInt(); // obfuscator seed
+	// add last 8 bytes of XOR key - they are constant
+	createInitialHellboundKey( p_initialKey, p_initialKey );
+	//
+	return true;
 }

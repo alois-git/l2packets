@@ -24,6 +24,7 @@ struct CharSelectInfoBlock
 	unsigned int level;
 	unsigned int karma;
 	unsigned int PK_kills;
+	unsigned int PVP_kills;
 	unsigned int iid_hair_all;
 	unsigned int iid_R_ear;
 	unsigned int iid_L_ear;
@@ -43,6 +44,7 @@ struct CharSelectInfoBlock
 	unsigned int iid_hair_2;
 	unsigned int iid_R_bracelet;
 	unsigned int iid_L_bracelet;
+	unsigned int iid_belt; // T2.3
 	unsigned int hairStyle;
 	unsigned int hairColor;
 	unsigned int face;
@@ -65,7 +67,7 @@ public:
 public:
 	bool read_nChars( unsigned int *ret );
 	bool read_server_maxChars( unsigned int *ret ); // ret can be NULL
-	bool read_next_charSelectInfoBlock( struct CharSelectInfoBlock *c );
+	bool read_next_charSelectInfoBlock( L2_VERSION l2_version, struct CharSelectInfoBlock *c );
 };
 
 #endif /*L2GAME_CHARSELECTIONINFO_H_*/

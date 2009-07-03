@@ -19,6 +19,13 @@ public:
 	static void createInitialHellboundKey(
 		const unsigned char *keyPacket,
 		unsigned char *keyResult );
+public:
+	virtual bool parse( L2_VERSION ver = L2_VERSION_T1 );
+public:
+	unsigned char p_protocolIsOK;
+	unsigned char p_initialKey[16];
+	unsigned char p_serverId;
+	unsigned int  p_obfuscatorSeed;
 };
 
 #endif /*L2GAME_KEYPACKET_H_*/

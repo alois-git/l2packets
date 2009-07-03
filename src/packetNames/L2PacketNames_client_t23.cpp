@@ -27,9 +27,9 @@ void L2PacketNames_InitClient_t23()
 	strcpy( l2_packet_names_client_t23[9], "RequestSetPledgeCrest" );
 	strcpy( l2_packet_names_client_t23[10], "..." ); // unused
 	strcpy( l2_packet_names_client_t23[11], "RequestGiveNickName" );
-	strcpy( l2_packet_names_client_t23[12], "ProtocolVersion" );
+	strcpy( l2_packet_names_client_t23[12], "..." ); // unused
 	strcpy( l2_packet_names_client_t23[13], "..." ); // unused
-	strcpy( l2_packet_names_client_t23[14], "..." ); // unused
+	strcpy( l2_packet_names_client_t23[14], "ProtocolVersion" );
 	strcpy( l2_packet_names_client_t23[15], "MoveBackwardToLocation" );
 	strcpy( l2_packet_names_client_t23[16], "Say (unused)" );
 	strcpy( l2_packet_names_client_t23[17], "EnterWorld" );

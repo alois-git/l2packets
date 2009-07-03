@@ -163,7 +163,7 @@ bool L2Game_CharSelectionInfo::read_server_maxChars( unsigned int *ret )
 	return true;
 }
 
-bool L2Game_CharSelectionInfo::read_next_charSelectInfoBlock( struct CharSelectInfoBlock *c )
+bool L2Game_CharSelectionInfo::read_next_charSelectInfoBlock( L2_VERSION l2_version, struct CharSelectInfoBlock *c )
 {
 	if( !c ) return false;
 	memset( c, 0, sizeof(CharSelectInfoBlock) );
@@ -175,15 +175,13 @@ bool L2Game_CharSelectionInfo::read_next_charSelectInfoBlock( struct CharSelectI
 	wstr = this->readUnicodeStringPtr();
 	if( !wstr ) return false;
 	wcsncpy( c->charName, wstr, 31 );
-	//free( wstr ); // no free
-	//wstr = NULL;
 	c->charID = this->readUInt();
 	wstr = this->readUnicodeStringPtr();
 	if( !wstr ) return false;
 	wcsncpy( c->accountName, wstr, 31 );
 	c->sessionID = readUInt();
 	c->clanID = readUInt();
-	readUInt();
+	readUInt(); // 0x00
 	c->sex = readUInt();
 	c->race = readUInt();
 	c->baseClassID = readUInt();
@@ -198,7 +196,8 @@ bool L2Game_CharSelectionInfo::read_next_charSelectInfoBlock( struct CharSelectI
 	c->level = readUInt();
 	c->karma = readUInt();
 	c->PK_kills = readUInt();
-	for( i=0; i<8; i++ ) readUInt();
+	c->PVP_kills = readUInt();
+	for( i=0; i<7; i++ ) readUInt(); // 7 0x00
 	c->iid_hair_all = readUInt();
 	c->iid_R_ear = readUInt();
 	c->iid_L_ear = readUInt();
@@ -218,7 +217,8 @@ bool L2Game_CharSelectionInfo::read_next_charSelectInfoBlock( struct CharSelectI
 	c->iid_hair_2 = readUInt();
 	c->iid_R_bracelet = readUInt();
 	c->iid_L_bracelet = readUInt();
-	for( i=0; i<6; i++ ) readUInt();
+	for( i=0; i<6; i++ ) readUInt(); // DECO1 .. DECO6
+	if( l2_version == L2_VERSION_T23 ) c->iid_belt = readUInt(); // Gracia Final T2.3
 	c->hairStyle = readUInt();
 	c->hairColor = readUInt();
 	c->face = readUInt();
