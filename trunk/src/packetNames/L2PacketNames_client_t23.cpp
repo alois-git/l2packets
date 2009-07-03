@@ -27,13 +27,13 @@ void L2PacketNames_InitClient_t23()
 	strcpy( l2_packet_names_client_t23[9], "RequestSetPledgeCrest" );
 	strcpy( l2_packet_names_client_t23[10], "..." ); // unused
 	strcpy( l2_packet_names_client_t23[11], "RequestGiveNickName" );
-	strcpy( l2_packet_names_client_t23[12], "..." ); // unused
+	strcpy( l2_packet_names_client_t23[12], "ProtocolVersion" );
 	strcpy( l2_packet_names_client_t23[13], "..." ); // unused
 	strcpy( l2_packet_names_client_t23[14], "..." ); // unused
 	strcpy( l2_packet_names_client_t23[15], "MoveBackwardToLocation" );
 	strcpy( l2_packet_names_client_t23[16], "Say (unused)" );
 	strcpy( l2_packet_names_client_t23[17], "EnterWorld" );
-	strcpy( l2_packet_names_client_t23[18], "..." ); // unused
+	strcpy( l2_packet_names_client_t23[18], "CharacterSelect" );
 	strcpy( l2_packet_names_client_t23[19], "..." ); // unused
 	strcpy( l2_packet_names_client_t23[20], "RequestItemList" );
 	strcpy( l2_packet_names_client_t23[21], "RequestEquipItem (unused)" );
@@ -58,7 +58,7 @@ void L2PacketNames_InitClient_t23()
 	strcpy( l2_packet_names_client_t23[40], "RequestWithdrawalPledge" );
 	strcpy( l2_packet_names_client_t23[41], "RequestOustPledgeMember" );
 	strcpy( l2_packet_names_client_t23[42], "..." ); // unused
-	strcpy( l2_packet_names_client_t23[43], "..." ); // unused
+	strcpy( l2_packet_names_client_t23[43], "AuthLogin" );
 	strcpy( l2_packet_names_client_t23[44], "RequestGetItemFromPet" );
 	strcpy( l2_packet_names_client_t23[45], "..." ); // unused
 	strcpy( l2_packet_names_client_t23[46], "RequestAllyInfo" );
@@ -192,7 +192,7 @@ void L2PacketNames_InitClient_t23()
 	strcpy( l2_packet_names_client_t23[174], "RequestConfirmSiegeWaitingList" );
 	strcpy( l2_packet_names_client_t23[175], "RequestSetCastleSiegeTime (unused)" );
 	strcpy( l2_packet_names_client_t23[176], "MultiSellChoose" );
-	strcpy( l2_packet_names_client_t23[177], "NetPing (unused)" );
+	strcpy( l2_packet_names_client_t23[177], "NetPing" );
 	strcpy( l2_packet_names_client_t23[178], "RequestRemainTime (unused)" );
 	strcpy( l2_packet_names_client_t23[179], "BypassUserCmd" );
 	strcpy( l2_packet_names_client_t23[180], "SnoopQuit" );

@@ -43,7 +43,7 @@ void L2PacketNames_InitClient()
 	strcpy( l2_packet_names_client[ 0x27 ], "RequestAnswerJoinPledge" );
 	strcpy( l2_packet_names_client[ 0x28 ], "RequestWithdrawalPledge" );
 	strcpy( l2_packet_names_client[ 0x29 ], "RequestOustPledgeMember" );
-	strcpy( l2_packet_names_client[ 0x2c ], "AuthLogin" );
+	strcpy( l2_packet_names_client[ 0x2b ], "AuthLogin" );
 	strcpy( l2_packet_names_client[ 0x2c ], "RequestGetItemFromPet" );
 	strcpy( l2_packet_names_client[ 0x2e ], "RequestAllyInfo" );
 	strcpy( l2_packet_names_client[ 0x2f ], "RequestCrystallizeItem" );

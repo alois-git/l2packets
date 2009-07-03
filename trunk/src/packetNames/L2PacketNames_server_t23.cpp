@@ -21,7 +21,7 @@ void L2PacketNames_InitServer_t23()
 	strcpy( l2_packet_names_server_t23[8], "DeleteObject" ); // 8
 	strcpy( l2_packet_names_server_t23[9], "CharacterSelectionInfo" ); // 9
 	strcpy( l2_packet_names_server_t23[10], "LoginFail" ); // a
-	strcpy( l2_packet_names_server_t23[11], "CharacterSelected" ); // b
+	strcpy( l2_packet_names_server_t23[11], "CharSelected" ); // b
 	strcpy( l2_packet_names_server_t23[12], "NpcInfo" ); // c
 	strcpy( l2_packet_names_server_t23[13], "NewCharacterSuccess" ); // d
 	strcpy( l2_packet_names_server_t23[14], "NewCharacterFail" ); // e
