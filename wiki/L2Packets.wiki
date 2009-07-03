@@ -8,7 +8,7 @@ C++ Library to work with Lineage II MMORPG game protocol.
   * encrypt, decrypt, basic reading/writing packets.
   * Supports T1/T1.5/T2/T2.2 (Kamael, Hellbound, Gracia, Gracia part 2).
   * Language: C++
-  * OS: Windows (Linux support coming)
+  * OS: Windows / Linux
 
 Library uses some information from [http://www.l2jserver.com L2J Lineage server] and [http://www.l2jdp.com L2J-Datapack].
 
