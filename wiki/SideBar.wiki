@@ -7,4 +7,5 @@ Compiling and installing:
   * [http://code.google.com/p/l2packets/wiki/Using Linking to application]
 
 Docs:
-  * TODO
+  * [http://code.google.com/p/l2packets/wiki/UsageExamples Example code]
+  * TODO =[[
