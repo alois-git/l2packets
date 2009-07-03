@@ -1,0 +1,38 @@
+Server: Len    7 [NetPing]
+07 00                        // len 7
+D9                           // opcode D9
+99 BD 6A 0F                  // ping ID
+
+Client: Len   15 [NetPing]
+0F 00                        // len 15
+B1                           // opcode B1
+99 BD 6A 0F                  // ping ID
+02 00 00 00                  // 0x00000002 const??
+00 10 00 00                  // 0x00001000 const??
+
+Client: Len   15 [NetPing]
+0F 00        //
+B1           // opcode
+D9 32 6B 0F  // ping id
+00 00 00 00  // O_o wtf
+00 10 00 00  // const?
+
+Client: Len   15 [NetPing]
+0F 00
+B1
+19 A8 6B 0F  // ping ID
+00 00 00 00
+00 10 00 00
+
+Client: Len   15 [NetPing]
+0F 00
+B1
+97 1D 6C 0F // ping ID
+00 00 00 00
+00 10 00 00
+
+
+
+
+Server: Len    7 [NetPing] | 07 00 / D9 / C7 92 6C 0F
+Client: Len   15 [NetPing] | 0F 00 / B1 / C7 92 6C 0F  00 00 00 00  00 10 00 00

@@ -1,0 +1,41 @@
+Server: Len  225 [CharacterSelected]
+E1 00
+0B
+4D 00 65 00  66 00 65 00  73 00 74 00  6F 00 00 00      // char name
+F0 58 0B 00                                             // char id (objectId)
+00 00                                                   // title (empty here)
+22 24 0E 00                                             // sessionId
+00 00 00 00                                             // clan id
+00 00 00 00                                             // 0x00
+00 00 00 00                                             // sex
+01 00 00 00                                             // race 0x01 - elf
+1E 00 00 00                                             // class Id
+01 00 00 00                                             // is Active
+0C 3E 02 00 \
+4D 64 00 00  >                                          // x,y,z
+28 F8 FF FF /
+52 27 A0 89  B0 AD A5 40                                // currentHp
+F6 28 5C 8F  C2 AB A2 40                                // currentMp
+64 DC 17 00                                             // sp
+7A 74 37 0D  00 00 00 00                                // exp
+40 00 00 00                                             // level (64)
+00 00 00 00                                             // karma
+02 00 00 00                                             // PK kills
+15 00 00 00                                             // INT
+18 00 00 00                                             // STR
+19 00 00 00                                             // CON
+25 00 00 00                                             // MEN
+17 00 00 00                                             // DEX
+28 00 00 00                                             // WIT
+51 04 00 00                                             // ?? const?
+00 00 00 00                                             // 0x00 const
+1E 00 00 00                                             // class Id
+00 00 00 00 \
+00 00 00 00  \                                          // 4 x 0x00
+00 00 00 00  /
+00 00 00 00 /
+D7 E0 CE 3E  8F 57 A0 BF  A0 F2 16 74  09 DB B6 00      // some 64 bytes O_o
+01 36 99 D2  4E 3C BA 13  32 C0 5F 81  3B 66 FE E2
+08 45 35 2A  81 6A 8F 83  D4 14 E0 13  CD B6 6D 79
+53 F3 7C 14  A9 D5 80 B2  E7 DA 74 07  C1 03 AF FE
+1F 83 06 02                                             // opcode obfuscator seed?
