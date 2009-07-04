@@ -1,0 +1,57 @@
+Server: Len  200 [NpcInfo]
+C8 00
+0C
+75 4D E1 4A       // object ID
+F6 92 0F 00       // template ID + 1 000 000
+01 00 00 00       // is Attackable
+6B 5A 02 00       \
+50 3B 00 00        > x,y,z
+70 F0 FF FF       /
+00 00 00 00       // heading
+00 00 00 00       // 
+4D 01 00 00       // castSpeed
+3D 01 00 00       // attackSpeed
+AE 00 00 00       // runSpeed
+50 00 00 00       // walkSpeed
+AE 00 00 00       // swimRunSpeed
+50 00 00 00       // swimWalkSpeed
+AE 00 00 00       // flRunSpeed
+50 00 00 00       // flWalkSpeed
+AE 00 00 00       // flyRunSpeed (again?)
+50 00 00 00       // flyWalkSpeed (again?)
+9A 99 99 99  99 99 F1 3F  // moveSpeed multiplier
+A2 94 B5 F2  37 46 F2 3F  // attackSpeed multiplier
+00 00 00 00  00 00 2C 40  // collisionRadius
+00 00 00 00  00 00 39 40  // collisionHeight
+DD 00 00 00        // rhand
+00 00 00 00        // chest
+00 00 00 00        // lhand
+01  // hasTitle
+01  // isRunning
+00  // isInCombat
+00  // isAlikeDead
+01  // isSummoned   // 0=teleported 1=default 2=summoned
+00 00   // name  (if empty, client displays from template)
+00 00   // title (if empty, client displays from template)
+00 00 00 00   // title color (0 - client default)
+00 00 00 00   // 0x00
+00 00 00 00   // pvp flag
+
+00 00 00 00   // abnormal effect id
+00 00 00 00   // clan id
+
+00 00 00 00   // crest id
+00 00 00 00   // 0x00
+00 00 00 00   // 0x00
+
+00            // isFlying
+00            // 0x00
+00 00 00 00  00 00 2C 40   // collisionRadius (again?)
+00 00 00 00  00 00 39 40   // collisionHeight (again?)
+00 00 00 00    // 0x00
+00 00 00 00    // isFLying
+00 00 00 00    // 0x00
+00 00 00 00    // pet form and skills (?)
+01             // 0x01
+01             // 0x01
+00 00 00 00    // 0x00

@@ -23,7 +23,8 @@ Every L2Character has abnormalEffect\n
 Every L2Character has its target\n
 Every L2Character can be in combat\n
 Every L2Character has its collision radius and height\n
-
+Every L2Character has its pvpFlag, karma\n
+Every L2Character has its clan, ally IDs and clan/ally crest IDs\n
 */
 
 class L2Character : public L2Object
@@ -112,6 +113,7 @@ public:
 	int isRunning; ///< 1, if char is runing, 0 if walking
 	int isSitting; ///< 1, if char is sitting, 0 if standing
 	int isAlikeDead; ///< 1, if characted is dead or looks like dead (fake death)
+	int isFlying; ///< 1, if character is flying (?) T2.3
 	unsigned long long int lastMoveTickTime; ///< timer used to store last time when character coords were known exactly
 	int s_STR; ///< STR base stat
 	int s_DEX; ///< DEX base stat
@@ -139,6 +141,13 @@ public:
 	int isInCombat; ///< 1, if char is in combat state, 0 if not
 	double collisionRadius;
 	double collisionHeight;
+	int pvpFlag;
+	int karma;
+	unsigned int clanID;
+	unsigned int clanCrestID;
+	unsigned int clanCrestLargeID;
+	unsigned int allyID;
+	unsigned int allyCrestID;
 };
 
 #endif

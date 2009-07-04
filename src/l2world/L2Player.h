@@ -23,8 +23,6 @@ Every L2Character has its collision radius and height\n
 Additionally:\n
 Every L2Player has classID, baseClassID\n
 Every L2Player has its appearance (Race, Sex, Face, Hair style, Hair color)\n
-Every L2Player has its clan, ally IDs and clan/ally crest IDs\n
-Every L2Player has its pvpFlag, karma\n
 Every L2Player has enchantEffect\n
 Every L2Player has its paperdoll: items equipped on it. Every paperdoll item can have augment ID\n
 Every L2Player can fish: has isFishing, fishX, fishY, fishZ\n
@@ -105,13 +103,6 @@ public:
 	int hairStyle;
 	int hairColor;
 	int face;
-	unsigned int clanID;
-	unsigned int clanCrestID;
-	unsigned int clanCrestLargeID;
-	unsigned int allyID;
-	unsigned int allyCrestID;
-	int pvpFlag;
-	int karma;
 	unsigned int enchantEffect; ///< player's weapon enchant value
 	// from RelationChanged
 	unsigned int relation; ///< relation (siege flags and clan war flags,fists)

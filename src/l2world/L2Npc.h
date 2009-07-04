@@ -51,6 +51,7 @@ public:
 	unsigned int templateID; ///< NPC template ID
 	int isAttackable; ///< =1, if npc is auto attackable on double click (mob); 0 if double click begins chat with NPC (NPC)
 	unsigned int iid_left_hand; ///< item ID of left hand weapon item
+	unsigned int iid_chest; ///< item ID if chest (?)
 	unsigned int iid_right_hand; ///< item ID of right hand weapon item
 };
 
