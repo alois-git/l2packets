@@ -93,7 +93,7 @@ bool L2Game_KeyPacket::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
 {
 	UNREFERENCED_PARAMETER( ver );
 	readReset();
-	if( !canReadBytes( 23 ) ) return false; // packet size is 25 bytes O_o
+	if( !canReadBytes( 19 ) ) return false; // packet size is at least 19 bytes O_o
 	getPacketType();
 	this->p_protocolIsOK = readUChar();  // 0x01 - proto OK, 0x00 - proto not supported
 	readBytes( this->p_initialKey, 8 );  // first 8 bytes of XOR key
