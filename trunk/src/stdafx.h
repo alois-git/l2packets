@@ -19,7 +19,6 @@
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_DEPRECATE // vc2005
 #define _CRT_SECURE_NO_WARNINGS // vc2008
-#define _CRT_NON_CONFORMING_SWPRINTFS // really?
 #endif
 
 #include <stdlib.h>

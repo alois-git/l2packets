@@ -33,11 +33,13 @@ bool L2Game_AuthLogin::create( char *loginName,
 	if( !loginName || !sessionKey1 || !sessionKey2 ) return false;
 	wchar_t loginU[32];
 	memset( loginU, 0, sizeof(loginU) );
-#ifdef WIN32 // windows
-	swprintf( loginU, L"%S", loginName );
-#else // linux
+#ifdef L2PACKETS_WINDOWS
+	_snwprintf( loginU, 32, L"%ls", loginName );
+#endif
+#ifdef L2PACKETS_LINUX
 	swprintf( loginU, 32, L"%ls", loginName );
 #endif
+	loginU[31] = 0;
 	return this->create( loginU, sessionKey1, sessionKey2 );
 }
 
@@ -51,7 +53,6 @@ bool L2Game_AuthLogin::create( wchar_t *loginName,
 	//this->writeUChar( 0x08 ); // interlude
 	this->writeUChar( 0x2b ); // hellbound
 	this->writeUnicodeString( loginName );
-	//this->writeBytes( sessionKey1, 8 );
 	this->writeBytes( sessionKey2+4, 4 );
 	this->writeBytes( sessionKey2,   4 );
 	this->writeBytes( sessionKey1,   8 );

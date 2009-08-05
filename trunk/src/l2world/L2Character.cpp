@@ -8,6 +8,72 @@ L2Character::L2Character()
 	setUnused();
 }
 
+L2Character::~L2Character()
+{
+	setUnused();
+}
+
+L2Character::L2Character( const L2Character& other ): L2Object()
+{
+	setUnused();
+	this->operator=( other );
+}
+
+const L2Character& L2Character::operator=( const L2Character& other )
+{
+	if( this == &other ) return (*this);
+	L2Object::operator=( other );
+	// copy
+	level = other.level;
+	setName( other.charName );
+	setTitle( other.charTitle );
+	xDst = other.xDst;
+	yDst = other.yDst;
+	zDst = other.zDst;
+	heading = other.heading;
+	runSpeed = other.runSpeed;
+	walkSpeed = other.walkSpeed;
+	isRunning = other.isRunning;
+	isSitting = other.isSitting;
+	isAlikeDead = other.isAlikeDead;
+	isFlying = other.isFlying;
+	lastMoveTickTime = other.lastMoveTickTime;
+	s_STR = other.s_STR;
+	s_DEX = other.s_DEX;
+	s_CON = other.s_CON;
+	s_INT = other.s_INT;
+	s_WIT = other.s_WIT;
+	s_MEN = other.s_MEN;
+	pAtk = other.pAtk;
+	pDef = other.pDef;
+	mAtk = other.mAtk;
+	mDef = other.mDef;
+	pAtkSpd = other.pAtkSpd;
+	mAtkSpd = other.mAtkSpd;
+	accuracy = other.accuracy;
+	evasion = other.evasion;
+	critical = other.critical;
+	curHp = other.curHp;
+	maxHp = other.maxHp;
+	curMp = other.curMp;
+	maxMp = other.maxMp;
+	curCp = other.curCp;
+	maxCp = other.maxCp;
+	abnormalEffect = other.abnormalEffect;
+	targetObjectID = other.targetObjectID;
+	isInCombat = other.isInCombat;
+	collisionRadius = other.collisionRadius;
+	collisionHeight = other.collisionHeight;
+	pvpFlag = other.pvpFlag;
+	karma = other.karma;
+	clanID = other.clanID;
+	clanCrestID = other.clanCrestID;
+	clanCrestLargeID = other.clanCrestLargeID;
+	allyID = other.allyID;
+	allyCrestID = other.allyCrestID;
+	return (*this);
+}
+
 void L2Character::setUnused()
 {
 	L2Object::setUnused();
@@ -35,11 +101,39 @@ void L2Character::setName( const wchar_t *name )
 	}
 }
 
+void L2Character::setName( const char *name )
+{
+	if( name )
+	{
+#ifdef L2PACKETS_WINDOWS
+		_snwprintf( charName, sizeof(charName)/sizeof(charName[0]), L"%ls", name );
+#endif
+#ifdef L2PACKETS_LINUX
+		swprintf( charName, sizeof(charName)/sizeof(charName[0]), L"%ls", name );
+#endif
+		charName[ sizeof(charName)/sizeof(charName[0]) - 1 ] = 0;
+	}
+}
+
 void L2Character::setTitle( const wchar_t *title )
 {
 	if( title )
 	{
 		wcsncpy( charTitle, title, sizeof(charTitle)/sizeof(charTitle[0]) - 1 );
+		charTitle[ sizeof(charTitle)/sizeof(charTitle[0]) - 1 ] = 0;
+	}
+}
+
+void L2Character::setTitle( const char *title )
+{
+	if( title )
+	{
+#ifdef L2PACKETS_WINDOWS
+		_snwprintf( charTitle, sizeof(charTitle)/sizeof(charTitle[0]), L"%ls", title );
+#endif
+#ifdef L2PACKETS_LINUX
+		swprintf( charTitle, sizeof(charTitle)/sizeof(charTitle[0]), L"%ls", title );
+#endif
 		charTitle[ sizeof(charTitle)/sizeof(charTitle[0]) - 1 ] = 0;
 	}
 }
@@ -78,7 +172,7 @@ void L2Character::processMoveTick()
 	unsigned long long int millisecsPassed = curTick - lastMoveTickTime;
 	if( millisecsPassed < 100 ) return;
 	lastMoveTickTime = curTick;
-	const int near_range = 50;
+	const int near_range = 50; // range in which point is reached
 	if( isMoving() )
 	{
 		int dx = xDst - x;
@@ -86,7 +180,7 @@ void L2Character::processMoveTick()
 		int dz = zDst - z;
 		if( ((dx > -near_range)&&(dx < near_range)) && 
 			((dy > -near_range)&&(dy < near_range)) && 
-			((dz > -near_range)&&(dz < near_range)) ) // target ~ reached?
+			((dz > -near_range)&&(dz < near_range)) ) // target ~~ reached?
 		{
 			stopMove();
 			return;

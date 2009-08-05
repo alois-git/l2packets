@@ -1,6 +1,8 @@
 #ifndef H_L2OBJECT
 #define H_L2OBJECT
 
+#include "../L2_versions.h"
+
 /** \class L2Object
 Every object has its objectID and can also have its coordinates in L2World
 */
@@ -9,12 +11,30 @@ class L2Object
 {
 public:
 	/** L2Object default constructor
-	*/
+	 */
 	L2Object(): x(0), y(0), z(0), objectID(0) {}
+
+	/** L2Object copy constructor
+	 * \param other copy source
+	 */
+	L2Object( const L2Object& other );
+
+	/** Assigns this->x,y,z,objectID to other's x,y,z,objectID
+	 * \param other copy source
+	 * \return reference to this object
+	 */
+	virtual const L2Object& operator=( const L2Object& other );
+
+	/** Compares objectIDs
+	 * \param other object to compare with
+	 * \return true, if objects are equal (equal objectIDs)
+	 */
+	virtual bool operator==( const L2Object& other );
+
 	/** Destructor calls setUnused()
 	* \see setUnused
 	*/
-	virtual ~L2Object() { setUnused(); }
+	virtual ~L2Object();
 public:
 	/** Sets object coordinates in world
 	* \param sx, sy, sz - new coordinates

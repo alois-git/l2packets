@@ -37,5 +37,6 @@
 #define L2_PAPERDOLL_DECO4      27
 #define L2_PAPERDOLL_DECO5      28
 #define L2_PAPERDOLL_DECO6      29
+#define L2_PAPERDOLL_BELT       30
 
 #endif

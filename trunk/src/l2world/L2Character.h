@@ -33,11 +33,18 @@ public:
 	/** Default constructor, just calls setUnused() (zeroes all members) */
 	L2Character();
 
+	/** Copy constructor
+	 * \param other source to copy from */
+	L2Character( const L2Character& other );
+
+	/** Operator =
+	 * \param other source to copy from
+	 * \return reference to this object
+	 */
+	virtual const L2Character& operator=( const L2Character& other );
+
 	/** Default destructor, just calls setUnused() (zeroes all members) */
-	virtual ~L2Character()
-	{
-		setUnused();
-	}
+	virtual ~L2Character();
 
 public:
 	/** Initializes object's state (zeroes all members)
@@ -91,11 +98,13 @@ public:
 	* \param name new char name to set.
 	*/
 	virtual  void setName( const wchar_t *name );
+	virtual  void setName( const char *name );
 
 	/** Sets char title.
 	* \param title new char title to set.
 	*/
 	virtual  void setTitle( const wchar_t *title );
+	virtual  void setTitle( const char *title );
 
 	virtual  const wchar_t *getName(); //< not really used
 	virtual  const wchar_t *getTitle(); //< not really used

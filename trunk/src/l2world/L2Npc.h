@@ -30,11 +30,18 @@ public:
 	/** Default constructor calls setUnused() (zeroes all members) */
 	L2Npc();
 
+	/** Copy constructor
+	 * \param other source to copy from
+	 */
+	L2Npc( const L2Npc& other );
+
+	/* Assigns all members of L2Npc class instance to other
+	 * \param other source to copy from
+	 * \return reference to this object */
+	virtual const L2Npc& operator=( const L2Npc& other );
+
 	/** Default destructor calls setUnused() (zeroes all members) */
-	virtual ~L2Npc()
-	{
-		setUnused();
-	}
+	virtual ~L2Npc();
 
 public:
 	/** Initializes object's state (zeroes all members)
@@ -43,15 +50,17 @@ public:
 	virtual void setUnused();
 
 public:
-	/** Not implemented */
-	virtual void setNpcNameByTemplate();
-	/** Not implemented */
-	virtual void setNpcTitleByTemplate();
+	/** Query database for name and title, using this object's templateID, and set them */
+	virtual void setNpcNameTitleByTemplate();
+
+public:
+	bool parse_NpcInfo( void *l2_game_packet, L2_VERSION l2_version );
+
 public:
 	unsigned int templateID; ///< NPC template ID
 	int isAttackable; ///< =1, if npc is auto attackable on double click (mob); 0 if double click begins chat with NPC (NPC)
 	unsigned int iid_left_hand; ///< item ID of left hand weapon item
-	unsigned int iid_chest; ///< item ID if chest (?)
+	unsigned int iid_chest; ///< item ID of chest (?)
 	unsigned int iid_right_hand; ///< item ID of right hand weapon item
 };
 
