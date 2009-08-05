@@ -12,10 +12,6 @@ sqlite3 *l2data_sqlite3_conn_skills = NULL;
 #ifdef L2PACKETS_WINDOWS
 CRITICAL_SECTION l2data_db_cs;
 #endif
-#ifdef L2PACKETS_LINUX
-// TODO: need semaphore synchronisation:
-// TODO: sem_open(), sem_close(), sem_wait(), ...
-#endif
 
 
 bool L2Data_DB_Init( char *outErrMsg,
@@ -25,6 +21,12 @@ bool L2Data_DB_Init( char *outErrMsg,
 {
 	if( !l2data_sqlite3_was_init )
 	{
+		// test for threadsafe
+		if( sqlite3_threadsafe() == 0 )
+		{
+			fprintf( stderr, "WARNING: sqlite3 is not configured to use thread-safe operations!\n" );
+		}
+		//
 		int r = 0;
 		const char *errmsg = NULL;
 		// items
@@ -68,9 +70,6 @@ bool L2Data_DB_Init( char *outErrMsg,
 #ifdef L2PACKETS_WINDOWS
 		InitializeCriticalSection( &l2data_db_cs );
 #endif
-#ifdef L2PACKETS_LINUX
-		// TODO: Linux: create & init semaphore
-#endif
 		return true;
 	}
 	return true;
@@ -83,6 +82,7 @@ void L2Data_DB_UnLock() { LeaveCriticalSection( &l2data_db_cs ); }
 
 #ifdef L2PACKETS_LINUX
 // TODO: lock/unlock semaphore (mutex?)
+// FIXED: (?) uses SQLITE_THREADSAFE definition to sqlite3 library
 void L2Data_DB_Lock()
 {
 }

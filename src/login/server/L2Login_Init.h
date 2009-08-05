@@ -4,7 +4,7 @@
 #include "../L2LoginPacket.h"
 
 /**
- * \class L2Login_Init\n
+ * \class L2Login_Init
  * Handles Init packet XOR encryption/decryption, RSA public key modulus scrambling/unscrambling, 
  * general Init packet parsing and creation.
  */

@@ -39,7 +39,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\src\sqlite3"
-				PreprocessorDefinitions="_DEBUG"
+				PreprocessorDefinitions="_DEBUG;SQLITE_THREADSAFE=1"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="false"
 				RuntimeLibrary="1"
@@ -412,6 +412,14 @@
 			</File>
 			<File
 				RelativePath="..\src\l2world\L2ChatMessageTypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\l2world\L2ElementalInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\l2world\L2ElementalInfo.h"
 				>
 			</File>
 			<File

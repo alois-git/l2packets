@@ -28,7 +28,7 @@ public:
 	void           setVersionMode_T2()  { setVersionMode( L2_VERSION_T2  ); }
 	/** Set version Gracia Part 2. Equvalent to setVersionMode( L2_VERSION_T22 ); */
 	void           setVersionMode_T22() { setVersionMode( L2_VERSION_T22 ); }
-	/** Set version Gracia Part 2. Equvalent to setVersionMode( L2_VERSION_T23 ); */
+	/** Set version Gracia Final. Equvalent to setVersionMode( L2_VERSION_T23 ); */
 	void           setVersionMode_T23() { setVersionMode( L2_VERSION_T23 ); }
 	
 	/** Frees object memory

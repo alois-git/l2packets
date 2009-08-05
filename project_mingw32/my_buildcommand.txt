@@ -1,0 +1,1 @@
+mingw32-make -s -f Makefile_release.mingw32 "INC_DIRS=-I../src -I../src/sqlite3 -IY:/lib/openssl/include"

@@ -9,6 +9,7 @@
 void L2PacketNames_Init();
 
 /** Get packet name (string) by packet opcode
+* \param l2_version Lineage game version to get packet name for
 * \param fromServer - must be true for Server->Client packet
 * \param opcode1 - main packet opcode
 * \param opcode2 - extended packet opcode. Used only for packets S->C FE and C->S D0

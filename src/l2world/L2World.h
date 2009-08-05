@@ -16,4 +16,6 @@
 #include "L2PlayerPaperDoll.h"
 #include "L2Experience.h"
 
+#include "L2ElementalInfo.h"
+
 #endif
