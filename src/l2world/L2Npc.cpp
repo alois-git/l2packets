@@ -2,6 +2,7 @@
 #include "L2Npc.h"
 #include "../l2data/L2Data.h"
 #include "../game/L2GamePacket.h"
+#include "../os/os_abstraction.h"
 
 L2Npc::L2Npc()
 {
@@ -130,6 +131,9 @@ bool L2Npc::parse_NpcInfo( void *l2_game_packet, L2_VERSION l2_version )
 		p->readC(); // 0x01
 		p->readD(); // 0x00000000
 	}
+
+	// set last time when npc coordinates were known exactly
+	lastMoveTickTime = OS_GetTickCount();
 
 	return true;
 }

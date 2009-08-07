@@ -657,5 +657,8 @@ bool L2Player::parse_UserInfo( void *l2_game_packet, L2_VERSION l2_version )
         //writeD(0x00); // CT2.3
 	//}
 
+	// set last time when char coordinates were known exactly
+	lastMoveTickTime = OS_GetTickCount();
+
 	return true;
 }
