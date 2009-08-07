@@ -134,7 +134,7 @@ void L2Player::getRaceStr( wchar_t *out ) const
 	out[0] = 0;
 	const char *ansi = L2Data_getRace( this->race );
 #ifdef L2PACKETS_WINDOWS
-	_snwprintf( out, 32, L"%ls", ansi );
+	_snwprintf( out, 32, L"%S", ansi );
 #endif
 #ifdef L2PACKETS_LINUX
 	swprintf( out, 32, L"%ls", ansi );
@@ -148,7 +148,7 @@ void L2Player::getSexStr( wchar_t *out ) const
 	out[0] = 0;
 	const char *ansi = L2Data_getSex( this->sex );
 #ifdef L2PACKETS_WINDOWS
-	_snwprintf( out, 32, L"%ls", ansi );
+	_snwprintf( out, 32, L"%S", ansi );
 #endif
 #ifdef L2PACKETS_LINUX
 	swprintf( out, 32, L"%ls", ansi );
@@ -162,7 +162,7 @@ void L2Player::getClassStr( wchar_t *out ) const
 	out[0] = 0;
 	const char *ansi = L2Data_getClass( this->classID );
 #ifdef L2PACKETS_WINDOWS
-	_snwprintf( out, 32, L"%ls", ansi );
+	_snwprintf( out, 32, L"%S", ansi );
 #endif
 #ifdef L2PACKETS_LINUX
 	swprintf( out, 32, L"%ls", ansi );
@@ -176,7 +176,7 @@ void L2Player::getBaseClassStr( wchar_t *out ) const
 	out[0] = 0;
 	const char *ansi = L2Data_getClass( this->baseClassID );
 #ifdef L2PACKETS_WINDOWS
-	_snwprintf( out, 32, L"%ls", ansi );
+	_snwprintf( out, 32, L"%S", ansi );
 #endif
 #ifdef L2PACKETS_LINUX
 	swprintf( out, 32, L"%ls", ansi );
