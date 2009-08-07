@@ -106,7 +106,7 @@ void L2Character::setName( const char *name )
 	if( name )
 	{
 #ifdef L2PACKETS_WINDOWS
-		_snwprintf( charName, sizeof(charName)/sizeof(charName[0]), L"%ls", name );
+		_snwprintf( charName, sizeof(charName)/sizeof(charName[0]), L"%S", name );
 #endif
 #ifdef L2PACKETS_LINUX
 		swprintf( charName, sizeof(charName)/sizeof(charName[0]), L"%ls", name );
@@ -129,7 +129,7 @@ void L2Character::setTitle( const char *title )
 	if( title )
 	{
 #ifdef L2PACKETS_WINDOWS
-		_snwprintf( charTitle, sizeof(charTitle)/sizeof(charTitle[0]), L"%ls", title );
+		_snwprintf( charTitle, sizeof(charTitle)/sizeof(charTitle[0]), L"%S", title );
 #endif
 #ifdef L2PACKETS_LINUX
 		swprintf( charTitle, sizeof(charTitle)/sizeof(charTitle[0]), L"%ls", title );

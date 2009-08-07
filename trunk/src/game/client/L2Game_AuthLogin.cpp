@@ -34,7 +34,7 @@ bool L2Game_AuthLogin::create( char *loginName,
 	wchar_t loginU[32];
 	memset( loginU, 0, sizeof(loginU) );
 #ifdef L2PACKETS_WINDOWS
-	_snwprintf( loginU, 32, L"%ls", loginName );
+	_snwprintf( loginU, 32, L"%S", loginName );
 #endif
 #ifdef L2PACKETS_LINUX
 	swprintf( loginU, 32, L"%ls", loginName );

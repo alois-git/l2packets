@@ -19,12 +19,14 @@ bool L2Data_DB_Init( char *outErrMsg,
 					const char *mobs_db_filename,
 					const char *skills_db_filename )
 {
+	if( outErrMsg ) outErrMsg[0] = 0;
 	if( !l2data_sqlite3_was_init )
 	{
 		// test for threadsafe
 		if( sqlite3_threadsafe() == 0 )
 		{
 			fprintf( stderr, "WARNING: sqlite3 is not configured to use thread-safe operations!\n" );
+			if( outErrMsg ) strcat( outErrMsg, "sqlite3 is not configured threadsafe! " );
 		}
 		//
 		int r = 0;
@@ -34,7 +36,7 @@ bool L2Data_DB_Init( char *outErrMsg,
 		if( r != SQLITE_OK )
 		{
 			errmsg = sqlite3_errmsg( l2data_sqlite3_conn_items );
-			if( outErrMsg && errmsg ) strcpy( outErrMsg, errmsg );
+			if( outErrMsg && errmsg ) strcat( outErrMsg, errmsg );
 			sqlite3_close( l2data_sqlite3_conn_items );
 			l2data_sqlite3_conn_items = NULL;
 			return false;
@@ -44,7 +46,7 @@ bool L2Data_DB_Init( char *outErrMsg,
 		if( r != SQLITE_OK )
 		{
 			errmsg = sqlite3_errmsg( l2data_sqlite3_conn_npcs );
-			if( outErrMsg && errmsg ) strcpy( outErrMsg, errmsg );
+			if( outErrMsg && errmsg ) strcat( outErrMsg, errmsg );
 			sqlite3_close( l2data_sqlite3_conn_items );
 			l2data_sqlite3_conn_items = NULL;
 			sqlite3_close( l2data_sqlite3_conn_npcs );
@@ -56,7 +58,7 @@ bool L2Data_DB_Init( char *outErrMsg,
 		if( r != SQLITE_OK )
 		{
 			errmsg = sqlite3_errmsg( l2data_sqlite3_conn_skills );
-			if( outErrMsg && errmsg ) strcpy( outErrMsg, errmsg );
+			if( outErrMsg && errmsg ) strcat( outErrMsg, errmsg );
 			sqlite3_close( l2data_sqlite3_conn_items );
 			l2data_sqlite3_conn_items = NULL;
 			sqlite3_close( l2data_sqlite3_conn_npcs );
