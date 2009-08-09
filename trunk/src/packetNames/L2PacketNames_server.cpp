@@ -376,7 +376,7 @@ void L2PacketNames_InitServer()
 	l2_packet_names_server2[109][0] = 0;
 	l2_packet_names_server2[110][0] = 0;
 	l2_packet_names_server2[111][0] = 0;
-	l2_packet_names_server2[112][0] = 0;
+	strcpy( l2_packet_names_server2[112], "ExUISetting" ); // answer to RequestKeyMapping
 	l2_packet_names_server2[113][0] = 0;
 	l2_packet_names_server2[114][0] = 0;
 	l2_packet_names_server2[115][0] = 0;
