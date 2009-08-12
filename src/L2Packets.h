@@ -62,18 +62,26 @@
 #include "login/server/L2Login_PlayFail.h"
 
 #include "game/L2GamePacket.h"
-#include "game/client/L2Game_ProtocolVersion.h"
-#include "game/server/L2Game_KeyPacket.h"
-#include "game/client/L2Game_AuthLogin.h"
-#include "game/server/L2Game_CharSelectionInfo.h"
-#include "game/client/L2Game_CharacterSelect.h"
+// game: from server
+#include "game/server/L2Game_AuthLoginFail.h"
+#include "game/server/L2Game_CharDeleteFail.h"
+#include "game/server/L2Game_CharDeleteSuccess.h"
 #include "game/server/L2Game_CharSelected.h"
+#include "game/server/L2Game_CharSelectionInfo.h"
+#include "game/server/L2Game_KeyPacket.h"
+#include "game/server/L2Game_NewCharacterSuccess.h"
 #include "game/server/L2Game_SSQInfo.h"
-#include "game/client/L2Game_EnterWorld.h"
-#include "game/client/L2Game_UseItem.h"
+// game: from client
 #include "game/client/L2Game_Action.h"
+#include "game/client/L2Game_AuthLogin.h"
+#include "game/client/L2Game_CharacterCreate.h"
+#include "game/client/L2Game_CharacterSelect.h"
+#include "game/client/L2Game_EnterWorld.h"
+#include "game/client/L2Game_NewCharacter.h"
+#include "game/client/L2Game_ProtocolVersion.h"
 #include "game/client/L2Game_RequestJoinParty.h"
 #include "game/client/L2Game_RequestUserCommand.h"
+#include "game/client/L2Game_UseItem.h"
 
 #include "pcode_obfuscator/L2PCodeObfuscator.h"
 

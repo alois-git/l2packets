@@ -3,7 +3,7 @@
 
 #include "../L2GamePacket.h"
 
-struct CharSelectInfoBlock
+struct L2Game_CharSelectionInfoBlock
 {
 	wchar_t charName[32];
 	unsigned int charID;
@@ -50,7 +50,7 @@ struct CharSelectInfoBlock
 	unsigned int face;
 	double HP_max;
 	double MP_max;
-	unsigned int deleteDays;
+	unsigned int deleteSeconds; ///< seconds left before char will be deleted, or 0 if char is not marked to deletion
 	unsigned int classID;
 	unsigned int lastUsedChar;
 	unsigned char enchantEffect;
@@ -67,7 +67,8 @@ public:
 public:
 	bool read_nChars( unsigned int *ret );
 	bool read_server_maxChars( unsigned int *ret ); // ret can be NULL
-	bool read_next_charSelectInfoBlock( L2_VERSION l2_version, struct CharSelectInfoBlock *c );
+	bool read_next_charSelectInfoBlock( L2_VERSION l2_version,
+		struct L2Game_CharSelectionInfoBlock *c );
 };
 
 #endif /*L2GAME_CHARSELECTIONINFO_H_*/

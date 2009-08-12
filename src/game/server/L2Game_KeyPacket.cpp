@@ -106,3 +106,17 @@ bool L2Game_KeyPacket::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
 	//
 	return true;
 }
+
+bool L2Game_KeyPacket::create( L2_VERSION ver )
+{
+	UNREFERENCED_PARAMETER( ver );
+	writeReset();
+	setPacketType( 0x2E );
+	writeUChar( p_protocolIsOK );
+	writeBytes( p_initialKey, 8 );
+	writeD( 1 );
+	writeUChar( p_serverId );
+	writeD( 0 );
+	writeUInt( p_obfuscatorSeed );
+	return true;
+}
