@@ -20,35 +20,35 @@ bool L2Game_CharSelected::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
 	readReset();
 	readUChar(); // 0x0b CharSelected
 
-	wcscpy( char_name, readUnicodeStringPtr() ); // char name
-	charId    = readUInt();                      // char id (objectId)
-	wcscpy( title, readUnicodeStringPtr() );     // title
-	sessionId = readUInt();                      // sessionId
-	clanId    = readUInt();                      // clanId
-	readD();                                     // 0x00 (maybe allyId?)
-	sex       = readD();
-	race      = readD();
-	classId   = readUInt();
-	isActive  = readD();
+	wcscpy( p_char_name, readUnicodeStringPtr() ); // char name
+	p_charId    = readUInt();                      // char id (objectId)
+	wcscpy( p_title, readUnicodeStringPtr() );     // title
+	p_sessionId = readUInt();                      // sessionId
+	p_clanId    = readUInt();                      // clanId
+	readD();                                       // 0x00 (maybe allyId?)
+	p_sex       = readD();
+	p_race      = readD();
+	p_classId   = readUInt();
+	p_isActive  = readD();
 
-	x         = readD();
-	y         = readD();
-	z         = readD();
+	p_x         = readD();
+	p_y         = readD();
+	p_z         = readD();
 
-	curHp     = readF();
-	curMp     = readF();
-	sp        = readUInt();
-	exp       = readUInt64();
-	level     = readD();
-	karma     = readD();
-	PK_kills  = readD();
+	p_curHp     = readF();
+	p_curMp     = readF();
+	p_sp        = readUInt();
+	p_exp       = readUInt64();
+	p_level     = readD();
+	p_karma     = readD();
+	p_PK_kills  = readD();
 
-	s_INT = readD();
-	s_STR = readD();
-	s_CON = readD();
-	s_MEN = readD();
-	s_DEX = readD();
-	s_WIT = readD();
+	p_INT = readD();
+	p_STR = readD();
+	p_CON = readD();
+	p_MEN = readD();
+	p_DEX = readD();
+	p_WIT = readD();
 
 	readD(); // writeD( 0x0451 ); //?
 	readD(); // writeD( 0x00 ); // some constants
@@ -65,7 +65,7 @@ bool L2Game_CharSelected::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
 	int i;
 	for( i=0; i<16; i++ ) readD(); // read 4 x 16 = 64 bytes
 
-	opcodeObfuscatorSeed = readUInt();
+	p_opcodeObfuscatorSeed = readUInt();
 	return true;
 }
 
@@ -75,39 +75,39 @@ bool L2Game_CharSelected::create( L2_VERSION ver /*= L2_VERSION_T1*/ )
 	writeReset();
 	writeC(0x0b);
 
-	writeS( char_name );
-	writeD( charId );
-	writeS( title );
-	writeD( sessionId );
-	writeD( clanId );
+	writeS( p_char_name );
+	writeD( p_charId );
+	writeS( p_title );
+	writeD( p_sessionId );
+	writeD( p_clanId );
 	writeD( 0x00 );  // maybe allyId?
-	writeD( sex );
-	writeD( race );
-	writeD( classId );
-	writeD( isActive ); // active ??
+	writeD( p_sex );
+	writeD( p_race );
+	writeD( p_classId );
+	writeD( p_isActive ); // active ??
 
-	writeD( x );
-	writeD( y );
-	writeD( z );
+	writeD( p_x );
+	writeD( p_y );
+	writeD( p_z );
 
-	writeF( curHp );
-	writeF( curMp );
-	writeD( sp );
-	writeQ( exp );
-	writeD( level );
-	writeD( karma );
-	writeD( PK_kills );
-	writeD( s_INT );
-	writeD( s_STR );
-	writeD( s_CON );
-	writeD( s_MEN );
-	writeD( s_DEX );
-	writeD( s_WIT );
+	writeF( p_curHp );
+	writeF( p_curMp );
+	writeD( p_sp );
+	writeQ( p_exp );
+	writeD( p_level );
+	writeD( p_karma );
+	writeD( p_PK_kills );
+	writeD( p_INT );
+	writeD( p_STR );
+	writeD( p_CON );
+	writeD( p_MEN );
+	writeD( p_DEX );
+	writeD( p_WIT );
 
 	writeD( 0x0451 ); //?
 	writeD( 0x00 ); // some constants
 
-	writeD( classId );
+	writeD( p_classId );
 
 	writeD(0x00); // 4 x 0x00
 	writeD(0x00);
@@ -119,6 +119,6 @@ bool L2Game_CharSelected::create( L2_VERSION ver /*= L2_VERSION_T1*/ )
 	writeBytes( rndbuf, 64 );
 	free( rndbuf );
 
-	writeD( opcodeObfuscatorSeed ); // writeD(0x00);
+	writeD( p_opcodeObfuscatorSeed ); // writeD(0x00);
 	return true;
 }

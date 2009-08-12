@@ -314,6 +314,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\game\client\L2Game_CharacterCreate.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\client\L2Game_CharacterCreate.h"
+					>
+				</File>
+				<File
 					RelativePath="..\src\game\client\L2Game_CharacterSelect.cpp"
 					>
 				</File>
@@ -327,6 +335,14 @@
 				</File>
 				<File
 					RelativePath="..\src\game\client\L2Game_EnterWorld.h"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\client\L2Game_NewCharacter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\client\L2Game_NewCharacter.h"
 					>
 				</File>
 				<File
@@ -366,6 +382,30 @@
 				Name="server"
 				>
 				<File
+					RelativePath="..\src\game\server\L2Game_AuthLoginFail.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\server\L2Game_AuthLoginFail.h"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\server\L2Game_CharDeleteFail.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\server\L2Game_CharDeleteFail.h"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\server\L2Game_CharDeleteSuccess.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\server\L2Game_CharDeleteSuccess.h"
+					>
+				</File>
+				<File
 					RelativePath="..\src\game\server\L2Game_CharSelected.cpp"
 					>
 				</File>
@@ -387,6 +427,14 @@
 				</File>
 				<File
 					RelativePath="..\src\game\server\L2Game_KeyPacket.h"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\server\L2Game_NewCharacterSuccess.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\game\server\L2Game_NewCharacterSuccess.h"
 					>
 				</File>
 				<File
