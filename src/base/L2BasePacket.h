@@ -77,6 +77,12 @@ public:
 	 * Moves write pointer to byte #3 (next after opcode)
 	 * \param type new packet opcode. */
 	virtual void           setPacketType( unsigned char type );
+	/** Sets 3rd,4th,5th bytes of packet (which holds packet extended opcode).
+	 * Equivalent to call writeReset(); writeUChar(); writeUShort() with parameter type. 
+	 * Moves write pointer!
+	 * \param opcode new packet opcode.
+	 * \param opcode2 extended opcode. */
+	virtual void           setPacketType2( unsigned char opcode, unsigned short opcode2 );
 	/** Reads packet opcode. Moves read pointer to byte #3 (next after opcode). Equivalent calls: readReset(); readUChar()
 	 * \return read packet opcode. */
 	virtual unsigned char  getPacketType() { readReset(); return readUChar(); }

@@ -64,6 +64,8 @@
 #include "game/L2GamePacket.h"
 // game: from server
 #include "game/server/L2Game_AuthLoginFail.h"
+#include "game/server/L2Game_CharCreateFail.h"
+#include "game/server/L2Game_CharCreateSuccess.h"
 #include "game/server/L2Game_CharDeleteFail.h"
 #include "game/server/L2Game_CharDeleteSuccess.h"
 #include "game/server/L2Game_CharSelected.h"
@@ -75,11 +77,14 @@
 #include "game/client/L2Game_Action.h"
 #include "game/client/L2Game_AuthLogin.h"
 #include "game/client/L2Game_CharacterCreate.h"
+#include "game/client/L2Game_CharacterDelete.h"
+#include "game/client/L2Game_CharacterRestore.h"
 #include "game/client/L2Game_CharacterSelect.h"
 #include "game/client/L2Game_EnterWorld.h"
 #include "game/client/L2Game_NewCharacter.h"
 #include "game/client/L2Game_ProtocolVersion.h"
 #include "game/client/L2Game_RequestJoinParty.h"
+#include "game/client/L2Game_RequestGotoLobby.h"
 #include "game/client/L2Game_RequestUserCommand.h"
 #include "game/client/L2Game_UseItem.h"
 

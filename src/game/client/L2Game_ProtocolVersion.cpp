@@ -22,14 +22,17 @@ L2Game_ProtocolVersion::L2Game_ProtocolVersion( const unsigned char *bytes, unsi
 	this->setBytes( bytes, length );
 }
 
-bool L2Game_ProtocolVersion::create( unsigned int gameProtoVer )
+bool L2Game_ProtocolVersion::create( L2_VERSION ver )
 {
-	this->writeReset();
-	// packet code 0x00 was in Interlude!!!!
-	// this->writeUChar( 0x00 ); // packet type - ProtocolVersion
-	// in Hellbound this code is 0x0e
-	this->writeUChar( 0x0e ); // packet type - ProtocolVersion
-	this->writeUInt( gameProtoVer );
+	switch( ver )
+	{
+	case L2_VERSION_T1:  this->createDefaultKamael();    break;
+	case L2_VERSION_T15: this->createDefaultHellbound(); break;
+	case L2_VERSION_T2:  this->createDefaultGracia1();   break;
+	case L2_VERSION_T22: this->createDefaultGracia2();   break;
+	case L2_VERSION_T23: this->createDefaultGracia3();   break;
+	default: return false; break;
+	}
 	return true;
 }
 
