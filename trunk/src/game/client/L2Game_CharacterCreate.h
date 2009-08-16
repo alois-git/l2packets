@@ -10,7 +10,7 @@ public:
 	L2Game_CharacterCreate();
 	L2Game_CharacterCreate( const unsigned char *bytes, unsigned int length );
 public:
-	bool create( L2Game_NewCharacterTemplate *tmpl, const wchar_t *name,
+	bool create( const L2Game_NewCharacterTemplate *tmpl, const wchar_t *name,
 		int hairStyle, int hairColor, int face, int gender );
 };
 

@@ -64,6 +64,13 @@ void L2BasePacket::setPacketType( unsigned char type )
 	writeUChar( type );
 }
 
+void L2BasePacket::setPacketType2( unsigned char opcode, unsigned short opcode2 )
+{
+	writeReset();
+	writeUChar( opcode );
+	writeUShort( opcode2 );
+}
+
 /*unsigned char L2BasePacket::getPacketType()
 {
 	readReset();

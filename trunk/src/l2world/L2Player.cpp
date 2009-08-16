@@ -629,14 +629,28 @@ bool L2Player::parse_UserInfo( void *l2_game_packet, L2_VERSION l2_version )
     // T1 Starts
     transformId = p->readUInt(); // writeD(_activeChar.getTransformationId());
     
-	elements.attackElementType = p->readUInt();  // writeD(_activeChar.getAttackElement());
-	elements.attackElementValue = p->readUInt(); // writeD(_activeChar.getAttackElementValue());
-	elements.defAttrFire = p->readUInt();        // writeD(_activeChar.getDefAttrFire());
-	elements.defAttrWater = p->readUInt();       // writeD(_activeChar.getDefAttrWater());
-	elements.defAttrWind = p->readUInt();        // writeD(_activeChar.getDefAttrWind());
-	elements.defAttrEarth = p->readUInt();       // writeD(_activeChar.getDefAttrEarth());
-	elements.defAttrHoly = p->readUInt();        // writeD(_activeChar.getDefAttrHoly());
-	elements.defAttrUnholy = p->readUInt();      // writeD(_activeChar.getDefAttrUnholy());
+	if( l2_version < L2_VERSION_T23 )
+	{
+		elements.attackElementType  = p->readD(); // writeD(_activeChar.getAttackElement());
+		elements.attackElementValue = p->readD(); // writeD(_activeChar.getAttackElementValue());
+		elements.defAttrFire        = p->readD(); // writeD(_activeChar.getDefAttrFire());
+		elements.defAttrWater       = p->readD(); // writeD(_activeChar.getDefAttrWater());
+		elements.defAttrWind        = p->readD(); // writeD(_activeChar.getDefAttrWind());
+		elements.defAttrEarth       = p->readD(); // writeD(_activeChar.getDefAttrEarth());
+		elements.defAttrHoly        = p->readD(); // writeD(_activeChar.getDefAttrHoly());
+		elements.defAttrUnholy      = p->readD(); // writeD(_activeChar.getDefAttrUnholy());
+	}
+	else
+	{
+		elements.attackElementType  = p->readH(); // writeH(attackAttribute);
+		elements.attackElementValue = p->readH(); // writeH(_activeChar.getAttackElementValue(attackAttribute));
+		elements.defAttrFire        = p->readH(); // writeH(_activeChar.getDefenseElementValue(Elementals.FIRE));
+		elements.defAttrWater       = p->readH(); // writeH(_activeChar.getDefenseElementValue(Elementals.WATER));
+		elements.defAttrWind        = p->readH(); // writeH(_activeChar.getDefenseElementValue(Elementals.WIND));
+		elements.defAttrEarth       = p->readH(); // writeH(_activeChar.getDefenseElementValue(Elementals.EARTH));
+		elements.defAttrHoly        = p->readH(); // writeH(_activeChar.getDefenseElementValue(Elementals.HOLY));
+		elements.defAttrUnholy      = p->readH(); // writeH(_activeChar.getDefenseElementValue(Elementals.DARK));
+	}
     
     agathionId = p->readUInt();  // writeD(_activeChar.getAgathionId());
     

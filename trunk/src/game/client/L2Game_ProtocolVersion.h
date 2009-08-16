@@ -9,7 +9,7 @@ public:
 	L2Game_ProtocolVersion();
 	L2Game_ProtocolVersion( const unsigned char *bytes, unsigned int length );
 public:
-	bool create( unsigned int gameProtoVer );
+	bool create( L2_VERSION ver = L2_VERSION_T1 );
 	bool createDefaultKamael( unsigned int gameProtoVer = 828 );
 	bool createDefaultHellbound( unsigned int gameProtoVer = 851 );
 	bool createDefaultGracia1( unsigned int gameProtoVer = 12 );
