@@ -240,8 +240,44 @@ bool L2Login_Init::create( L2_VERSION ver )
 	writeUInt( 0x07bde0f7 ); // f7 e0 bd 07
 	writeBytes( p_BF_dyn_key, 16 );
 	writeChar( 0x00 );
-	// TODO: encode xor...
-	return false;
+	// Init packet has no checksum or padding, but it has XOR encryption
+	// fill packet up to xor key position
+	writeD( 0x00000000 ); // write some 6 bytes, they are ignored? trash?
+	writeH( 0x0000 );     // TODO: test on L2 client
+	// now, XOR all previous bytes except first 2 bytes with packet len
+	// and next 4 bytes with login session id?
+	unsigned int xor_key = rand(); // O_o generate random XOR "key"
+	unsigned char *raw_bytes = b.getBytesPtr(); // we need to modify almost all bytes...
+	int psize = getPacketSize();
+	int xor_offset = 6; //2; // should we XOR login session id also?
+	while( xor_offset < psize )
+	{
+		// read current dword
+		unsigned int xoring_dword =
+			(unsigned int)raw_bytes[xor_offset] | 
+			((unsigned int)raw_bytes[xor_offset+1]) << 8 |
+			((unsigned int)raw_bytes[xor_offset+2]) << 16 |
+			((unsigned int)raw_bytes[xor_offset+3]) << 24;
+		xor_key += xoring_dword; // increase xor key by xoring dword before XOR
+		xoring_dword ^= xor_key; // XOR
+		// decodeXOR() first XORs, then substracts :) and it goes from end of packet to beginning
+		// update dword inside packet
+		raw_bytes[xor_offset] = (unsigned char(xoring_dword)) & 0xFF;
+		raw_bytes[xor_offset+1] = (unsigned char(xoring_dword >> 8)) & 0xFF;
+		raw_bytes[xor_offset+2] = (unsigned char(xoring_dword >> 16)) & 0xFF;
+		raw_bytes[xor_offset+3] = (unsigned char(xoring_dword >> 24)) & 0xFF;
+		// move to next dword
+		xor_offset += 4;
+	}
+	// append resulting xor key to packet
+	writeUInt( xor_key );
+	// add some 4 (trash?) bytes up to size 186
+	writeUInt( 0x00001234 );
+	// now Init packet size is 186 bytes long, all OK
+	// next step before sending packet to client is to encrypt Init packet
+	// by STATIC blowfish key (can be done by calling L2LoginPacket::encodeBlowfish( true );)
+	// NO need to call padPacketTo8ByteLen(), appendChecksum(), appendMore8Bytes().
+	return true;
 }
 
 bool L2Login_Init::parse( L2_VERSION ver )
