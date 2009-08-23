@@ -14,7 +14,7 @@ public:
 	virtual bool parse( L2_VERSION ver = L2_VERSION_T1 );
 	virtual bool create( L2_VERSION ver = L2_VERSION_T1 );
 public:
-	unsigned int ggAuthResponse;
+	unsigned int p_ggAuthResponse;
 };
 
 #endif /*LOGIN_GGAUTHRESPONSE_H_*/

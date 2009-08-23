@@ -1,22 +1,6 @@
 #include "stdafx.h"
 #include "L2Login_LoginOK.h"
 
-/* L2J
-   protected void write()
-	{
-		writeC(0x03);
-		writeD(_loginOk1);
-		writeD(_loginOk2);
-		writeD(0x00);
-		writeD(0x00);
-		writeD(0x000003ea);
-		writeD(0x00);
-		writeD(0x00);
-		writeD(0x00);
-		writeB(new byte[16]);
-	}
-*/
-
 L2Login_LoginOK::L2Login_LoginOK()
 {
 	this->_initNull();
@@ -40,3 +24,33 @@ bool L2Login_LoginOK::read_sessionKey1( unsigned char *sessionKey1 )
 	this->readBytes( sessionKey1, 8 ); // read 8 bytes of sessionKey1
 	return true;
 }
+
+bool L2Login_LoginOK::create( L2_VERSION ver /*= L2_VERSION_T23*/ )
+{
+	UNREFERENCED_PARAMETER(ver);
+	setPacketType( 0x03 );
+	writeBytes( p_sessionKey1, 8 );
+	writeD( 0x00 );
+	writeD( 0x00 );
+	writeD( 0x000003ea ); // wtf?
+	writeD( 0x00 );
+	writeD( 0x00 );
+	writeD( 0x00 );
+	//writeB(new byte[16]); // 4 Ds
+	writeD( 0x00 );
+	writeD( 0x00 );
+	writeD( 0x00 );
+	writeD( 0x00 );
+	return true;
+}
+
+bool L2Login_LoginOK::parse( L2_VERSION ver /*= L2_VERSION_T23*/ )
+{
+	UNREFERENCED_PARAMETER(ver);
+	if( getPacketType() != 0x03 ) return false;
+	if( !canReadBytes( 8 ) ) return false; // we need at least 8 bytes of sessionKey1
+	readBytes( p_sessionKey1, 8 );
+	// ignore the rest
+	return true;
+}
+

@@ -12,6 +12,11 @@ public:
 	// read SessionKey #1 from packet
 	// SessionKey is 8-byte array
 	bool read_sessionKey1( unsigned char *sessionKey1 );
+public:
+	bool create( L2_VERSION ver = L2_VERSION_T23 );
+	bool parse( L2_VERSION ver = L2_VERSION_T23 );
+public:
+	unsigned char p_sessionKey1[8];
 };
 
 #endif /*L2LOGIN_LOGINOK_H_*/

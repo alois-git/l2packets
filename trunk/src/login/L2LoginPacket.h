@@ -58,7 +58,7 @@ protected:
 protected:
 	unsigned char STATIC_BLOWFISH_KEY[32]; ///< Static Blowfish key (First packet from login server is encrypted by this)
 	unsigned int  STATIC_BLOWFISH_KEY_LEN; ///< length of static BF key
-	unsigned char NEW_BLOWFISH_KEY[32]; ///< Buffer to hold dynamic blowfish key
+	unsigned char NEW_BLOWFISH_KEY[64]; ///< Buffer to hold dynamic blowfish key
 	unsigned int  NEW_BLOWFISH_KEY_LEN; ///< Dynamic BF key size
 	unsigned int  xor_key; ///< current XOR key (for Init packet)
 };

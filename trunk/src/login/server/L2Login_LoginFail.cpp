@@ -47,14 +47,31 @@ void L2Login_LoginFail::getReasonStr( unsigned int code, char *s )
 	strcpy( s, "REASON_UNKNOWN" );
 	switch( code )
 	{
-	case L2LF_REASON_SYSTEM_ERROR       : strcpy( s, "REASON_SYSTEM_ERROR" ); break;
-	case L2LF_REASON_PASS_WRONG         : strcpy( s, "REASON_PASS_WRONG" ); break;
-	case L2LF_REASON_USER_OR_PASS_WRONG : strcpy( s, "REASON_USER_OR_PASS_WRONG" ); break;
-	case L2LF_REASON_ACCESS_FAILED      : strcpy( s, "REASON_ACCESS_FAILED" ); break;
-	case L2LF_REASON_ACCOUNT_IN_USE     : strcpy( s, "REASON_ACCOUNT_IN_USE" ); break;
-	case L2LF_REASON_SERVER_OVERLOADED  : strcpy( s, "REASON_SERVER_OVERLOADED" ); break;
-	case L2LF_REASON_SERVER_MAINTENANCE : strcpy( s, "REASON_SERVER_MAINTENANCE" ); break;
-	case L2LF_REASON_TEMP_PASS_EXPIRED  : strcpy( s, "REASON_TEMP_PASS_EXPIRED" ); break;
-	case L2LF_REASON_DUAL_BOX           : strcpy( s, "REASON_DUAL_BOX" ); break;
+	case REASON_SYSTEM_ERROR       : strcpy( s, "REASON_SYSTEM_ERROR" ); break;
+	case REASON_PASS_WRONG         : strcpy( s, "REASON_PASS_WRONG" ); break;
+	case REASON_USER_OR_PASS_WRONG : strcpy( s, "REASON_USER_OR_PASS_WRONG" ); break;
+	case REASON_ACCESS_FAILED      : strcpy( s, "REASON_ACCESS_FAILED" ); break;
+	case REASON_ACCOUNT_IN_USE     : strcpy( s, "REASON_ACCOUNT_IN_USE" ); break;
+	case REASON_SERVER_OVERLOADED  : strcpy( s, "REASON_SERVER_OVERLOADED" ); break;
+	case REASON_SERVER_MAINTENANCE : strcpy( s, "REASON_SERVER_MAINTENANCE" ); break;
+	case REASON_TEMP_PASS_EXPIRED  : strcpy( s, "REASON_TEMP_PASS_EXPIRED" ); break;
+	case REASON_DUAL_BOX           : strcpy( s, "REASON_DUAL_BOX" ); break;
 	}
+}
+
+bool L2Login_LoginFail::create( L2_VERSION ver /*= L2_VERSION_T1*/ )
+{
+	UNREFERENCED_PARAMETER(ver);
+	setPacketType( 0x01 );
+	writeUChar( p_reasonCode & 0xFF );
+	return true;
+}
+
+bool L2Login_LoginFail::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
+{
+	UNREFERENCED_PARAMETER(ver);
+	if( !canReadBytes( 2 ) ) return false;
+	if( getPacketType() != 0x01 ) return false;
+	p_reasonCode = (unsigned int)readUChar();
+	return true;
 }
