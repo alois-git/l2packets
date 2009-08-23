@@ -3,12 +3,15 @@
 
 L2Login_RequestAuthLogin::L2Login_RequestAuthLogin()
 {
-	this->_initNull();
+	_initNull();
 }
 
-/*L2Login_RequestAuthLogin::~L2Login_RequestAuthLogin()
+L2Login_RequestAuthLogin::L2Login_RequestAuthLogin( const unsigned char *bytes, unsigned int length )
 {
-}*/
+	_initNull();
+	setBytes( bytes, length );
+}
+
 
 // RSA_pubKeyMod must point to 128-bytes length buffer
 bool L2Login_RequestAuthLogin::create( const char *szL2Login, const char *szL2Password,

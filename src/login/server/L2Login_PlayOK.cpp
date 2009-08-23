@@ -28,3 +28,20 @@ bool L2Login_PlayOK::read_sessionKey2( unsigned char *sessionKey2 )
 	this->getPacketType();
 	return this->readBytes( sessionKey2, 8 );
 }
+
+bool L2Login_PlayOK::create( L2_VERSION ver /*= L2_VERSION_T1*/ )
+{
+	UNREFERENCED_PARAMETER(ver);
+	setPacketType( 0x07 );
+	writeBytes( p_sessionKey2, 8 );
+	return true;
+}
+
+bool L2Login_PlayOK::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
+{
+	UNREFERENCED_PARAMETER(ver);
+	if( getPacketType() != 0x07 ) return false;
+	if( !canReadBytes( 8 ) ) return false;
+	readBytes( p_sessionKey2, 8 );
+	return true;
+}

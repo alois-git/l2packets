@@ -10,6 +10,7 @@ class L2Login_RequestAuthLogin: public L2LoginPacket
 {
 public:
 	L2Login_RequestAuthLogin();
+	L2Login_RequestAuthLogin( const unsigned char *bytes, unsigned int length );
 public:
 	// RSA_pubKeyMod must point to 128-bytes length buffer
 	bool create( const char *szL2Login, const char *szL2Password,

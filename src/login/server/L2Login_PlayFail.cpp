@@ -35,11 +35,29 @@ bool L2Login_PlayFail::getReasonStr( unsigned char code, char *str )
 	strcpy( str, "REASON_UNKNOWN" );
 	switch( code )
 	{
-	case L2PF_REASON_SYSTEM_ERROR: strcpy( str, "REASON_SYSTEM_ERROR" ); break;       
-	case L2PF_REASON_USER_OR_PASS_WRONG: strcpy( str, "REASON_USER_OR_PASS_WRONG" ); break; 
-	case L2PF_REASON3: strcpy( str, "REASON3" ); break;
-	case L2PF_REASON4: strcpy( str, "REASON4" ); break;
-	case L2PF_REASON_TOO_MANY_PLAYERS: strcpy( str, "REASON_TOO_MANY_PLAYERS" ); break;
+	case REASON_SYSTEM_ERROR: strcpy( str, "REASON_SYSTEM_ERROR" ); break;       
+	case REASON_USER_OR_PASS_WRONG: strcpy( str, "REASON_USER_OR_PASS_WRONG" ); break; 
+	case REASON3: strcpy( str, "REASON3" ); break;
+	case REASON4: strcpy( str, "REASON4" ); break;
+	case REASON_TOO_MANY_PLAYERS: strcpy( str, "REASON_TOO_MANY_PLAYERS" ); break;
 	}
 	return true;
 }
+
+bool L2Login_PlayFail::create( L2_VERSION ver /*= L2_VERSION_T1*/ )
+{
+	UNREFERENCED_PARAMETER(ver);
+	setPacketType( 0x06 );
+	writeUChar( p_reasonCode );
+	return true;
+}
+
+bool L2Login_PlayFail::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
+{
+	UNREFERENCED_PARAMETER(ver);
+	if( getPacketType() != 0x06 ) return false;
+	if( !canReadBytes(1) ) return false;
+	p_reasonCode = readUChar();
+	return true;
+}
+

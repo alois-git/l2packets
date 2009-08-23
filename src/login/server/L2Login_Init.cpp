@@ -243,7 +243,7 @@ bool L2Login_Init::create( L2_VERSION ver )
 	// Init packet has no checksum or padding, but it has XOR encryption
 	// fill packet up to xor key position
 	writeD( 0x00000000 ); // write some 6 bytes, they are ignored? trash?
-	writeH( 0x0000 );     // TODO: test on L2 client
+	writeH( 0x0000 );     // tested, works OK
 	// now, XOR all previous bytes except first 2 bytes with packet len
 	// and next 4 bytes with login session id?
 	unsigned int xor_key = rand(); // O_o generate random XOR "key"
