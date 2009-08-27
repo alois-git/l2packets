@@ -223,6 +223,39 @@ bool L2LoginPacket::appendChecksum( bool append4bytes )
 	return true;
 }
 
+bool L2LoginPacket::verifyBytesChecksum( const unsigned char *bytes, unsigned int offset, unsigned int size )
+{
+	if( !bytes || (size<8) ) return false;
+	if( size % 4 != 0 ) return false; // data size should be a multiple of 4
+	//
+	unsigned int chksum = 0;
+	unsigned int count = size-4;
+	unsigned int check = 0xFFFFFFFF;
+	unsigned int i = 0;
+	//
+	for( i=offset; i<count; i+=4 )
+	{
+		check = bytes[i] & 0xFF;
+		check |= (bytes[i+1] << 8) & 0xFF00;
+		check |= (bytes[i+2] << 16) & 0xFF0000;
+		check |= (bytes[i+3] << 24) & 0xFF000000;
+		chksum ^= check;
+	}
+	check = bytes[i] & 0xFF;
+	check |= (bytes[i+1] << 8) & 0xFF00;
+	check |= (bytes[i+2] << 16) & 0xFF0000;
+	check |= (bytes[i+3] << 24) & 0xFF000000;
+	//
+	return (check == chksum);
+}
+
+bool L2LoginPacket::verifyChecksum() const
+{
+	const unsigned char *bytes = getBytesPtr();
+	unsigned int data_len = getDataSize();
+	return L2LoginPacket::verifyBytesChecksum( bytes, 2, data_len );
+}
+
 bool L2LoginPacket::padPacketTo8ByteLen()
 {
 	unsigned char *packet = b.getBytesPtr();
@@ -344,9 +377,9 @@ bool L2LoginPacket::encodeBlowfish( bool bUseStaticBFKey )
 	return true;
 }
 
-bool L2LoginPacket::encodeAndPrepareToSend( unsigned char *blowfishKey )
+bool L2LoginPacket::encodeAndPrepareToSend( unsigned char *blowfishKey, unsigned int bfKeyLen /*= 16*/ )
 {
-	if( !setDynamicBFKey( blowfishKey, 16 ) ) return false;
+	if( !setDynamicBFKey( blowfishKey, bfKeyLen ) ) return false;
 	if( !padPacketTo8ByteLen() ) return false;
 	appendChecksum( true );
 	appendMore8Bytes();
