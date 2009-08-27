@@ -32,6 +32,15 @@ public:
 	/** Appends checksum to packet
 	 * \param append4bytes in Hellbound, set to true to keep packet data length 8-byte aligned */
 	virtual bool         appendChecksum( bool append4bytes = true );
+	/** Verifies data checksum, XORing count bytes starting from offset.\n
+	 * Checksum must be written at last 4 bytes of data, so data size must be >= 8 at least.
+	 * \param bytes data array
+	 * \param offset starting position
+	 * \param size data size in bytes (should be a multiple of 4)
+	 * \return true, if checksum is ok */
+	static bool          verifyBytesChecksum( const unsigned char *bytes, unsigned int offset, unsigned int size );
+	/** Verifies this packet checksum. */
+	virtual bool         verifyChecksum() const;
 	/** Does padding of packet data by zeroes to 8-byte border (before BF encryption) */
 	virtual bool         padPacketTo8ByteLen();
 	/** In Hellbound, packets are padded by more 8 zero bytes after adding checksum & 4 bytes */
@@ -49,8 +58,9 @@ public:
 public:
 	/** Encrypts packet with Blowfish, does all padding, appends checksum - after that packet may be sent
 	 * \param blowfishKey - Blowfish key to use for encryption (16 bytes)
+	 * \param bfKeyLen - length of Blowfish key (default is 16)
 	 * \return success status */
-	virtual bool encodeAndPrepareToSend( unsigned char *blowfishKey );
+	virtual bool encodeAndPrepareToSend( unsigned char *blowfishKey, unsigned int bfKeyLen = 16 );
 
 protected:
 	/** Also initializes STATIC_BF_KEY, which is constant. */
