@@ -8,8 +8,9 @@ class L2Login_PlayFail : public L2LoginPacket
 public:
 	static const int REASON_SYSTEM_ERROR        = 0x01;
 	static const int REASON_USER_OR_PASS_WRONG  = 0x02;
-	static const int REASON3                    = 0x03;
-	static const int REASON4                    = 0x04;
+	static const int REASON3                    = 0x03; // same as REASON_USER_OR_PASS_WRONG
+	static const int REASON_ACCESS_FAILED       = 0x04;
+	static const int REASON_ACCOUNT_INFORMATION_INCORRECT = 0x05;
 	static const int REASON_TOO_MANY_PLAYERS    = 0x0f;
 public:
 	L2Login_PlayFail();

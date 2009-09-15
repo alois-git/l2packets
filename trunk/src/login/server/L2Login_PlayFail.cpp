@@ -38,7 +38,8 @@ bool L2Login_PlayFail::getReasonStr( unsigned char code, char *str )
 	case REASON_SYSTEM_ERROR: strcpy( str, "REASON_SYSTEM_ERROR" ); break;       
 	case REASON_USER_OR_PASS_WRONG: strcpy( str, "REASON_USER_OR_PASS_WRONG" ); break; 
 	case REASON3: strcpy( str, "REASON3" ); break;
-	case REASON4: strcpy( str, "REASON4" ); break;
+	case REASON_ACCESS_FAILED: strcpy( str, "REASON_ACCESS_FAILED" ); break;
+	case REASON_ACCOUNT_INFORMATION_INCORRECT: strcpy( str, "REASON_ACCOUNT_INFORMATION_INCORRECT" ); break;
 	case REASON_TOO_MANY_PLAYERS: strcpy( str, "REASON_TOO_MANY_PLAYERS" ); break;
 	}
 	return true;
