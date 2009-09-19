@@ -59,9 +59,9 @@ bool L2Game_CharSelectionInfo::read_next_charSelectInfoBlock( L2_VERSION l2_vers
 	c->race = readUInt();
 	c->baseClassID = readUInt();
 	c->isActive = readUInt();
-	c->x = readUInt();
-	c->y = readUInt();
-	c->z = readUInt();
+	c->x = readInt();
+	c->y = readInt();
+	c->z = readInt();
 	c->HP_cur = readDouble();
 	c->MP_cur = readDouble();
 	c->SP = readUInt();

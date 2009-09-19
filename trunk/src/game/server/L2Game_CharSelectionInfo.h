@@ -14,9 +14,9 @@ struct L2Game_CharSelectionInfoBlock
 	unsigned int race;
 	unsigned int baseClassID;
 	unsigned int isActive;
-	unsigned int x;
-	unsigned int y;
-	unsigned int z;
+	int x;
+	int y;
+	int z;
 	double HP_cur;
 	double MP_cur;
 	unsigned int SP;
