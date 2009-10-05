@@ -48,12 +48,14 @@ public:
 	virtual ~L2BasePacket();
 
 public:
-	/** Reads byte at index from internal storage. Calls ByteArray::getByteAt()
+	/** Reads byte at index from internal storage. Calls ByteArray::getByteAt()\n
+	 * May throw L2P_ReadException in case of range error.
 	 \param index - byte index to read
 	 \return byte value, or 0 if index is out of range.
 	 */
 	virtual unsigned char  getByteAt( unsigned int index );
-	/** Sets byte at specified index to value. Does nothing if index out of bounds. Calls ByteArray::setByteAt()
+	/** Sets byte at specified index to value. Does nothing if index out of bounds. Calls ByteArray::setByteAt()\n
+	 * May throw L2P_WriteException in case of range error.
 	 * \param index byte index
 	 * \param byte byte value to set
 	 * \return previous byte value
@@ -77,12 +79,20 @@ public:
 	 * Moves write pointer to byte #3 (next after opcode)
 	 * \param type new packet opcode. */
 	virtual void           setPacketType( unsigned char type );
-	/** Sets 3rd,4th,5th bytes of packet (which holds packet extended opcode).
+	/** Sets 3rd,4th,5th bytes of packet (which holds packet opcode and extended opcode).
 	 * Equivalent to call writeReset(); writeUChar(); writeUShort() with parameter type. 
 	 * Moves write pointer!
 	 * \param opcode new packet opcode.
 	 * \param opcode2 extended opcode. */
 	virtual void           setPacketType2( unsigned char opcode, unsigned short opcode2 );
+	/** Sets 3rd,4th,5th,6th,7th bytes of packet (which holds packet opcode, ext opcode, ext opcode 2).
+	 * Equivalent to call writeReset(); writeUChar(); writeUShort() writeUShort() with parameter type. 
+	 * Moves write pointer!
+	 * \param opcode new packet opcode.
+	 * \param opcode2 extended opcode.
+	 * \param opcode3 extended opcode 2.
+	 */
+	virtual void           setPacketType3( unsigned char opcode, unsigned short opcode2, unsigned short opcode3 );
 	/** Reads packet opcode. Moves read pointer to byte #3 (next after opcode). Equivalent calls: readReset(); readUChar()
 	 * \return read packet opcode. */
 	virtual unsigned char  getPacketType() { readReset(); return readUChar(); }
@@ -95,6 +105,7 @@ public:
 	virtual unsigned short getDataSize() const { return (unsigned short)(this->datasize); }
 
 public: // write funcs
+	// All of read/write funcs can throw subclasses of L2P_Exception in case of read/write errors.
 	/** Checks if it is possible to write nBytes bytes to packet; if no, tries to increase buffer size.
 	 * Called automatically from write-functions.
 	 * \param nBytes checked size
@@ -143,6 +154,7 @@ public: // write funcs
 	 * \param len data length. */
 	virtual void           writeBytes( const unsigned char *bytes, unsigned int len );
 public: // read funcs
+	// All of read/write funcs can throw subclasses of L2P_Exception in case of read/write errors.
 	/** Checks if there are some bytes left to read form current read position in packet.
 	 * \param nBytes number of bytes to test to readability.
 	 * \return true, if nBytes bytes can be read form current read position; false if there are less than 
