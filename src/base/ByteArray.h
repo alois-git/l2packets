@@ -35,7 +35,8 @@ public:	// size funcs
 	/** \return Current array size. */
 	inline unsigned int   getSize() const { return this->byteCount; }
 	/** sets new size of buffer. Contents remain unchanged (but may be truncated). \n
-	 * In general, calls C runtime realloc()
+	 * In general, calls C runtime realloc()\n
+	 * May throw L2P_MemoryError exception, if enabled.
 	 * \param newSize new size of buffer. Must be >= 0
 	 */
 	bool                  setSize( unsigned int newSize );
@@ -44,12 +45,14 @@ public: // data functions
 	/** \return pointer to internal data buffer */
 	inline unsigned char *getBytesPtr() const { return this->bytes; }
 	
-	/** Get byte value at specified index.
+	/** Get byte value at specified index.\n
+	 * May throw L2P_ReadException, if enabled.
 	 * \param index Index of byte to retreive. If index is out of array bounds, function returns zero.
 	 * \return byte alue at index, or 0 if index does not belong to array.
 	 */
 	unsigned char         getByteAt( unsigned int index ) const;
-	/** Sets byte at specified index.
+	/** Sets byte at specified index.\n
+	 * May throw L2P_WriteException, if enabled.
 	 * \param index Byte index to set. If index does not belong to array, function does nothing.
 	 * \param byteSet new byte value
 	 * \return previous byte value */

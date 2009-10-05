@@ -23,6 +23,7 @@ mkdir %dn%\login\server
 mkdir %dn%\net_io
 mkdir %dn%\packetNames
 mkdir %dn%\pcode_obfuscator
+mkdir %dn%\xcpt
 echo Created dir tree
 
 :copy
@@ -50,6 +51,8 @@ rem packetNames
 copy %src%\packetNames\L2PacketNames.h %dn%\packetNames\L2PacketNames.h > NUL
 rem pcode_obfuscator
 copy %src%\pcode_obfuscator\L2PCodeObfuscator.h %dn%\pcode_obfuscator\L2PCodeObfuscator.h > NUL
+rem xcpt
+copy %src%\xcpt\L2Packets_xcpt.h %dn%\xcpt\L2Packets_xcpt.h > NUL
 
 echo Copy headers complete to %dn%
 

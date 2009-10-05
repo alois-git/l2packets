@@ -23,6 +23,7 @@ mkdir $dn/login/server
 mkdir $dn/net_io
 mkdir $dn/packetNames
 mkdir $dn/pcode_obfuscator
+mkdir $dn/xcpt
 echo "Created dir tree"
 
 # main header
@@ -50,5 +51,7 @@ cp $src/net_io/*.h $dn/net_io
 cp $src/packetNames/L2PacketNames.h $dn/packetNames/L2PacketNames.h
 # pcode_obfuscator
 cp $src/pcode_obfuscator/L2PCodeObfuscator.h $dn/pcode_obfuscator/L2PCodeObfuscator.h
+#xcpt
+cp $src/xcpt/L2Packets_xcpt.h $dn/xcpt/L2Packets_xcpt.h
 
 echo "Copy headers complete to $dn"

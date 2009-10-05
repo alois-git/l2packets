@@ -39,7 +39,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\src\sqlite3"
-				PreprocessorDefinitions="_DEBUG;SQLITE_THREADSAFE=1"
+				PreprocessorDefinitions="_DEBUG;SQLITE_THREADSAFE=1;L2P_THROW"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="false"
 				RuntimeLibrary="1"
@@ -108,6 +108,7 @@
 				Optimization="0"
 				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories="..\src\sqlite3"
+				PreprocessorDefinitions="SQLITE_THREADSAFE=1;L2P_THROW"
 				BufferSecurityCheck="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
@@ -745,6 +746,18 @@
 			</File>
 			<File
 				RelativePath="..\src\os\os_abstraction.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="xcpt"
+			>
+			<File
+				RelativePath="..\src\xcpt\L2Packets_xcpt.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xcpt\L2Packets_xcpt.h"
 				>
 			</File>
 		</Filter>

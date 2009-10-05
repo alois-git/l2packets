@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ByteArray.h"
+#include "../xcpt/L2Packets_xcpt.h"
 
 #ifdef _DEBUG
 int ByteArray::_debugPrintf( const char *_Format, ... )
@@ -128,21 +129,16 @@ bool ByteArray::setSize( unsigned int newSize )
 			this->bytes = newPtr;
 			this->byteCount = newSize;
 			return true;
-		} // TODO: else throw exception?
+		}
+#ifdef L2P_THROW
+		else throw L2P_MemoryError( newSize );
+#else
 		return false;
+#endif
 	}
 	return false;
 }
 
-/*unsigned int ByteArray::getSize() const
-{
-	return this->byteCount;
-}*/
-
-/*unsigned char *ByteArray::getBytesPtr() const
-{
-	return this->bytes;
-}*/
 
 unsigned char ByteArray::getByteAt( unsigned int index ) const
 {
@@ -151,12 +147,15 @@ unsigned char ByteArray::getByteAt( unsigned int index ) const
 		if( index < (this->byteCount) ) return this->bytes[index];
 		return 0;
 	}
-	return 0; // TODO: throw exception?
+#ifdef L2P_THROW
+	throw L2P_ReadException( 1, (int)index, (int)byteCount );
+#else
+	return 0;
+#endif
 }
 
 unsigned char ByteArray::setByteAt( unsigned int index, unsigned char byteSet )
 {
-	//printf( "ByteArray::setByteAt( %u => %u )... ", index, (unsigned int)byteSet );
 	if( (this->byteCount > 0) && (this->bytes) )
 	{
 		unsigned char retVal = 0;
@@ -164,20 +163,21 @@ unsigned char ByteArray::setByteAt( unsigned int index, unsigned char byteSet )
 		{
 			retVal = this->bytes[index];
 			this->bytes[index] = byteSet;
-			//printf( "OK\n" );
 		}
-		// TODO: else throw exception?
-		/*else
-		{
-			printf( "O_o index (%u) < byteCount (%u)\n", index, this->byteCount );
-		}*/
+		// else throw exception?
+#ifdef L2P_THROW
+		throw L2P_WriteException( 1, (int)index, (int)byteCount );
+#else
 		return retVal;
+#endif
 	}
 	else
 	{
-		/*printf( "O_o this->byteCount = %u > 0 && this->bytes = 0x%p\n",
-			this->byteCount, this->bytes );*/
-		return 0; // TODO: throw exception?
+#ifdef L2P_THROW
+		throw L2P_WriteException( 1, (int)index, (int)byteCount );
+#else
+		return 0;
+#endif
 	}
 }
 
@@ -210,8 +210,7 @@ bool ByteArray::setBytes( const unsigned char *newBytes, unsigned int length )
 	this->memset( 0x00 );
 	//while( i < length ) this->bytes[i] = newBytes[i++];
 	memcpy( this->bytes, newBytes, length );
-	//printf( "ByteArray::setBytes(): %u bytes set OK (buffer len %u)\n",
-	//	length, this->byteCount );
+	//printf( "ByteArray::setBytes(): %u bytes set OK (buffer len %u)\n", length, this->byteCount );
 	return true;
 }
 

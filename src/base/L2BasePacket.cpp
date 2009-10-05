@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "L2BasePacket.h"
+#include "../xcpt/L2Packets_xcpt.h"
 
 L2BasePacket::L2BasePacket()
 {
@@ -69,6 +70,14 @@ void L2BasePacket::setPacketType2( unsigned char opcode, unsigned short opcode2 
 	writeReset();
 	writeUChar( opcode );
 	writeUShort( opcode2 );
+}
+
+void L2BasePacket::setPacketType3( unsigned char opcode, unsigned short opcode2, unsigned short opcode3 )
+{
+	writeReset();
+	writeUChar( opcode );
+	writeUShort( opcode2 );
+	writeUShort( opcode3 );
 }
 
 /*unsigned char L2BasePacket::getPacketType()
@@ -232,7 +241,12 @@ bool L2BasePacket::canReadBytes( unsigned int nBytes )
 
 char L2BasePacket::readChar()
 {
-	if( !canReadBytes( 1 ) ) return 0; // TODO: throw exception?
+	if( !canReadBytes( 1 ) )
+#ifdef L2P_THROW
+		throw L2P_ReadException( 1, (int)read_ptr, (int)real_size );
+#else
+		return 0;
+#endif
 	char ret = b.getByteAt( read_ptr );
 	read_ptr++;
 	return ret;
@@ -240,7 +254,12 @@ char L2BasePacket::readChar()
 
 unsigned char L2BasePacket::readUChar()
 {
-	if( !canReadBytes( 1 ) ) return 0; // TODO: throw exception?
+	if( !canReadBytes( 1 ) )
+#ifdef L2P_THROW
+		throw L2P_ReadException( 1, (int)read_ptr, (int)real_size );
+#else
+		return 0;
+#endif
 	unsigned char ret = b.getByteAt( read_ptr );
 	read_ptr++;
 	return ret;
@@ -262,8 +281,12 @@ short int L2BasePacket::readShort()
 		unsigned char c2 = readChar();
 		unsigned short int ret = ((unsigned short int)c1) | ((unsigned short int)c2 << 8);
 		return ret;
-	} // TODO: else throw exception?
+	}
+#ifdef L2P_THROW
+	throw L2P_ReadException( 2, (int)read_ptr, (int)real_size );
+#else
 	return 0;
+#endif
 }
 
 unsigned short int L2BasePacket::readUShort()
@@ -274,8 +297,12 @@ unsigned short int L2BasePacket::readUShort()
 		unsigned char c2 = readUChar();
 		unsigned short int ret = ((unsigned short int)c1) | ((unsigned short int)c2 << 8);
 		return ret;
-	} // TODO: else throw exception?
+	}
+#ifdef L2P_THROW
+	throw L2P_ReadException( 2, (int)read_ptr, (int)real_size );
+#else
 	return 0;
+#endif
 }
 
 int L2BasePacket::readInt()
@@ -291,8 +318,12 @@ int L2BasePacket::readInt()
 		ret |= ( (unsigned int)c3 << 16 );
 		ret |= ( (unsigned int)c4 << 24 );
 		return ret;
-	} // TODO: else throw exception?
+	}
+#ifdef L2P_THROW
+	throw L2P_ReadException( 4, (int)read_ptr, (int)real_size );
+#else
 	return 0;
+#endif
 }
 
 unsigned int L2BasePacket::readUInt()
@@ -308,8 +339,12 @@ unsigned int L2BasePacket::readUInt()
 		ret |= ( (unsigned int)c3 << 16 );
 		ret |= ( (unsigned int)c4 << 24 );
 		return ret;
-	} // TODO: else throw exception?
+	}
+#ifdef L2P_THROW
+	throw L2P_ReadException( 4, (int)read_ptr, (int)real_size );
+#else
 	return 0;
+#endif
 }
 
 long long int L2BasePacket::readInt64()
@@ -326,8 +361,13 @@ long long int L2BasePacket::readInt64()
 			(*retaddr) = c;
 			retaddr++;
 		}
-	} // TODO: else throw exception?
-	return ret;
+		return ret;
+	}
+#ifdef L2P_THROW
+	throw L2P_ReadException( 8, (int)read_ptr, (int)real_size );
+#else
+	return 0;
+#endif
 }
 
 unsigned long long int L2BasePacket::readUInt64()
@@ -344,8 +384,13 @@ unsigned long long int L2BasePacket::readUInt64()
 			(*retaddr) = c;
 			retaddr++;
 		}
-	} // TODO: else throw exception?
-	return ret;
+		return ret;
+	}
+#ifdef L2P_THROW
+	throw L2P_ReadException( 8, (int)read_ptr, (int)real_size );
+#else
+	return 0;
+#endif
 }
 
 double L2BasePacket::readDouble()
@@ -362,8 +407,13 @@ double L2BasePacket::readDouble()
 			(*retaddr) = c;
 			retaddr++;
 		}
-	}// TODO: else throw exception?
-	return ret;
+		return ret;
+	}
+#ifdef L2P_THROW
+	throw L2P_ReadException( 8, (int)read_ptr, (int)real_size );
+#else
+	return 0.0;
+#endif
 }
 
 char *L2BasePacket::readString()
@@ -446,16 +496,6 @@ const wchar_t *L2BasePacket::readUnicodeStringPtr()
 	return wstr;
 }
 
-/*bool L2BasePacket::opcodeObfuscate( L2PCodeObfuscator *obfuscator )
-{
-	if( !obfuscator || (datasize<1) ) return false;
-	unsigned char opcode = this->getByteAt( 2 );
-	opcode = obfuscator->encodeIDs(
-}
-
-bool L2BasePacket::opcodeDeObfuscate( L2PCodeObfuscator *obfuscator )
-{
-}*/
 
 void L2BasePacket::writeReset()
 {
@@ -553,13 +593,18 @@ void L2BasePacket::displaySelfNice( FILE *f )
 
 unsigned char L2BasePacket::getByteAt( unsigned int index )
 {
-	if( index >= real_size ) return 0; // TODO: throw?
+	if( index >= real_size )
+#ifdef L2P_THROW
+		throw L2P_ReadException( 1, (int)index, (int)real_size );
+#else
+		return 0;
+#endif
 	char c = b.getByteAt( index );
 	return c;
 }
 unsigned char L2BasePacket::setByteAt( unsigned int index, unsigned char byte )
 {
-	// TODO: checks?
+	// checks are inside of ByteArray::setByteAt() (throwing exceptions if enabled)
 	return b.setByteAt( index, byte );
 }
 
@@ -580,7 +625,11 @@ ByteArray *L2BasePacket::readB( unsigned int count )
 	pByteArray->setSize( count );
 	if( this->readBytes( pByteArray->getBytesPtr(), count ) ) return pByteArray;
 	delete pByteArray;
+#ifdef L2P_THROW
+	throw L2P_ReadException( (int)count, (int)read_ptr, (int)real_size );
+#else
 	return NULL;
+#endif
 }
 
 // must be overrided in child classes
