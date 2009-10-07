@@ -32,7 +32,7 @@ protected:
 class L2P_MemoryError: public L2P_Exception
 {
 public:
-	L2P_MemoryError( size_t bytes );
+	L2P_MemoryError( const char *comment, size_t bytes );
 };
 
 /** \class L2P_Exception Will be thrown when reading past end of packet OR calling 
@@ -40,7 +40,7 @@ public:
 class L2P_ReadException: public L2P_Exception
 {
 public:
-	L2P_ReadException( int nBytesTriedToRead, int nPos, int nSize );
+	L2P_ReadException( const char *comment, int nBytesTriedToRead, int nPos, int nSize );
 };
 
 /** \class L2P_Exception Will be thrown when writing past end of packet (almost impossible situation) OR
@@ -48,7 +48,7 @@ public:
 class L2P_WriteException: public L2P_Exception
 {
 public:
-	L2P_WriteException( int nBytesTriedToWrite, int nPos, int nSize );
+	L2P_WriteException( const char *comment, int nBytesTriedToWrite, int nPos, int nSize );
 };
 
 #endif
