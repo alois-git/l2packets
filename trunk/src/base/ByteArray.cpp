@@ -131,7 +131,7 @@ bool ByteArray::setSize( unsigned int newSize )
 			return true;
 		}
 #ifdef L2P_THROW
-		else throw L2P_MemoryError( newSize );
+		else throw L2P_MemoryError( "ByteArray::setSize()", newSize );
 #else
 		return false;
 #endif
@@ -148,7 +148,7 @@ unsigned char ByteArray::getByteAt( unsigned int index ) const
 		return 0;
 	}
 #ifdef L2P_THROW
-	throw L2P_ReadException( 1, (int)index, (int)byteCount );
+	throw L2P_ReadException( "ByteArray::getByteAt()", 1, (int)index, (int)byteCount );
 #else
 	return 0;
 #endif
@@ -164,17 +164,15 @@ unsigned char ByteArray::setByteAt( unsigned int index, unsigned char byteSet )
 			retVal = this->bytes[index];
 			this->bytes[index] = byteSet;
 		}
-		// else throw exception?
 #ifdef L2P_THROW
-		throw L2P_WriteException( 1, (int)index, (int)byteCount );
-#else
-		return retVal;
+		else throw L2P_WriteException( "ByteArray::setByteAt()", 1, (int)index, (int)byteCount );
 #endif
+		return retVal;
 	}
 	else
 	{
 #ifdef L2P_THROW
-		throw L2P_WriteException( 1, (int)index, (int)byteCount );
+		throw L2P_WriteException( "ByteArray::setByteAt()", 1, (int)index, (int)byteCount );
 #else
 		return 0;
 #endif

@@ -243,7 +243,7 @@ char L2BasePacket::readChar()
 {
 	if( !canReadBytes( 1 ) )
 #ifdef L2P_THROW
-		throw L2P_ReadException( 1, (int)read_ptr, (int)real_size );
+		throw L2P_ReadException( "L2BasePacket::readChar()", 1, (int)read_ptr, (int)real_size );
 #else
 		return 0;
 #endif
@@ -256,7 +256,7 @@ unsigned char L2BasePacket::readUChar()
 {
 	if( !canReadBytes( 1 ) )
 #ifdef L2P_THROW
-		throw L2P_ReadException( 1, (int)read_ptr, (int)real_size );
+		throw L2P_ReadException( "L2BasePacket::readUChar()", 1, (int)read_ptr, (int)real_size );
 #else
 		return 0;
 #endif
@@ -283,7 +283,7 @@ short int L2BasePacket::readShort()
 		return ret;
 	}
 #ifdef L2P_THROW
-	throw L2P_ReadException( 2, (int)read_ptr, (int)real_size );
+	throw L2P_ReadException( "L2BasePacket::readShort()", 2, (int)read_ptr, (int)real_size );
 #else
 	return 0;
 #endif
@@ -299,7 +299,7 @@ unsigned short int L2BasePacket::readUShort()
 		return ret;
 	}
 #ifdef L2P_THROW
-	throw L2P_ReadException( 2, (int)read_ptr, (int)real_size );
+	throw L2P_ReadException( "L2BasePacket::readUShort()", 2, (int)read_ptr, (int)real_size );
 #else
 	return 0;
 #endif
@@ -320,7 +320,7 @@ int L2BasePacket::readInt()
 		return ret;
 	}
 #ifdef L2P_THROW
-	throw L2P_ReadException( 4, (int)read_ptr, (int)real_size );
+	throw L2P_ReadException( "L2BasePacket::readInt()", 4, (int)read_ptr, (int)real_size );
 #else
 	return 0;
 #endif
@@ -341,7 +341,7 @@ unsigned int L2BasePacket::readUInt()
 		return ret;
 	}
 #ifdef L2P_THROW
-	throw L2P_ReadException( 4, (int)read_ptr, (int)real_size );
+	throw L2P_ReadException( "L2BasePacket::readUInt()", 4, (int)read_ptr, (int)real_size );
 #else
 	return 0;
 #endif
@@ -364,7 +364,7 @@ long long int L2BasePacket::readInt64()
 		return ret;
 	}
 #ifdef L2P_THROW
-	throw L2P_ReadException( 8, (int)read_ptr, (int)real_size );
+	throw L2P_ReadException( "L2BasePacket::readInt64()", 8, (int)read_ptr, (int)real_size );
 #else
 	return 0;
 #endif
@@ -387,7 +387,7 @@ unsigned long long int L2BasePacket::readUInt64()
 		return ret;
 	}
 #ifdef L2P_THROW
-	throw L2P_ReadException( 8, (int)read_ptr, (int)real_size );
+	throw L2P_ReadException( "L2BasePacket::readUInt64()", 8, (int)read_ptr, (int)real_size );
 #else
 	return 0;
 #endif
@@ -410,7 +410,7 @@ double L2BasePacket::readDouble()
 		return ret;
 	}
 #ifdef L2P_THROW
-	throw L2P_ReadException( 8, (int)read_ptr, (int)real_size );
+	throw L2P_ReadException( "L2BasePacket::readDouble()", 8, (int)read_ptr, (int)real_size );
 #else
 	return 0.0;
 #endif
@@ -595,7 +595,7 @@ unsigned char L2BasePacket::getByteAt( unsigned int index )
 {
 	if( index >= real_size )
 #ifdef L2P_THROW
-		throw L2P_ReadException( 1, (int)index, (int)real_size );
+		throw L2P_ReadException( "L2BasePacket::getByteAt()", 1, (int)index, (int)real_size );
 #else
 		return 0;
 #endif
@@ -626,7 +626,7 @@ ByteArray *L2BasePacket::readB( unsigned int count )
 	if( this->readBytes( pByteArray->getBytesPtr(), count ) ) return pByteArray;
 	delete pByteArray;
 #ifdef L2P_THROW
-	throw L2P_ReadException( (int)count, (int)read_ptr, (int)real_size );
+	throw L2P_ReadException( "L2BasePacket::readB()", (int)count, (int)read_ptr, (int)real_size );
 #else
 	return NULL;
 #endif

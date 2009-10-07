@@ -26,29 +26,29 @@ const L2P_Exception& L2P_Exception::operator=( const L2P_Exception& other )
 	return (*this);
 }
 
-L2P_MemoryError::L2P_MemoryError( size_t bytes )
+L2P_MemoryError::L2P_MemoryError( const char *comment, size_t bytes )
 {
-	m_what = (char *)malloc( 32 );
+	m_what = (char *)malloc( 256 );
 	if( m_what )
 	{
-		sprintf( m_what, "Tried to allocate: %u bytes", (unsigned int)bytes );
+		sprintf( m_what, "%s: Tried to allocate: %u bytes", comment, (unsigned int)bytes );
 	}
 }
 
-L2P_ReadException::L2P_ReadException( int nBytesTriedToRead, int nPos, int nSize )
+L2P_ReadException::L2P_ReadException( const char *comment, int nBytesTriedToRead, int nPos, int nSize )
 {
-	m_what = (char *)malloc( 32 );
+	m_what = (char *)malloc( 256 );
 	if( m_what )
 	{
-		sprintf( m_what, "Tried to read: %d bytes; pos: %d/%d", nBytesTriedToRead, nPos, nSize );
+		sprintf( m_what, "%s: Tried to read: %d bytes; pos: %d/%d", comment, nBytesTriedToRead, nPos, nSize );
 	}
 }
 
-L2P_WriteException::L2P_WriteException( int nBytesTriedToWrite, int nPos, int nSize )
+L2P_WriteException::L2P_WriteException( const char *comment, int nBytesTriedToWrite, int nPos, int nSize )
 {
-	m_what = (char *)malloc( 32 );
+	m_what = (char *)malloc( 256 );
 	if( m_what )
 	{
-		sprintf( m_what, "Tried to write: %d bytes; pos: %d/%d", nBytesTriedToWrite, nPos, nSize );
+		sprintf( m_what, "%s: Tried to write: %d bytes; pos: %d/%d", comment, nBytesTriedToWrite, nPos, nSize );
 	}
 }
