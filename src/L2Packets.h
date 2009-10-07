@@ -89,11 +89,9 @@
 #include "game/client/L2Game_UseItem.h"
 
 #include "pcode_obfuscator/L2PCodeObfuscator.h"
-
 #include "l2data/L2Data.h"
-
 #include "l2world/L2World.h"
-
 #include "packetNames/L2PacketNames.h"
+#include "xcpt/L2Packets_xcpt.h"
 
 #endif /*L2PACKETS_H_*/
