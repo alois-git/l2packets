@@ -262,10 +262,10 @@ bool L2Login_Init::create( L2_VERSION ver )
 		xoring_dword ^= xor_key; // XOR
 		// decodeXOR() first XORs, then substracts :) and it goes from end of packet to beginning
 		// update dword inside packet
-		raw_bytes[xor_offset] = (unsigned char(xoring_dword)) & 0xFF;
-		raw_bytes[xor_offset+1] = (unsigned char(xoring_dword >> 8)) & 0xFF;
-		raw_bytes[xor_offset+2] = (unsigned char(xoring_dword >> 16)) & 0xFF;
-		raw_bytes[xor_offset+3] = (unsigned char(xoring_dword >> 24)) & 0xFF;
+		raw_bytes[xor_offset]   = (unsigned char)(xoring_dword & 0xFF);
+		raw_bytes[xor_offset+1] = (unsigned char)(xoring_dword >> 8 & 0xFF);
+		raw_bytes[xor_offset+2] = (unsigned char)(xoring_dword >> 16 & 0xFF);
+		raw_bytes[xor_offset+3] = (unsigned char)(xoring_dword >> 24 & 0xFF);
 		// move to next dword
 		xor_offset += 4;
 	}
