@@ -22,7 +22,7 @@ DEL_FILE      = rm -f
 DEL_DIR       = rmdir
 WINDRES       = windres -O coff
 CFLAGS        = -g -W -Wall
-DEFINES       = -D_DEBUG -DSQLITE_THREADSAFE=1
+DEFINES       = -D_DEBUG -DSQLITE_THREADSAFE=1 -DL2P_THROW
 INC_DIRS      = -I$(SRC) -I../src/sqlite3
 LIB           = ar
 LIBFLAGS      = rsc
@@ -50,15 +50,26 @@ OBJECTS       = $(BUILDDIR)/ByteArray.o $(BUILDDIR)/L2BasePacket.o \
 	$(BUILDDIR)/L2Login_RequestServerList.o \
 	$(BUILDDIR)/L2Login_RequestServerLogin.o \
 	$(BUILDDIR)/L2GamePacket.o \
+	$(BUILDDIR)/L2Game_AuthLoginFail.o \
+	$(BUILDDIR)/L2Game_CharCreateFail.o \
+	$(BUILDDIR)/L2Game_CharCreateSuccess.o \
+	$(BUILDDIR)/L2Game_CharDeleteFail.o \
+	$(BUILDDIR)/L2Game_CharDeleteSuccess.o \
 	$(BUILDDIR)/L2Game_CharSelected.o \
 	$(BUILDDIR)/L2Game_CharSelectionInfo.o \
 	$(BUILDDIR)/L2Game_KeyPacket.o \
+	$(BUILDDIR)/L2Game_NewCharacterSuccess.o \
 	$(BUILDDIR)/L2Game_SSQInfo.o \
 	$(BUILDDIR)/L2Game_Action.o \
 	$(BUILDDIR)/L2Game_AuthLogin.o \
+	$(BUILDDIR)/L2Game_CharacterCreate.o \
+	$(BUILDDIR)/L2Game_CharacterDelete.o \
+	$(BUILDDIR)/L2Game_CharacterRestore.o \
 	$(BUILDDIR)/L2Game_CharacterSelect.o \
 	$(BUILDDIR)/L2Game_EnterWorld.o \
+	$(BUILDDIR)/L2Game_NewCharacter.o \
 	$(BUILDDIR)/L2Game_ProtocolVersion.o \
+	$(BUILDDIR)/L2Game_RequestGotoLobby.o \
 	$(BUILDDIR)/L2Game_RequestJoinParty.o \
 	$(BUILDDIR)/L2Game_RequestUserCommand.o \
 	$(BUILDDIR)/L2Game_UseItem.o \
@@ -79,8 +90,9 @@ OBJECTS       = $(BUILDDIR)/ByteArray.o $(BUILDDIR)/L2BasePacket.o \
 	$(BUILDDIR)/L2PacketNames_client_t23.o \
 	$(BUILDDIR)/L2PacketNames_server_t23.o \
 	$(BUILDDIR)/L2PCodeObfuscator.o \
-	$(BUILDDIR)/sqlite3.o \
-	$(BUILDDIR)/os_abstraction.o
+	$(BUILDDIR)/L2Packets_xcpt.o \
+	$(BUILDDIR)/os_abstraction.o \
+	$(BUILDDIR)/sqlite3.o
 
 $(TARGET): $(PCHC) $(OBJECTS)
 	echo [LIB] $(TARGET)
@@ -167,6 +179,26 @@ $(BUILDDIR)/L2GamePacket.o: $(SRC)/game/L2GamePacket.cpp $(GAMEDEPS)
 	echo [C++] $(SRC)/game/L2GamePacket.cpp
 	$(COMPILE) $(SRC)/game/L2GamePacket.cpp -o $(BUILDDIR)/L2GamePacket.o
 
+$(BUILDDIR)/L2Game_AuthLoginFail.o: $(SRC)/game/server/L2Game_AuthLoginFail.cpp $(SRC)/game/server/L2Game_AuthLoginFail.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/server/L2Game_AuthLoginFail.cpp
+	$(COMPILE) $(SRC)/game/server/L2Game_AuthLoginFail.cpp -o $(BUILDDIR)/L2Game_AuthLoginFail.o
+
+$(BUILDDIR)/L2Game_CharCreateFail.o: $(SRC)/game/server/L2Game_CharCreateFail.cpp $(SRC)/game/server/L2Game_CharCreateFail.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/server/L2Game_CharCreateFail.cpp
+	$(COMPILE) $(SRC)/game/server/L2Game_CharCreateFail.cpp -o $(BUILDDIR)/L2Game_CharCreateFail.o
+
+$(BUILDDIR)/L2Game_CharCreateSuccess.o: $(SRC)/game/server/L2Game_CharCreateSuccess.cpp $(SRC)/game/server/L2Game_CharCreateSuccess.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/server/L2Game_CharCreateSuccess.cpp
+	$(COMPILE) $(SRC)/game/server/L2Game_CharCreateSuccess.cpp -o $(BUILDDIR)/L2Game_CharCreateSuccess.o
+
+$(BUILDDIR)/L2Game_CharDeleteFail.o: $(SRC)/game/server/L2Game_CharDeleteFail.cpp $(SRC)/game/server/L2Game_CharDeleteFail.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/server/L2Game_CharDeleteFail.cpp
+	$(COMPILE) $(SRC)/game/server/L2Game_CharDeleteFail.cpp -o $(BUILDDIR)/L2Game_CharDeleteFail.o
+
+$(BUILDDIR)/L2Game_CharDeleteSuccess.o: $(SRC)/game/server/L2Game_CharDeleteSuccess.cpp $(SRC)/game/server/L2Game_CharDeleteSuccess.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/server/L2Game_CharDeleteSuccess.cpp
+	$(COMPILE) $(SRC)/game/server/L2Game_CharDeleteSuccess.cpp -o $(BUILDDIR)/L2Game_CharDeleteSuccess.o
+
 $(BUILDDIR)/L2Game_CharSelected.o: $(SRC)/game/server/L2Game_CharSelected.cpp $(SRC)/game/server/L2Game_CharSelected.h $(GAMEDEPS)
 	echo [C++] $(SRC)/game/server/L2Game_CharSelected.cpp
 	$(COMPILE) $(SRC)/game/server/L2Game_CharSelected.cpp -o $(BUILDDIR)/L2Game_CharSelected.o
@@ -179,10 +211,14 @@ $(BUILDDIR)/L2Game_KeyPacket.o: $(SRC)/game/server/L2Game_KeyPacket.cpp $(SRC)/g
 	echo [C++] $(SRC)/game/server/L2Game_KeyPacket.cpp
 	$(COMPILE) $(SRC)/game/server/L2Game_KeyPacket.cpp -o $(BUILDDIR)/L2Game_KeyPacket.o
 
+$(BUILDDIR)/L2Game_NewCharacterSuccess.o: $(SRC)/game/server/L2Game_NewCharacterSuccess.cpp $(SRC)/game/server/L2Game_NewCharacterSuccess.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/server/L2Game_NewCharacterSuccess.cpp
+	$(COMPILE) $(SRC)/game/server/L2Game_NewCharacterSuccess.cpp -o $(BUILDDIR)/L2Game_NewCharacterSuccess.o
+
 $(BUILDDIR)/L2Game_SSQInfo.o: $(SRC)/game/server/L2Game_SSQInfo.cpp $(SRC)/game/server/L2Game_SSQInfo.h $(GAMEDEPS)
 	echo [C++] $(SRC)/game/server/L2Game_SSQInfo.cpp
 	$(COMPILE) $(SRC)/game/server/L2Game_SSQInfo.cpp -o $(BUILDDIR)/L2Game_SSQInfo.o
-
+	
 $(BUILDDIR)/L2Game_Action.o: $(SRC)/game/client/L2Game_Action.cpp $(SRC)/game/client/L2Game_Action.h $(GAMEDEPS)
 	echo [C++] $(SRC)/game/client/L2Game_Action.cpp
 	$(COMPILE) $(SRC)/game/client/L2Game_Action.cpp -o $(BUILDDIR)/L2Game_Action.o
@@ -190,6 +226,18 @@ $(BUILDDIR)/L2Game_Action.o: $(SRC)/game/client/L2Game_Action.cpp $(SRC)/game/cl
 $(BUILDDIR)/L2Game_AuthLogin.o: $(SRC)/game/client/L2Game_AuthLogin.cpp $(SRC)/game/client/L2Game_AuthLogin.h $(GAMEDEPS)
 	echo [C++] $(SRC)/game/client/L2Game_AuthLogin.cpp
 	$(COMPILE) $(SRC)/game/client/L2Game_AuthLogin.cpp -o $(BUILDDIR)/L2Game_AuthLogin.o
+
+$(BUILDDIR)/L2Game_CharacterCreate.o: $(SRC)/game/client/L2Game_CharacterCreate.cpp $(SRC)/game/client/L2Game_CharacterCreate.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/client/L2Game_CharacterCreate.cpp
+	$(COMPILE) $(SRC)/game/client/L2Game_CharacterCreate.cpp -o $(BUILDDIR)/L2Game_CharacterCreate.o
+
+$(BUILDDIR)/L2Game_CharacterDelete.o: $(SRC)/game/client/L2Game_CharacterDelete.cpp $(SRC)/game/client/L2Game_CharacterDelete.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/client/L2Game_CharacterDelete.cpp
+	$(COMPILE) $(SRC)/game/client/L2Game_CharacterDelete.cpp -o $(BUILDDIR)/L2Game_CharacterDelete.o
+
+$(BUILDDIR)/L2Game_CharacterRestore.o: $(SRC)/game/client/L2Game_CharacterRestore.cpp $(SRC)/game/client/L2Game_CharacterRestore.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/client/L2Game_CharacterRestore.cpp
+	$(COMPILE) $(SRC)/game/client/L2Game_CharacterRestore.cpp -o $(BUILDDIR)/L2Game_CharacterRestore.o
 
 $(BUILDDIR)/L2Game_CharacterSelect.o: $(SRC)/game/client/L2Game_CharacterSelect.cpp $(SRC)/game/client/L2Game_CharacterSelect.h $(GAMEDEPS)
 	echo [C++] $(SRC)/game/client/L2Game_CharacterSelect.cpp
@@ -199,9 +247,17 @@ $(BUILDDIR)/L2Game_EnterWorld.o: $(SRC)/game/client/L2Game_EnterWorld.cpp $(SRC)
 	echo [C++] $(SRC)/game/client/L2Game_EnterWorld.cpp
 	$(COMPILE) $(SRC)/game/client/L2Game_EnterWorld.cpp -o $(BUILDDIR)/L2Game_EnterWorld.o
 
+$(BUILDDIR)/L2Game_NewCharacter.o: $(SRC)/game/client/L2Game_NewCharacter.cpp $(SRC)/game/client/L2Game_NewCharacter.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/client/L2Game_NewCharacter.cpp
+	$(COMPILE) $(SRC)/game/client/L2Game_NewCharacter.cpp -o $(BUILDDIR)/L2Game_NewCharacter.o
+
 $(BUILDDIR)/L2Game_ProtocolVersion.o: $(SRC)/game/client/L2Game_ProtocolVersion.cpp $(SRC)/game/client/L2Game_ProtocolVersion.h $(GAMEDEPS)
 	echo [C++] $(SRC)/game/client/L2Game_ProtocolVersion.cpp
 	$(COMPILE) $(SRC)/game/client/L2Game_ProtocolVersion.cpp -o $(BUILDDIR)/L2Game_ProtocolVersion.o
+
+$(BUILDDIR)/L2Game_RequestGotoLobby.o: $(SRC)/game/client/L2Game_RequestGotoLobby.cpp $(SRC)/game/client/L2Game_RequestGotoLobby.h $(GAMEDEPS)
+	echo [C++] $(SRC)/game/client/L2Game_RequestGotoLobby.cpp
+	$(COMPILE) $(SRC)/game/client/L2Game_RequestGotoLobby.cpp -o $(BUILDDIR)/L2Game_RequestGotoLobby.o
 
 $(BUILDDIR)/L2Game_RequestJoinParty.o: $(SRC)/game/client/L2Game_RequestJoinParty.cpp $(SRC)/game/client/L2Game_RequestJoinParty.h $(GAMEDEPS)
 	echo [C++] $(SRC)/game/client/L2Game_RequestJoinParty.cpp
@@ -289,10 +345,14 @@ $(BUILDDIR)/L2PCodeObfuscator.o: $(PCHDEPS) $(SRC)/pcode_obfuscator/L2PCodeObfus
 	$(COMPILE) $(SRC)/pcode_obfuscator/L2PCodeObfuscator.cpp -o $(BUILDDIR)/L2PCodeObfuscator.o
 
 
+$(BUILDDIR)/L2Packets_xcpt.o: $(PCHDEPS) $(SRC)/xcpt/L2Packets_xcpt.cpp $(SRC)/xcpt/L2Packets_xcpt.h
+	echo [C++] $(SRC)/xcpt/L2Packets_xcpt.cpp
+	$(COMPILE) $(SRC)/xcpt/L2Packets_xcpt.cpp -o $(BUILDDIR)/L2Packets_xcpt.o
+
+
 $(BUILDDIR)/sqlite3.o: $(PCHDEPS) $(SRC)/sqlite3/sqlite3.c $(SRC)/sqlite3/sqlite3.h $(SRC)/sqlite3/sqlite3ext.h
 	echo [CC ] $(SRC)/sqlite3/sqlite3.c
 	$(COMPILE_C) $(SRC)/sqlite3/sqlite3.c -o $(BUILDDIR)/sqlite3.o
-
 
 $(BUILDDIR)/os_abstraction.o: $(SRC)/os/os_abstraction.cpp $(SRC)/os/os_abstraction.h
 	echo [C++] $(SRC)/os/os_abstraction.cpp
@@ -303,7 +363,6 @@ clean:
 	$(DEL_FILE) $(BUILDDIR)/*.o
 	$(DEL_FILE) $(BUILDDIR)/*.gch
 	$(DEL_FILE) $(SRC)/*.gch
-	$(DEL_FILE) $(TARGET)
 
 distclean: clean
 	$(DEL_FILE) $(TARGET)
