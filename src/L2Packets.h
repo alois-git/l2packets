@@ -2,7 +2,7 @@
 #define L2PACKETS_H_
 
 /** \file L2Packets.h
-* Main include file to include all other library files.
+* Main include file to include all other library files related to Lineage II.
 */
 
 // detect OS
