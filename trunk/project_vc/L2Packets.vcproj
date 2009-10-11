@@ -288,6 +288,14 @@
 			Name="game"
 			>
 			<File
+				RelativePath="..\src\game\AionGamePacket.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\game\AionGamePacket.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\game\L2GamePacket.cpp"
 				>
 			</File>
@@ -761,6 +769,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\src\AionPackets.h"
+			>
+		</File>
 		<File
 			RelativePath="..\src\L2_versions.h"
 			>
