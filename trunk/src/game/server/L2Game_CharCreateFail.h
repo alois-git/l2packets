@@ -10,6 +10,9 @@ public:
 	static const int REASON_TOO_MANY_CHARACTERS = 0x01;
 	static const int REASON_NAME_ALREADY_EXISTS = 0x02;
 	static const int REASON_16_ENG_CHARS        = 0x03;
+	static const int REASON_INCORRECT_NAME      = 0x04;
+	static const int REASON_CREATE_NOT_ALLOWED  = 0x05;
+	static const int REASON_CHOOSE_ANOTHER_SVR  = 0x06;
 public:
 	L2Game_CharCreateFail();
 	L2Game_CharCreateFail( const unsigned char *bytes, unsigned int length );
