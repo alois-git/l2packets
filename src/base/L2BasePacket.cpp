@@ -100,7 +100,7 @@ bool L2BasePacket::ensureCanWriteBytes( unsigned int nBytes )
 	if( nBytes == 0 ) return true;
 	unsigned int end_ptr = write_ptr + nBytes - 1; // calc write end pointer
 	// loop until end_ptr fits in buffer size
-	while( end_ptr > buffer_size ) // not enough place in buffer
+	while( end_ptr >= buffer_size ) // not enough place in buffer
 	{
 		if( !this->_growBuffer() ) return false; // _growBuffer() increases buffer_size
 	}
