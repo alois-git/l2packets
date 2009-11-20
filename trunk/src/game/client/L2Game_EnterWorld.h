@@ -9,7 +9,7 @@ public:
 	L2Game_EnterWorld();
 	L2Game_EnterWorld( const unsigned char *bytes, unsigned int length );
 public:
-	bool create();
+	virtual bool create( L2_VERSION ver = L2_VERSION_T1 );
 	//void read() {} // L2J Server ignores its contents, parsing is unknown :)
 };
 

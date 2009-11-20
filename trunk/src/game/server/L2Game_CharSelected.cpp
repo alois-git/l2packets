@@ -78,7 +78,7 @@ bool L2Game_CharSelected::create( L2_VERSION ver /*= L2_VERSION_T1*/ )
 	writeS( p_char_name );
 	writeD( p_charId );
 	writeS( p_title );
-	writeD( p_sessionId );
+	writeD( p_sessionId ); // playOkID1
 	writeD( p_clanId );
 	writeD( 0x00 );  // maybe allyId?
 	writeD( p_sex );
