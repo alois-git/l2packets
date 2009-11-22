@@ -146,14 +146,15 @@ int L2PCodeObfuscator::encodeIDs( unsigned char *packet_data_raw )
 {
 	if( !packet_data_raw ) return 0;
 	unsigned char *data = packet_data_raw;
-	int ofs = 2; // offset of packet ID in raw data
+	int ofs = 2; // offset of packet ID in raw data (ofs+1 is position of extended opcode)
 	int ret_val = 0;
 	if( m_EncodeTable1 )
 	{
+		unsigned char prev_opcode = data[ofs]; // opcode BEFORE obfuscation
 		if( data[ofs] >= m_s1 ) return -1;
 		else data[ofs] = m_EncodeTable1[ data[ofs] ];
 		ret_val = 1;
-		if( data[ofs] == 0xD0 ) // double-byte packet
+		if( prev_opcode == 0xD0 ) // this is a double-byte packet - obfuscate second (ext) opcode
 		{
 			ret_val = 2;
 			if( data[ofs + 1] >= m_s2 ) return -2;
