@@ -20,4 +20,4 @@ nmake -f nt.mak
 The steps described above are not exact and these instructions may be incomplete or not working :)
 
 = The easy way =
-In [http://code.google.com/p/l2packets/downloads/list downloads%20section] there is a package of openssl libs & headers I used to build applications with (Win32, MS Visual C++)
+In [http://code.google.com/p/l2packets/downloads/list downloads_section] there is a package of openssl libs & headers I used to build applications with (Win32, MS Visual C++)
