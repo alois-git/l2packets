@@ -52,3 +52,21 @@ L2P_WriteException::L2P_WriteException( const char *comment, int nBytesTriedToWr
 		sprintf( m_what, "%s: Tried to write: %d bytes; pos: %d/%d", comment, nBytesTriedToWrite, nPos, nSize );
 	}
 }
+
+L2P_ObfuscateException::L2P_ObfuscateException( int size, unsigned int wrong_opcode, int error_code )
+{
+	m_what = (char *)malloc( 256 );
+	if( m_what )
+	{
+		sprintf( m_what, "Obfuscation failed (%d): opcode 0x%02X (table size %d)", error_code, wrong_opcode, size );
+	}
+}
+
+L2P_DeObfuscateException::L2P_DeObfuscateException( int size, unsigned int wrong_opcode, int error_code )
+{
+	m_what = (char *)malloc( 256 );
+	if( m_what )
+	{
+		sprintf( m_what, "Deobfuscation failed (%d): opcode 0x%02X (table size %d)", error_code, wrong_opcode, size );
+	}
+}
