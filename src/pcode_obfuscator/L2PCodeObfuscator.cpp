@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "L2PCodeObfuscator.h"
+#ifdef L2P_THROW
+#include "../xcpt/L2Packets_xcpt.h"
+#endif
 
 L2PCodeObfuscator::L2PCodeObfuscator()
 {
@@ -129,13 +132,27 @@ int L2PCodeObfuscator::decodeIDs( unsigned char *packet_data_raw )
 	int ret_val = 0;
 	if( m_DecodeTable1 )
 	{
-		if( data[ofs] >= m_s1 ) return -1;
+		if( data[ofs] > m_s1 )
+		{
+#ifdef L2P_THROW
+			throw L2P_DeObfuscateException( m_s1, data[ofs], -1 );
+#else
+			return -1;
+#endif
+		}
 		else data[ofs] = m_DecodeTable1[ data[ofs] ];
 		ret_val = 1;
 		if( data[ofs] == 0xD0 ) // double-byte packet
 		{
 			ret_val = 2;
-			if( data[ofs + 1] >= m_s2 ) return -2;
+			if( data[ofs + 1] > m_s2 )
+			{
+#ifdef L2P_THROW
+				throw L2P_DeObfuscateException( m_s2, data[ofs + 1], -2 );
+#else
+				return -2;
+#endif
+			}
 			else data[ofs + 1] = m_DecodeTable2[ data[ofs + 1] ];
 		}
 	}
@@ -151,13 +168,27 @@ int L2PCodeObfuscator::encodeIDs( unsigned char *packet_data_raw )
 	if( m_EncodeTable1 )
 	{
 		unsigned char prev_opcode = data[ofs]; // opcode BEFORE obfuscation
-		if( data[ofs] >= m_s1 ) return -1;
+		if( data[ofs] > m_s1 ) // m_s1 is a valid index in table (allocated as m_s1+1)
+		{
+#ifdef L2P_THROW
+			throw L2P_ObfuscateException( m_s1, data[ofs], -1 );
+#else
+			return -1;
+#endif
+		}
 		else data[ofs] = m_EncodeTable1[ data[ofs] ];
 		ret_val = 1;
 		if( prev_opcode == 0xD0 ) // this is a double-byte packet - obfuscate second (ext) opcode
 		{
 			ret_val = 2;
-			if( data[ofs + 1] >= m_s2 ) return -2;
+			if( data[ofs + 1] > m_s2 )
+			{
+#ifdef L2P_THROW
+				throw L2P_ObfuscateException( m_s2, data[ofs + 1], -2 );
+#else
+				return -2;
+#endif
+			}
 			else data[ofs + 1] = m_EncodeTable2[ data[ofs + 1] ];
 		}
 	}
@@ -181,11 +212,11 @@ bool L2PCodeObfuscator::decodeOpcode( unsigned char &singleOpcode, unsigned shor
 {
 	//unsigned char  prev_singleOpcode = singleOpcode;
 	//unsigned short prev_doubleOpcode = doubleOpcode;
-	if( singleOpcode >= m_s1 ) return false;
+	if( singleOpcode > m_s1 ) return false;
 	singleOpcode = m_DecodeTable1[ singleOpcode ];
 	if( singleOpcode == 0xD0 ) // D0:xx
 	{
-		if( doubleOpcode >= m_s2 ) return false;
+		if( doubleOpcode > m_s2 ) return false;
 		doubleOpcode = (unsigned short)m_DecodeTable2[ doubleOpcode ];
 		// TODO: Gracia Final triple opcodes
 		if( m_version == L2_VERSION_T23 )
@@ -193,7 +224,7 @@ bool L2PCodeObfuscator::decodeOpcode( unsigned char &singleOpcode, unsigned shor
 			//if( prev_doubleOpcode == 0x51 ) // D0:51:xx
 			if( doubleOpcode == 0x51 ) // D0:51:xx
 			{
-				if( tripleOpcode >= m_s3 ) return false;
+				if( tripleOpcode > m_s3 ) return false;
 				tripleOpcode = (unsigned short)m_DecodeTable3[ tripleOpcode ];
 			}
 		}
@@ -205,18 +236,18 @@ bool L2PCodeObfuscator::encodeOpcode( unsigned char &singleOpcode, unsigned shor
 {
 	unsigned char  prev_singleOpcode = singleOpcode;
 	unsigned short prev_doubleOpcode = doubleOpcode;
-	if( singleOpcode >= m_s1 ) return false;
+	if( singleOpcode > m_s1 ) return false;
 	singleOpcode = m_EncodeTable1[ singleOpcode ];
 	if( prev_singleOpcode == 0xD0 ) // D0:xx
 	{
-		if( doubleOpcode >= m_s2 ) return false;
+		if( doubleOpcode > m_s2 ) return false;
 		doubleOpcode = (unsigned short)m_EncodeTable2[ doubleOpcode ];
 		// TODO: Gracia Final triple opcodes
 		if( m_version == L2_VERSION_T23 )
 		{
 			if( prev_doubleOpcode == 0x51 ) // D0:51:xx
 			{
-				if( tripleOpcode >= m_s3 ) return false;
+				if( tripleOpcode > m_s3 ) return false;
 				tripleOpcode = (unsigned short)m_EncodeTable3[ tripleOpcode ];
 			}
 		}

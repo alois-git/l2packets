@@ -51,4 +51,16 @@ public:
 	L2P_WriteException( const char *comment, int nBytesTriedToWrite, int nPos, int nSize );
 };
 
+class L2P_ObfuscateException: public L2P_Exception
+{
+public:
+	L2P_ObfuscateException( int size, unsigned int wrong_opcode, int error_code );
+};
+
+class L2P_DeObfuscateException: public L2P_Exception
+{
+public:
+	L2P_DeObfuscateException( int size, unsigned int wrong_opcode, int error_code );
+};
+
 #endif
