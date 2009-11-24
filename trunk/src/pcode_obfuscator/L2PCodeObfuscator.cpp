@@ -65,7 +65,9 @@ void L2PCodeObfuscator::init_tables( unsigned int seed )
 	if gSys.Protocol = 831 then _init_tables(GInt(_dBuff, $16, 4), $4E); // CT1.5+ */
 	if( m_version == L2_VERSION_T2  ) m_s2 = 0x55; // T2   Gracia Part 1
 	if( m_version == L2_VERSION_T22 ) m_s2 = 0x58; // T2.2 Gracia Part 2
-	if( m_version == L2_VERSION_T23 ) m_s2 = 0x58; // T2.3 Gracia Final // TODO: ??
+	if( m_version == L2_VERSION_T23 ) m_s2 = 0x5C; // T2.3 Gracia Final // TODO: ??
+	//[--] PP_full_fromClient(): ERROR de-obfuscating A4
+	//[PACK] Client: D0:5C
 
 	if( m_DecodeTable1 ) free( m_DecodeTable1 );
 	if( m_DecodeTable2 ) free( m_DecodeTable2 );
