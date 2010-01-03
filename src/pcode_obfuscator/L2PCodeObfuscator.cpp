@@ -65,9 +65,7 @@ void L2PCodeObfuscator::init_tables( unsigned int seed )
 	if gSys.Protocol = 831 then _init_tables(GInt(_dBuff, $16, 4), $4E); // CT1.5+ */
 	if( m_version == L2_VERSION_T2  ) m_s2 = 0x55; // T2   Gracia Part 1
 	if( m_version == L2_VERSION_T22 ) m_s2 = 0x58; // T2.2 Gracia Part 2
-	if( m_version == L2_VERSION_T23 ) m_s2 = 0x5C; // T2.3 Gracia Final // TODO: ??
-	//[--] PP_full_fromClient(): ERROR de-obfuscating A4
-	//[PACK] Client: D0:5C
+	if( m_version == L2_VERSION_T23 ) m_s2 = 0x63; // T2.3 Gracia Final // TODO: length
 
 	if( m_DecodeTable1 ) free( m_DecodeTable1 );
 	if( m_DecodeTable2 ) free( m_DecodeTable2 );
@@ -212,21 +210,44 @@ bool L2PCodeObfuscator::encodeOpcode( unsigned char &singleOpcode, unsigned shor
 
 bool L2PCodeObfuscator::decodeOpcode( unsigned char &singleOpcode, unsigned short &doubleOpcode, unsigned short &tripleOpcode )
 {
-	//unsigned char  prev_singleOpcode = singleOpcode;
-	//unsigned short prev_doubleOpcode = doubleOpcode;
-	if( singleOpcode > m_s1 ) return false;
+	unsigned char  prev_singleOpcode = singleOpcode;
+	unsigned short prev_doubleOpcode = doubleOpcode;
+	if( singleOpcode > m_s1 )
+	{
+#ifdef L2P_THROW
+		throw L2P_DeObfuscateException( m_s1, singleOpcode, -1 );
+#else
+		return false;
+#endif
+	}
 	singleOpcode = m_DecodeTable1[ singleOpcode ];
 	if( singleOpcode == 0xD0 ) // D0:xx
 	{
-		if( doubleOpcode > m_s2 ) return false;
+		if( doubleOpcode > m_s2 )
+		{
+			singleOpcode = prev_singleOpcode; // restore prev. opcodes
+#ifdef L2P_THROW
+			throw L2P_DeObfuscateException( m_s2, doubleOpcode, -2 );
+#else
+			return false;
+#endif
+		}
 		doubleOpcode = (unsigned short)m_DecodeTable2[ doubleOpcode ];
 		// TODO: Gracia Final triple opcodes
 		if( m_version == L2_VERSION_T23 )
 		{
-			//if( prev_doubleOpcode == 0x51 ) // D0:51:xx
 			if( doubleOpcode == 0x51 ) // D0:51:xx
 			{
-				if( tripleOpcode > m_s3 ) return false;
+				if( tripleOpcode > m_s3 )
+				{
+					singleOpcode = prev_singleOpcode; // restore prev. opcodes
+					doubleOpcode = prev_doubleOpcode; // restore prev. opcodes
+#ifdef L2P_THROW
+					throw L2P_DeObfuscateException( m_s3, tripleOpcode, -3 );
+#else
+					return false;
+#endif
+				}
 				tripleOpcode = (unsigned short)m_DecodeTable3[ tripleOpcode ];
 			}
 		}
@@ -238,18 +259,42 @@ bool L2PCodeObfuscator::encodeOpcode( unsigned char &singleOpcode, unsigned shor
 {
 	unsigned char  prev_singleOpcode = singleOpcode;
 	unsigned short prev_doubleOpcode = doubleOpcode;
-	if( singleOpcode > m_s1 ) return false;
+	if( singleOpcode > m_s1 )
+	{
+#ifdef L2P_THROW
+		throw L2P_ObfuscateException( m_s1, singleOpcode, -1 );
+#else
+		return false;
+#endif
+	}
 	singleOpcode = m_EncodeTable1[ singleOpcode ];
 	if( prev_singleOpcode == 0xD0 ) // D0:xx
 	{
-		if( doubleOpcode > m_s2 ) return false;
+		if( doubleOpcode > m_s2 )
+		{
+			singleOpcode = prev_singleOpcode; // restore prev. opcode
+#ifdef L2P_THROW
+			throw L2P_ObfuscateException( m_s2, doubleOpcode, -2 );
+#else
+			return false;
+#endif
+		}
 		doubleOpcode = (unsigned short)m_EncodeTable2[ doubleOpcode ];
 		// TODO: Gracia Final triple opcodes
 		if( m_version == L2_VERSION_T23 )
 		{
 			if( prev_doubleOpcode == 0x51 ) // D0:51:xx
 			{
-				if( tripleOpcode > m_s3 ) return false;
+				if( tripleOpcode > m_s3 )
+				{
+					singleOpcode = prev_singleOpcode; // restore prev. opcode
+					doubleOpcode = prev_doubleOpcode; // restore prev. opcode
+#ifndef L2P_THROW
+					throw L2P_ObfuscateException( m_s3, tripleOpcode, -3 );
+#else
+					return false;
+#endif
+				}
 				tripleOpcode = (unsigned short)m_EncodeTable3[ tripleOpcode ];
 			}
 		}
