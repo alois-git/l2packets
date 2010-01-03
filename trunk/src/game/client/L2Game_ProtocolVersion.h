@@ -15,6 +15,7 @@ public:
 	bool createDefaultGracia1( unsigned int gameProtoVer = 12 );
 	bool createDefaultGracia2( unsigned int gameProtoVer = 17 );
 	bool createDefaultGracia3( unsigned int gameProtoVer = 83 );
+	bool createDefaultGracia4( unsigned int gameProtoVer = 146 );
 	bool read_protoVer( unsigned int *pver );
 };
 

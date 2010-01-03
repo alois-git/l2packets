@@ -11,8 +11,10 @@ typedef enum eL2_VERSION
 	L2_VERSION_T2 = 2,
 	/** constant to set protocol version as Gracia Part 2 */
 	L2_VERSION_T22 = 3,
-	/** constant to set protocol version as Gracia Part 3 */
-	L2_VERSION_T23 = 4
+	/** constant to set protocol version as Gracia Final */
+	L2_VERSION_T23 = 4,
+	/** constant to set protocol version as Gracia Epilogue */
+	L2_VERSION_T24 = 5
 } L2_VERSION;
 
 #endif
