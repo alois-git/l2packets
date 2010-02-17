@@ -302,6 +302,8 @@ void L2PacketNames_InitClient_t23()
 	strcpy( l2_packet_names_client2_t23[78], "RequestExCancelEnchantItem" );
 	strcpy( l2_packet_names_client2_t23[79], "RequestChangeNicknameColor" );
 	strcpy( l2_packet_names_client2_t23[80], "RequestResetNickname" );
+	strcpy( l2_packet_names_client2_t23[117], "RequestRefundItem" );
+	strcpy( l2_packet_names_client2_t23[118], "RequestBuySellUIClose" );
 
 	// Triple opcode packets (D0:51:xx)
 	strcpy( l2_packet_names_client3_t23[0], "RequestBookMarkSlotInfo" );

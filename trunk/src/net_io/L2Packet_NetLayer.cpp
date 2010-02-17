@@ -288,7 +288,7 @@ int L2PNet_shutdown( unsigned int sock )
 	}
 	else
 	{
-		ret = ( (int (__stdcall*)(SOCKET,int))(ws2_func[L2PFUNC_SHUTDOWN]))( sock, 0 );
+		ret = ( (int (__stdcall*)(SOCKET,int))(ws2_func[L2PFUNC_SHUTDOWN]))( sock, 0x02 ); // SD_BOTH
 	}
 	return ret;
 }

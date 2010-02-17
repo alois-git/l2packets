@@ -84,6 +84,9 @@ L2Class[54] = (char *)"Scavenger";
 L2Class[55] = (char *)"Bounty Hunter";
 L2Class[56] = (char *)"Artisan";
 L2Class[57] = (char *)"Warsmith";
+//
+// indexes [ 58 .. 87 ] unused
+//
 L2Class[88] = (char *)"Duelist";
 L2Class[89] = (char *)"Dreadnought";
 L2Class[90] = (char *)"Phoenix Knight";
@@ -115,6 +118,9 @@ L2Class[115] = (char *)"Dominator";
 L2Class[116] = (char *)"Doomcryer";
 L2Class[117] = (char *)"Fortune Seeker";
 L2Class[118] = (char *)"Maestro";
+//
+// indexes [ 119 .. 122 ] unused
+//
 L2Class[123] = (char *)"Kamael Male Soldier";
 L2Class[124] = (char *)"Kamael Female Soldier";
 L2Class[125] = (char *)"Trooper";
