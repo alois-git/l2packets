@@ -91,7 +91,8 @@ bool L2Game_CharSelectionInfo::read_next_charSelectInfoBlock( L2_VERSION l2_vers
 	c->iid_R_bracelet = readUInt();
 	c->iid_L_bracelet = readUInt();
 	for( i=0; i<6; i++ ) readUInt(); // DECO1 .. DECO6
-	if( l2_version == L2_VERSION_T23 ) c->iid_belt = readUInt(); // Gracia Final T2.3
+	if( l2_version >= L2_VERSION_T23 )
+		c->iid_belt = readUInt(); // Gracia Final T2.3
 	c->hairStyle = readUInt();
 	c->hairColor = readUInt();
 	c->face = readUInt();

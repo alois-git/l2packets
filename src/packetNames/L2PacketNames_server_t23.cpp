@@ -440,6 +440,8 @@ void L2PacketNames_InitServer_t23()
 	strcpy( l2_packet_names_server2_t23[170], "ExBR_PremiumState" ); // FE:aa
 	strcpy( l2_packet_names_server2_t23[171], "ExBrBroadcastEventState" ); // FE:ab
 	strcpy( l2_packet_names_server2_t23[172], "ExBrExtraUserInfo" ); // FE:ac
+	strcpy( l2_packet_names_server2_t23[183], "ExBuySellListPacket (Epilogue)" ); // FE:B7
+	strcpy( l2_packet_names_server2_t23[190], "ExBrExtraUserInfo (Epilogue)" ); // FE:BE (chdd)
 }
 
 void L2Packets_GetL2PacketName_fromServer_t23(

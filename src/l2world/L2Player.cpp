@@ -391,7 +391,7 @@ bool L2Player::parse_UserInfo( void *l2_game_packet, L2_VERSION l2_version )
 	z = p->readInt();
 
 	if( l2_version <= L2_VERSION_T22 )      heading = p->readUInt();
-	else if( l2_version == L2_VERSION_T23 ) vehicleObjectId = p->readUInt();
+	else if( l2_version >= L2_VERSION_T23 ) vehicleObjectId = p->readUInt();
 
 	objectID = p->readUInt();
 

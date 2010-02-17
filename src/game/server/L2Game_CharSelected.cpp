@@ -50,8 +50,8 @@ bool L2Game_CharSelected::parse( L2_VERSION ver /*= L2_VERSION_T1*/ )
 	p_DEX = readD();
 	p_WIT = readD();
 
-	readD(); // writeD( 0x0451 ); //?
-	readD(); // writeD( 0x00 ); // some constants
+	readD(); // writeD( 0x0451 ); // game time?
+	readD(); // writeD( 0x00 ); // 0x00
 
 	readD(); // writeD( classId ); // classId already read?
 
